@@ -8,3 +8,8 @@ Dowloads dos zip files de contratos e de licitações consolidados:
 * [Contratos 2017](http://dados.tce.rs.gov.br/dataset/contratos-consolidado-2017)
 * [Contratos 2018](http://dados.tce.rs.gov.br/dataset/contratos-consolidado-2018)
 * [Contratos 2019](http://dados.tce.rs.gov.br/dataset/contratos-consolidado-2019)
+
+Atenção: na reprodução dos scripts, ficar atento(a) aos diretórios. Os loops para abertura de arquivos conseidera que os arquivos estão separados por anos, exemplo contratos>>2017 // contratos>>2018 etc. 
+
+As descrições sobre o que foi utilizado dos bancos originais está no [docs](https://docs.google.com/document/d/1K808wOI4uyUcZcGF5NcRUbjyLQVk_U3H94zUYx9F_Yo/edit?usp=sharing) 
+
