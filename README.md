@@ -13,4 +13,4 @@ Atenção: na reprodução dos scripts, ficar atento(a) aos diretórios. Os loop
 
 As descrições sobre o que foi utilizado dos bancos originais está no [docs](https://docs.google.com/document/d/1K808wOI4uyUcZcGF5NcRUbjyLQVk_U3H94zUYx9F_Yo/edit?usp=sharing) 
 
-Para o QSA, deixei aqui nessa pasta o script do QSA e na pasta QSA os Rdatas extraídos. Fiz isso porque o site de onde eu retirei as informações está fora do ar.
+Para o QSA, deixei aqui nessa pasta o script do QSA e [nesse link estão os Rdatas dos QSAs](https://github.com/voigtjessica/Educacao-no-Brasil/tree/master/QSA). Fiz isso porque o site de onde eu retirei as informações está fora do ar.
