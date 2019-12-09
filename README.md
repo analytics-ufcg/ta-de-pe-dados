@@ -1,4 +1,4 @@
-# ta-na-mesa
+# Ta na mesa
 
 Repositório de acesso a dados de licitações, empenhos e contratos do Tribunal de Contas do Estado do Rio Grande do Sul.
 
