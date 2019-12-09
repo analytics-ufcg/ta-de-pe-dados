@@ -1,6 +1,7 @@
-import requests, zipfile, io, sys
+import requests, zipfile, io, sys, os
 from colorama import Fore, Style
-
+from tqdm import tqdm
+import urllib.request
 
 def print_usage():
     '''
@@ -10,22 +11,26 @@ def print_usage():
 
     print ('Chamada errada ou ano inválido! \nChamada Correta: ' + Fore.YELLOW +'python3.6 fetch_licitacoes.py <ano>')
 
-def download_zip(url):
+def download_zip(url, file_name):
     '''
     Função que baixa o arquivo compactado das licitações
     '''
-    try:
-        return requests.get(url)
-    except requests.exceptions.RequestException as e:
-        print(e)
-        sys.exit(1)
+    chunkSize = 1024
+    r = requests.get(url, stream=True)
+
+    with open(file_name, 'wb') as f:
+        pbar = tqdm( unit="B", total=int( r.headers['Content-Length'] ) )
+        for chunk in r.iter_content(chunk_size=chunkSize): 
+            if chunk:
+                pbar.update (len(chunk))
+                f.write(chunk)
 
 def unzip_file(file, output_path):
     '''
     Função que descompacta arquivo
     '''
     try:
-        z = zipfile.ZipFile(io.BytesIO(file.content))
+        z = zipfile.ZipFile(file)
         z.extractall(output_path)
     except Exception:
         print_usage()
@@ -42,7 +47,8 @@ if __name__ == "__main__":
     ano = str(sys.argv[1])
     url = 'http://dados.tce.rs.gov.br/dados/licitacon/licitacao/ano/' + ano + '.csv.zip'
     path = '../data/licitacoes/' + ano
-
-    r = download_zip(url)
-    unzip_file(r, path)
+    file_name = ano + '.csv.zip'
+    download_zip(url, file_name)
+    unzip_file(file_name, path)
+    os.remove(file_name)
     
