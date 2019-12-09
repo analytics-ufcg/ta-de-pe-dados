@@ -15,15 +15,20 @@ def download_zip(url, file_name):
     '''
     Função que baixa o arquivo compactado das licitações
     '''
-    chunkSize = 1024
-    r = requests.get(url, stream=True)
+    try:
+        chunkSize = 1024
+        r = requests.get(url, stream=True)
 
-    with open(file_name, 'wb') as f:
-        pbar = tqdm( unit="B", total=int( r.headers['Content-Length'] ) )
-        for chunk in r.iter_content(chunk_size=chunkSize): 
-            if chunk:
-                pbar.update (len(chunk))
-                f.write(chunk)
+        with open(file_name, 'wb') as f:
+            pbar = tqdm( unit="B", total=int( r.headers['Content-Length'] ) )
+            for chunk in r.iter_content(chunk_size=chunkSize): 
+                if chunk:
+                    pbar.update (len(chunk))
+                    f.write(chunk)
+    except requests.exceptions.RequestException as e:
+        print(e)
+        sys.exit(1)
+
 
 def unzip_file(file, output_path):
     '''
