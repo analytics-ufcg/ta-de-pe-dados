@@ -1,7 +1,6 @@
 import requests, zipfile, io, sys, os
 from colorama import Fore, Style
 from tqdm import tqdm
-import urllib.request
 
 def print_usage():
     '''
@@ -9,7 +8,7 @@ def print_usage():
     de argumentos
     '''
 
-    print ('Chamada errada ou ano inválido! \nChamada Correta: ' + Fore.YELLOW +'python3.6 fetch_licitacoes.py <ano>')
+    print ('Chamada errada ou ano inválido! \nChamada Correta: python3.6 fetch_licitacoes.py <ano>')
 
 def download_zip(url, file_name):
     '''
