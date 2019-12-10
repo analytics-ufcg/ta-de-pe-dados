@@ -6,15 +6,15 @@ Repositório de acesso a dados de licitações, empenhos e contratos do Tribunal
 
 Para baixar dados das licitações:
 ```sh
-$ python3.6 scripts/fetch_licitacoes.py <ano>
+$ python3.6 fetch_licitacoes.py <ano>
 ```
 
 Para baixar dados dos empenhos:
 ```sh
-$ python3.6 scripts/fetch_empenhos.py <ano>
+$ python3.6 fetch_empenhos.py <ano>
 ```
 
 Para baixar dados dos contratos:
 ```sh
-$ python3.6 scripts/fetch_contratos.py <ano>
+$ python3.6 fetch_contratos.py <ano>
 ```
