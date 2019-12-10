@@ -1,0 +1,10 @@
+version: "3.5"
+
+services:
+  crawler:
+    build: scripts
+    command: ["python3", "fetch_all_data.py", "licitacao,contrato,empenho", "2017,2018,2019"]    
+    container_name: crawler_python
+    volumes:
+      - ./scripts:/code/scripts
+      - ./data:/code/data
