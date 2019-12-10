@@ -8,7 +8,7 @@ def print_usage():
     de argumentos
     '''
 
-    print ('Chamada errada ou ano inválido! \nChamada Correta: ' + Fore.YELLOW +'python3.6 fetch_licitacoes.py <ano>')
+    print(Fore.WHITE +'Chamada Correta: ' + Fore.YELLOW +'python3.6 fetch_licitacoes.py <ano> <diretório de destino>')
 
 def download_zip(url, file_name):
     '''
@@ -17,7 +17,10 @@ def download_zip(url, file_name):
     try:
         chunkSize = 1024
         r = requests.get(url, stream=True)
-
+        if r.status_code == 404:
+            print(Fore.RED + 'Ano inválido!')
+            print_usage()
+            sys.exit(1)
         with open(file_name, 'wb') as f:
             pbar = tqdm( unit="B", total=int( r.headers['Content-Length'] ) )
             for chunk in r.iter_content(chunk_size=chunkSize): 
