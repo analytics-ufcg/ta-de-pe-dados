@@ -4,6 +4,7 @@ import utils
 if __name__ == "__main__":
     # Argumentos que o programa deve receber:
     # -1º: Ano que desejar baixar dos empenhos
+    # -2º: Caminho da pasta de destino
 
     if len(sys.argv) != 3:
         utils.print_usage()
