@@ -7,8 +7,7 @@ def call_fetch(year, call, path):
     '''
     Requesita arquivo de acao de acordo com o(s) ano(s) solicitado(s).
     '''
-    for y in year:
-        os.system(PYTHON_VERSION + ' ' + call + ' ' + y + ' ' + path)
+    os.system(PYTHON_VERSION + ' ' + call + ' ' + year + ' ' + path)
 
 def call_all_fetch(year, path):
     '''
