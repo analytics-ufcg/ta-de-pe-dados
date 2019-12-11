@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     year = str(sys.argv[1])
     output_path = str(sys.argv[2])
-    url = 'http://dados.tce.rs.gov.br/dados/licitacon/licitacao/ano/' + year + '.csv.zip'
+    url = 'http://dados.tce.rs.gov.br/dados/municipal/empenhos/' + year + '.csv.zip'
     path = output_path + '/empenhos/' + year
     file_name = year + '.csv.zip'
     utils.download_zip(url, file_name)
