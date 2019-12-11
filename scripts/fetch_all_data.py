@@ -2,19 +2,6 @@ import sys, os
 import utils
 
 PYTHON_VERSION = 'python3.6'
-
-def call_action_year(action, year, path):
-    '''
-    Seleciona qual acao será retornada.
-    '''
-    if action.lower() == 'contrato':
-        call_fetch(year, 'scripts/fetch_contratos.py', path)
-        
-    elif action.lower() == 'licitacao':
-        call_fetch(year, 'scripts/fetch_licitacoes.py', path)
-        
-    elif action.lower() == 'empenho':
-        call_fetch(year, 'scripts/fetch_empenhos.py', path)
         
 def call_fetch(year, call, path):
     '''
@@ -27,28 +14,41 @@ def call_all_fetch(year, path):
     '''
     Requisita todos os arquivos de baixar dados.
     '''
-    for y in year:
-        os.system(PYTHON_VERSION + ' scripts/fetch_contratos.py '+ y + ' ' + path)
-        os.system(PYTHON_VERSION + ' scripts/fetch_empenhos.py '+ y + ' ' + path)
-        os.system(PYTHON_VERSION + ' scripts/fetch_licitacoes.py '+ y + ' ' + path)
+    os.system(PYTHON_VERSION + ' fetch_contratos.py ' + year + ' ' + path)
+    os.system(PYTHON_VERSION + ' fetch_empenhos.py ' + year + ' ' + path)
+    os.system(PYTHON_VERSION + ' fetch_licitacoes.py ' + year + ' ' + path)
 
 if __name__ == "__main__":
 
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 3:
         utils.print_usage()
         exit(1)
 
-    in_action = str(sys.argv[1])
-    in_year = str(sys.argv[2])
-    path = str(sys.argv[3])
+    print('Escolha uma opcao: ')
+    print('1 - Baixar contratos')
+    print('2 - Baixar licitacoes')
+    print('3 - Baixar empenhos')
+    print('4 - Baixar tudo')
 
-    in_year = in_year.split(',')
+    action = input('Digite sua opcao: ')
 
-    if in_action.lower() == 'all':
-        call_all_fetch(in_year, path)
+    inp_year = str(sys.argv[1])
+    path = str(sys.argv[2])
+
+    if action == '4':
+        call_all_fetch(inp_year, path)
             
+    elif action == '1':
+        call_fetch(inp_year, 'fetch_contratos.py', path)
+
+    elif action == '2':
+        call_fetch(inp_year, 'fetch_licitacoes.py', path)
+    
+    elif action == '3':
+        call_fetch(inp_year, 'fetch_empenhos.py', path)
+    
     else:
-        in_action = in_action.split(',')
-        for a in in_action:
-            call_action_year(a, in_year, path)
+        print('Opcao incorreta.')
+
+
     
