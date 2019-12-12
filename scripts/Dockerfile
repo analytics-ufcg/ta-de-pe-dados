@@ -1,6 +1,6 @@
 FROM python:3.6.4-alpine3.7
 
-COPY ./requirements.txt /code/scripts/requirements.txt
+COPY ./ /code/scripts/
 
 WORKDIR /code/scripts/
 
