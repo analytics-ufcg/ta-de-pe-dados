@@ -1,8 +1,6 @@
 FROM python:3.6.4-alpine3.7
 
-COPY ./ /code/scripts/
-
-WORKDIR /code/scripts/
+COPY ./requirements.txt /code/scripts/requirements.txt
 
 RUN set -ex && \
     apk update && apk add --no-cache curl tzdata libpq && \    
@@ -12,5 +10,9 @@ RUN set -ex && \
       git \
       python3-dev && \
     python -m pip --no-cache install -U pip && \
-    python -m pip --no-cache install -r requirements.txt && \
+    python -m pip --no-cache install -r /code/scripts/requirements.txt && \
     apk del --purge .build-dependencies
+
+WORKDIR /code/scripts/
+
+COPY ./ ./
