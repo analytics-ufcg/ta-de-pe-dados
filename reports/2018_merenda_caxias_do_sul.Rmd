@@ -1,0 +1,93 @@
+---
+title: "A merenda de Caxias do Sul em 2018"
+output: 
+  html_document:
+    css: styles.css
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.cap = '',
+  fig.align = 'center',
+  fig.width = 10,
+  fig.height = 8
+)
+```
+
+```{r}
+options(scipen = 999)
+library(tidyverse)
+library(here)
+library(hrbrthemes)
+theme_set(theme_minimal())
+
+source(here("code/licitacoes/processa_licitacoes.R"))
+source(here("code/licitacoes/processa_licitantes.R"))
+source(here("code/licitacoes/processa_pessoas.R"))
+```
+
+```{r}
+filtra_licitacoes <- function(licitacoes, palavra_chave) {
+  
+  licitacoes_filtradas <- licitacoes %>%  
+    filter(grepl(palavra_chave, tolower(DS_OBJETO)), CD_TIPO_FASE_ATUAL == "ADH")  %>%
+    select(id, CD_ORGAO, NM_ORGAO, NR_LICITACAO, 
+           ANO_LICITACAO, CD_TIPO_MODALIDADE, 
+           DS_OBJETO, VL_LICITACAO, DT_ABERTURA, 
+           DT_HOMOLOGACAO, DT_ADJUDICACAO) %>% 
+    mutate(DT_ADJUDICACAO = as.Date(DT_ADJUDICACAO),
+           DT_ABERTURA = as.Date(DT_ABERTURA))
+  
+}
+```
+
+```{r}
+anos <- c(2018)
+
+licitacoes <- processa_licitacoes(anos)
+
+licitacoes_cx <- licitacoes %>% 
+  mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO)) %>% 
+  filter(NM_ORGAO == 'PM DE CAXIAS DO SUL')
+
+merenda <- licitacoes_cx %>%  filtra_licitacoes(palavra_chave = "merenda")
+
+cpp <- licitacoes_cx %>%  
+  filter(CD_TIPO_MODALIDADE == "CPP", CD_TIPO_FASE_ATUAL == "ADH")  %>%
+  select(id, CD_ORGAO, NM_ORGAO, NR_LICITACAO, 
+         ANO_LICITACAO, CD_TIPO_MODALIDADE, 
+         DS_OBJETO, VL_LICITACAO, DT_ABERTURA, 
+         DT_HOMOLOGACAO, DT_ADJUDICACAO) %>% 
+  mutate(DT_ADJUDICACAO = as.Date(DT_ADJUDICACAO),
+         DT_ABERTURA = as.Date(DT_ABERTURA))
+
+itens_cx <- read_csv("data/licitacoes/2018/item.csv") %>% filter(CD_ORGAO == 45000)
+
+itens_cx_cpp <- itens_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
+  mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
+
+contratos_cx <- read_csv("data/contratos/2018/contrato.csv") %>% filter(CD_ORGAO == 45000)
+alteracao_cx <- read_csv("data/contratos/2018/alteracao.csv") %>% filter(CD_ORGAO == 45000) 
+
+contratos_cx_cpp <- contratos_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
+  mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
+alteracao_cx_cpp <- alteracao_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
+  mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
+
+empenhos_cx <- read_csv("data/empenhos/2018/caxias_do_sul.csv") %>% filter(cd_orgao == 45000)
+
+empenhos_cx_cpp <- empenhos_cx %>% filter(mod_licitacao == "CPP") %>% 
+  mutate(id = paste0(cd_orgao, mod_licitacao, nr_licitacao, ano_licitacao))
+
+censo_escolar_cx <- read_csv("data/censo_escolar/censo_escolar_2018.csv") %>% filter(municipio == "CAXIAS DO SUL")
+```
+
+```{r}
+
+```
+
