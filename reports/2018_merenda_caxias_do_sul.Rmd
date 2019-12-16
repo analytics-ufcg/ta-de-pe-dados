@@ -22,13 +22,14 @@ knitr::opts_chunk$set(
 ```{r}
 options(scipen = 999)
 library(tidyverse)
-library(here)
 library(hrbrthemes)
+library(ggbeeswarm)
+library(lubridate)
 theme_set(theme_minimal())
 
-source(here("code/licitacoes/processa_licitacoes.R"))
-source(here("code/licitacoes/processa_licitantes.R"))
-source(here("code/licitacoes/processa_pessoas.R"))
+source(here::here("code/licitacoes/processa_licitacoes.R"))
+source(here::here("code/licitacoes/processa_licitantes.R"))
+source(here::here("code/licitacoes/processa_pessoas.R"))
 ```
 
 ```{r}
@@ -50,6 +51,9 @@ filtra_licitacoes <- function(licitacoes, palavra_chave) {
 anos <- c(2018)
 
 licitacoes <- processa_licitacoes(anos)
+
+licitacoes_cpp <- licitacoes %>% 
+  filter(CD_TIPO_MODALIDADE == "CPP")
 
 licitacoes_cx <- licitacoes %>% 
   mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO)) %>% 
@@ -87,7 +91,38 @@ empenhos_cx_cpp <- empenhos_cx %>% filter(mod_licitacao == "CPP") %>%
 censo_escolar_cx <- read_csv("data/censo_escolar/censo_escolar_2018.csv") %>% filter(municipio == "CAXIAS DO SUL")
 ```
 
+Quantidade
 ```{r}
+licitacoes_qtd <- licitacoes_cpp %>% 
+  group_by(CD_ORGAO, NM_ORGAO) %>% 
+  summarise(num_licitacoes = n())
 
+licitacoes_qtd %>% 
+  ggplot(aes(x = num_licitacoes)) + 
+  geom_histogram() +
+  geom_label(aes(x=3, y=120, label="Caxias do Sul está aqui"), color="#69b3a2")
+```
+
+Tempo
+
+O município de Caxias do Sul possui duas licitações da modalidade CPP e o intervalo de tempo entre a data de adjudicação e homologação foi de zero dias.
+
+Valor
+```{r}
+licitacoes_cpp %>% 
+  ggplot(aes(x = "", 
+             y = VL_LICITACAO, 
+             colour=if_else(NM_ORGAO == "PM DE CAXIAS DO SUL", "red", "black"),
+             alpha = .8)) +
+  ggbeeswarm::geom_quasirandom()
+  
+```
+
+
+Itens
+```{r}
+itens_cx_cpp_tb <- itens_cx_cpp %>% 
+  select(DS_ITEM, QT_ITENS, SG_UNIDADE_MEDIDA, VL_UNITARIO_ESTIMADO, VL_TOTAL_ESTIMADO) %>% 
+  mutate(produto = strsplit(DS_ITEM, ":"))
 ```
 
