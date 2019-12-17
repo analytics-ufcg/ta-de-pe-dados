@@ -25,6 +25,7 @@ library(tidyverse)
 library(hrbrthemes)
 library(ggbeeswarm)
 library(lubridate)
+library(DT)
 theme_set(theme_minimal())
 
 source(here::here("code/licitacoes/processa_licitacoes.R"))
@@ -123,6 +124,75 @@ Itens
 ```{r}
 itens_cx_cpp_tb <- itens_cx_cpp %>% 
   select(DS_ITEM, QT_ITENS, SG_UNIDADE_MEDIDA, VL_UNITARIO_ESTIMADO, VL_TOTAL_ESTIMADO) %>% 
-  mutate(produto = strsplit(DS_ITEM, ":"))
+  mutate(produto = strsplit(DS_ITEM, ":")) %>% 
+  mutate(nome_item = unlist(lapply(produto, "[[", 1))) %>% 
+  select(-produto)
+
+itens <- read_csv("data/licitacoes/2018/item.csv") %>% filter(CD_TIPO_MODALIDADE == "CPP")
+
+itens_media_rs <- itens %>% 
+  select(DS_ITEM, QT_ITENS, SG_UNIDADE_MEDIDA, VL_UNITARIO_ESTIMADO, VL_TOTAL_ESTIMADO) %>% 
+  mutate(produto = strsplit(DS_ITEM, ",")) %>% 
+  mutate(nome_item = unlist(lapply(produto, "[[", 1))) %>% 
+  select(-produto) %>% 
+  group_by(nome_item) %>% 
+  summarise(media_produto = format(round(mean(VL_UNITARIO_ESTIMADO)), nsmall=2))
+
+itens_tab <- left_join(itens_cx_cpp_tb, itens_media_rs, by = "nome_item") %>% 
+  group_by(nome_item) %>% 
+  summarise(dif_preco = sum(abs(media_produto - VL_UNITARIO_ESTIMADO) < 0.1))
+
+```
+
+```{r}
+itens_tab %>% 
+  arrange(desc(media_produto)) %>% 
+  select(nome_item, QT_ITENS, SG_UNIDADE_MEDIDA, VL_UNITARIO_ESTIMADO, media_produto, VL_TOTAL_ESTIMADO) %>% 
+  datatable(class = 'cell-border stripe',
+            filter = 'top',
+            rownames = FALSE, 
+            options = list(pageLength = 10,
+                           dom = 'ftp'),
+            colnames = c("Nome", "Quantidade", "Unid. de medida", "Valor unid. estimado", "Preço médio - estado", "Valor tot. estimado"))
+```
+
+Contratos
+
+Quem ganhou
+```{r}
+contratos_cx_cpp %>% 
+  arrange(desc(VL_CONTRATO)) %>% 
+  select(NR_DOCUMENTO, DT_INICIO_VIGENCIA, DT_FINAL_VIGENCIA, DT_ASSINATURA, VL_CONTRATO) %>% 
+  datatable(class = 'cell-border stripe',
+            filter = 'top',
+            rownames = FALSE, 
+            options = list(pageLength = 10,
+                           dom = 'ftp'),
+            colnames = c("CNPJ", "Início Vigência", "Fim da vigência", "Data de assinatura", "Valor do contrato"))
+```
+
+Alteração
+
+```{r}
+alt_cx_cpp <- alteracao_cx_cpp %>% select(CD_ORGAO, 
+                                          NR_LICITACAO, 
+                                          ANO_LICITACAO,
+                                          CD_TIPO_MODALIDADE,
+                                          NR_CONTRATO,
+                                          ANO_CONTRATO,
+                                          TP_INSTRUMENTO,
+                                          SQ_EVENTO,
+                                          CD_TIPO_OPERACAO,
+                                          VL_ACRESCIMO,
+                                          id)
+
+alteracao_valor <- left_join(alteracao_cx_cpp, contratos_cx_cpp, by = "NR_CONTRATO", all.x = TRUE)
+
+```
+
+```{r}
+alteracao_cx_cpp %>% 
+  ggplot(aes(x = id, y = VL_ACRESCIMO)) +
+  geom_point()
 ```
 
