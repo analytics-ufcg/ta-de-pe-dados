@@ -25,9 +25,11 @@ library(tidyverse)
 library(hrbrthemes)
 library(ggbeeswarm)
 library(lubridate)
-library(DT)
 library(ggchicklet)
-library(viridis)
+library(magrittr)
+library(GGally)
+library(stringr)
+library(DT)
 theme_set(theme_minimal())
 
 source(here::here("code/licitacoes/processa_licitacoes.R"))
@@ -73,27 +75,29 @@ cpp <- licitacoes_cx %>%
   mutate(DT_ADJUDICACAO = as.Date(DT_ADJUDICACAO),
          DT_ABERTURA = as.Date(DT_ABERTURA))
 
-itens <- read_csv("data/licitacoes/2018/item.csv") %>% filter(CD_TIPO_MODALIDADE == "CPP")
+itens <- read_csv("./data/licitacoes/2018/item.csv") %>% filter(CD_TIPO_MODALIDADE == "CPP")
 
-itens_cx <- read_csv("data/licitacoes/2018/item.csv") %>% filter(CD_ORGAO == 45000)
+itens_cx <- read_csv("./data/licitacoes/2018/item.csv") %>% filter(CD_ORGAO == 45000)
 
 itens_cx_cpp <- itens_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
   mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
 
-contratos_cx <- read_csv("data/contratos/2018/contrato.csv") %>% filter(CD_ORGAO == 45000)
-alteracao_cx <- read_csv("data/contratos/2018/alteracao.csv") %>% filter(CD_ORGAO == 45000) 
+contratos_cx <- read_csv("./data/contratos/2018/contrato.csv") %>% filter(CD_ORGAO == 45000)
+alteracao_cx <- read_csv("./data/contratos/2018/alteracao.csv") %>% filter(CD_ORGAO == 45000) 
 
 contratos_cx_cpp <- contratos_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
   mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
 alteracao_cx_cpp <- alteracao_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
   mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
 
-empenhos_cx <- read_csv("data/empenhos/2018/caxias_do_sul.csv") %>% filter(cd_orgao == 45000)
+empenhos_cx <- read_csv("./data/empenhos/2018/caxias_do_sul.csv") %>% filter(cd_orgao == 45000)
 
-empenhos_cx_cpp <- empenhos_cx %>% filter(mod_licitacao == "CPP") %>% 
+empenhos_cx_cpp <- empenhos_cx %>% filter(grepl("pnae", tolower(nm_recurso)) | mod_licitacao == "CPP") %>% 
   mutate(id = paste0(cd_orgao, mod_licitacao, nr_licitacao, ano_licitacao))
 
-censo_escolar_cx <- read_csv("data/censo_escolar/censo_escolar_2018.csv") %>% filter(municipio == "CAXIAS DO SUL")
+empenhos_merenda <- empenhos_cx %>% filter(cd_funcao == 12, cd_subfuncao == 306, ano_empenho == 2018)
+
+censo_escolar_cx <- read_csv("./data/censo_escolar/censo_escolar_2018.csv")
 ```
 
 ### Licitações
@@ -105,8 +109,8 @@ licitacoes_qtd <- licitacoes_cpp %>%
 
 licitacoes_qtd %>% 
   ggplot(aes(x = num_licitacoes)) + 
-  geom_histogram(binwidth = 0.5, fill="#69b3a2") +
-  geom_label(aes(x=2.2, y=122, label="Caxias do Sul está aqui"), color="#69b3a2") +
+  geom_histogram(binwidth = 0.5, fill="#00AFBB") +
+  geom_label(aes(x=2.2, y=122, label="Caxias do Sul está aqui"), color="#00AFBB") +
   labs(x = "Número de licitações",
        y = "Quantidade de licitações",
        title = "Quantidade de licitações por cidade",
@@ -119,10 +123,10 @@ O município de Caxias do Sul possui duas licitações da modalidade CPP e o int
 ```{r}
 licitacoes_cpp %>% 
   ggplot(aes(x = "", 
-             y = VL_LICITACAO, 
-             colour=if_else(NM_ORGAO == "PM DE CAXIAS DO SUL", "red", "black"))) +
-  ggbeeswarm::geom_quasirandom(alpha = 0.8) +
-  geom_label(aes(x=1, y=1550000, label="Caxias do Sul"), color="#69b3a2") +
+             y = VL_LICITACAO)) +
+  ggbeeswarm::geom_quasirandom(alpha = 0.8, 
+             colour=if_else(licitacoes_cpp$NM_ORGAO == "PM DE CAXIAS DO SUL", "#773bb0", "#00AFBB")) +
+  geom_label(aes(x=1, y=1550000, label="Caxias do Sul"), color="#773bb0") +
   labs(x = "",
        y = "Valor das licitações (R$)",
        title = "Distribuição dos valores de licitações",
@@ -137,7 +141,7 @@ Podemos observar que o município de Caxias do Sul possui licitações com os ma
 
 ```{r}
 itens_cx_cpp_tb <- itens_cx_cpp %>% 
-  select(DS_ITEM, QT_ITENS, SG_UNIDADE_MEDIDA, VL_UNITARIO_ESTIMADO, VL_TOTAL_ESTIMADO) %>% 
+  select(DS_ITEM, QT_ITENS, SG_UNIDADE_MEDIDA, VL_UNITARIO_ESTIMADO, VL_TOTAL_ESTIMADO, NR_DOCUMENTO) %>% 
   mutate(produto = strsplit(DS_ITEM, ":")) %>% 
   mutate(nome_item = unlist(lapply(produto, "[[", 1))) %>% 
   select(-produto)
@@ -160,14 +164,14 @@ Sabendo que o município possui os maiores valores de licitações CPP, logo aba
 itens_tab <- itens_tab %>% mutate(diferenca_valor = media_produto - VL_UNITARIO_ESTIMADO)
 
 itens_tab %>% 
-  arrange(desc(media_produto)) %>% 
-  select(nome_item, QT_ITENS, SG_UNIDADE_MEDIDA, VL_UNITARIO_ESTIMADO, media_produto, diferenca_valor, VL_TOTAL_ESTIMADO) %>% 
+  arrange(desc(diferenca_valor)) %>% 
+  select(nome_item, NR_DOCUMENTO, QT_ITENS, SG_UNIDADE_MEDIDA, VL_UNITARIO_ESTIMADO, media_produto, diferenca_valor, VL_TOTAL_ESTIMADO) %>% 
   datatable(class = 'cell-border stripe',
             filter = 'top',
             rownames = FALSE, 
             options = list(pageLength = 10,
                            dom = 'ftp'),
-            colnames = c("Nome", "Quantidade", "Unid. de medida", "Valor unid. estimado", "Preço médio - estado", "Diferença entre CS e RS", "Valor tot. estimado"))
+            colnames = c("Nome", "Nº documento", "Quantidade", "Unid. de medida", "Valor unid. estimado", "Preço médio - estado", "Diferença entre CS e RS", "Valor tot. estimado"))
 ```
 
 ### Contratos
@@ -239,4 +243,129 @@ alteracao_valor %>%
   theme_ipsum_rc()
  
 ```
+
+
+## Empenhos
+
+### Qual o período do ano em que os empenhos são feitos?
+
+```{r echo=TRUE, warning=FALSE}
+empenhos_por_mes <- empenhos_merenda %>% 
+  mutate(mes_empenho = lubridate::month(lubridate::ymd(dt_empenho))) %>% 
+  group_by(mes_empenho) %>% 
+  summarise(qtd_empenhos = n())
+
+empenhos_por_mes %>% 
+  ggplot(aes(x = as.factor(mes_empenho), y = qtd_empenhos)) +
+  geom_chicklet(width = .7, radius = grid::unit(5, "pt"), fill = "steelblue") +
+  labs(x = "Mês do ano",
+       y = "Número de empenhos",
+       title = "Empenhos feitos por mês em 2018") +
+  theme_ipsum_rc()
+```
+
+### Qual a origem da verba utilizada para os empenhos de merenda?
+
+```{r}
+origem_verba <- empenhos_merenda %>% 
+  group_by(nm_recurso = if_else(grepl("pnae", tolower(nm_recurso)), "PNAE", "Recurso Livre")) %>% 
+  summarise(numero_empenhos = n())
+
+origem_verba %>% 
+  ggplot(aes(x = nm_recurso, y = numero_empenhos)) +
+  geom_chicklet(width = .3, radius = grid::unit(5, "pt"), fill = "steelblue") +
+  labs(x = "Recurso",
+       y = "Número de empenhos",
+       title = "Origem da verba dos empenhos") +
+  theme_ipsum_rc(grid="Y")
+
+```
+
+### Quais as modalidades de licitação com maior número de empenhos?
+
+```{r}
+uso_verba <- empenhos_merenda %>%
+  select(mod_licitacao, ds_funcao, ds_subfuncao) %>% 
+  group_by(mod_licitacao) %>% 
+  summarise(qtd_empenhos = n())
+
+uso_verba %>% 
+  ggplot(aes(x = reorder(mod_licitacao, qtd_empenhos), y = qtd_empenhos)) +
+  geom_chicklet(width = .3, radius = grid::unit(5, "pt"), fill = "steelblue") +
+  labs(x = "Modalidade da licitação",
+       y = "Número de empenhos",
+       title = "Número de empenhos por modalidade de licitação") +
+  theme_ipsum_rc(grid="Y")
+
+```
+
+### Empenho x Liquidação x Pagamento
+
+```{r}
+
+valores_empenhos <- empenhos_merenda %>% 
+  select(nr_empenho, vl_empenho, vl_liquidacao, vl_pagamento)
+valores_empenhos[is.na(valores_empenhos)] <- 0
+valores_empenhos <- valores_empenhos %>% group_by(nr_empenho) %>% 
+  summarise(Empenho = sum(vl_empenho),
+            Liquidação = sum(vl_liquidacao),
+            Pagamento = sum(vl_pagamento))
+
+ggparcoord(valores_empenhos,
+    columns = 2:4, 
+    scale="globalminmax",
+    title = "Original",
+    alphaLines = 0.3
+    ) + 
+  theme_ipsum_rc()
+```
+
+## Custo Aluno
+
+### Qual a relação entre o valor das licitações e o número de alunos de um município?
+
+```{r}
+
+nmr_estudantes <- censo_escolar_cx %>% 
+  group_by(municipio) %>% 
+  summarise(qtd_estudantes = sum(creche_parcial, creche_integral, pre_escola_parcial,
+                                 pre_escola_integral, fundamental_inicial_parcial,
+                                 fundamental_inicial_integral, fundamental_final_parcial,
+                                 fundamental_final_integral, medio_parcial, medio_integral,
+                                 eja_fundamental, eja_medio))
+
+
+
+gasto_licitacoes <- licitacoes_cpp %>% 
+  select(NM_ORGAO , VL_LICITACAO) %>% 
+  mutate(municipio = str_remove(NM_ORGAO, "PM DE ")) %>% 
+  group_by(municipio) %>% 
+  summarise(media_gasto = mean(VL_LICITACAO)) %>% 
+  select(municipio, media_gasto) %>% inner_join(nmr_estudantes)
+
+gasto_licitacoes %>% ggplot(aes(x=qtd_estudantes, y=media_gasto)) +
+  geom_point(color=if_else(gasto_licitacoes$municipio == "CAXIAS DO SUL", "#773bb0", "#00AFBB")) +
+  hrbrthemes::theme_ipsum_rc(grid=FALSE) + 
+  labs(
+  x = "Número de alunos", y = "Média do valor das licitações CPP", fill = NULL,
+  title = "Valor médio das licitações pela quantidade de alunos"
+  ) +
+  theme(legend.title = element_blank()) +
+  geom_label(aes(x=110000, y=1555000, label="Caxias do Sul"), color="#773bb0")
+
+```
+
+### Quanto Caxias do Sul gastou com merenda por aluno em 2018?
+
+```{r}
+gasto_2018 <- sum(valores_empenhos$Pagamento)
+qtd_alunos <- sum(nmr_estudantes$qtd_estudantes)
+
+custo_por_estudantes <- gasto_2018/qtd_alunos
+
+custo_por_estudantes
+
+```
+
+
 
