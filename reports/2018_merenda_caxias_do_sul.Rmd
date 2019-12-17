@@ -74,25 +74,27 @@ cpp <- licitacoes_cx %>%
   mutate(DT_ADJUDICACAO = as.Date(DT_ADJUDICACAO),
          DT_ABERTURA = as.Date(DT_ABERTURA))
 
-itens_cx <- read_csv("data/licitacoes/2018/item.csv") %>% filter(CD_ORGAO == 45000)
+itens_cx <- read_csv("../data/licitacoes/2018/item.csv") %>% filter(CD_ORGAO == 45000)
 
 itens_cx_cpp <- itens_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
   mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
 
-contratos_cx <- read_csv("data/contratos/2018/contrato.csv") %>% filter(CD_ORGAO == 45000)
-alteracao_cx <- read_csv("data/contratos/2018/alteracao.csv") %>% filter(CD_ORGAO == 45000) 
+contratos_cx <- read_csv("../data/contratos/2018/contrato.csv") %>% filter(CD_ORGAO == 45000)
+alteracao_cx <- read_csv("../data/contratos/2018/alteracao.csv") %>% filter(CD_ORGAO == 45000) 
 
 contratos_cx_cpp <- contratos_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
   mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
 alteracao_cx_cpp <- alteracao_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
   mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
 
-empenhos_cx <- read_csv("data/empenhos/2018/caxias_do_sul.csv") %>% filter(cd_orgao == 45000)
+empenhos_cx <- read_csv("../data/empenhos/2018/caxias_do_sul.csv") %>% filter(cd_orgao == 45000)
 
-empenhos_cx_cpp <- empenhos_cx %>% filter(mod_licitacao == "CPP") %>% 
+empenhos_cx_cpp <- empenhos_cx %>% filter(grepl("pnae", tolower(nm_recurso)) | mod_licitacao == "CPP") %>% 
   mutate(id = paste0(cd_orgao, mod_licitacao, nr_licitacao, ano_licitacao))
 
-censo_escolar_cx <- read_csv("data/censo_escolar/censo_escolar_2018.csv")
+empenhos_merenda <- empenhos_cx %>% filter(cd_funcao == 12, cd_subfuncao == 306, ano_empenho == 2018)
+
+censo_escolar_cx <- read_csv("../data/censo_escolar/censo_escolar_2018.csv")
 ```
 
 Quantidade
@@ -132,18 +134,15 @@ itens_cx_cpp_tb <- itens_cx_cpp %>%
 ```
 
 
+## Empenhos
+
+### Qual o período do ano em que os empenhos são feitos?
+
 ```{r echo=TRUE, warning=FALSE}
-empenhos_por_mes <- empenhos_cx_cpp %>% 
+empenhos_por_mes <- empenhos_merenda %>% 
   mutate(mes_empenho = lubridate::month(lubridate::ymd(dt_empenho))) %>% 
   group_by(mes_empenho) %>% 
   summarise(qtd_empenhos = n())
-
-mes_empenho = c(2, 5, 6, 9, 10)
-qtd_empenhos = c(0, 0, 0, 0, 0)
-
-meses_vazios = data.frame(mes_empenho, qtd_empenhos)
-
-empenhos_por_mes %<>% bind_rows(meses_vazios) 
 
 empenhos_por_mes %>% 
   ggplot(aes(x = as.factor(mes_empenho), y = qtd_empenhos)) +
@@ -154,10 +153,11 @@ empenhos_por_mes %>%
   theme_ipsum_rc()
 ```
 
+### Qual a origem da verba utilizada para os empenhos de merenda?
 
 ```{r}
-origem_verba <- empenhos_cx_cpp %>% 
-  group_by(nm_recurso = if_else(grepl("pnae", tolower(nm_recurso)), "PNAE", "Outros")) %>% 
+origem_verba <- empenhos_merenda %>% 
+  group_by(nm_recurso = if_else(grepl("pnae", tolower(nm_recurso)), "PNAE", "Recurso Livre")) %>% 
   summarise(numero_empenhos = n())
 
 origem_verba %>% 
@@ -170,9 +170,10 @@ origem_verba %>%
 
 ```
 
+### Quais as modalidades de licitação com maior número de empenhos?
+
 ```{r}
-uso_verba <- empenhos_cx %>% 
-  filter(grepl("pnae", tolower(nm_recurso))) %>% 
+uso_verba <- empenhos_merenda %>%
   select(mod_licitacao, ds_funcao, ds_subfuncao) %>% 
   group_by(mod_licitacao) %>% 
   summarise(qtd_empenhos = n())
@@ -182,15 +183,16 @@ uso_verba %>%
   geom_chicklet(width = .3, radius = grid::unit(5, "pt"), fill = "steelblue") +
   labs(x = "Modalidade da licitação",
        y = "Número de empenhos",
-       title = "Número de empenhos por \nmodalidade de licitação") +
+       title = "Número de empenhos por modalidade de licitação") +
   theme_ipsum_rc(grid="Y")
 
 ```
 
+### Empenho x Liquidação x Pagamento
 
 ```{r}
 
-valores_empenhos <- empenhos_cx_cpp %>% 
+valores_empenhos <- empenhos_merenda %>% 
   select(nr_empenho, vl_empenho, vl_liquidacao, vl_pagamento)
 valores_empenhos[is.na(valores_empenhos)] <- 0
 valores_empenhos <- valores_empenhos %>% group_by(nr_empenho) %>% 
@@ -200,26 +202,28 @@ valores_empenhos <- valores_empenhos %>% group_by(nr_empenho) %>%
 
 ggparcoord(valores_empenhos,
     columns = 2:4, 
-    showPoints = TRUE, 
-        scale="globalminmax",
-
+    scale="globalminmax",
     title = "Original",
     alphaLines = 0.3
     ) + 
   theme_ipsum_rc()
 ```
 
+## Custo Aluno
+
+### Qual a relação entre o valor das licitações e o número de alunos de um município?
 
 ```{r}
 
 nmr_estudantes <- censo_escolar_cx %>% 
-  filter(tipo_educacao == "regular") %>% 
   group_by(municipio) %>% 
   summarise(qtd_estudantes = sum(creche_parcial, creche_integral, pre_escola_parcial,
                                  pre_escola_integral, fundamental_inicial_parcial,
                                  fundamental_inicial_integral, fundamental_final_parcial,
                                  fundamental_final_integral, medio_parcial, medio_integral,
                                  eja_fundamental, eja_medio))
+
+
 
 gasto_licitacoes <- licitacoes_cpp %>% 
   select(NM_ORGAO , VL_LICITACAO) %>% 
@@ -228,15 +232,29 @@ gasto_licitacoes <- licitacoes_cpp %>%
   summarise(media_gasto = mean(VL_LICITACAO)) %>% 
   select(municipio, media_gasto) %>% inner_join(nmr_estudantes)
 
-ggplot(gasto_licitacoes, aes(x=qtd_estudantes, y=media_gasto, color=if_else(municipio == "CAXIAS DO SUL", "red", "blue"))) +
-  geom_point() +
+gasto_licitacoes %>% ggplot(aes(x=qtd_estudantes, y=media_gasto)) +
+  geom_point(color=if_else(gasto_licitacoes$municipio == "CAXIAS DO SUL", "#773bb0", "#00AFBB")) +
   hrbrthemes::theme_ipsum_rc(grid=FALSE) + 
   labs(
-  x = "Número de alunos", y = "Gasto com licitações CPP", fill = NULL,
-  title = ""
+  x = "Número de alunos", y = "Média do valor das licitações CPP", fill = NULL,
+  title = "Valor médio das licitações pela quantidade de alunos"
   ) +
-  theme(legend.title = element_blank()) 
+  theme(legend.title = element_blank()) +
+  geom_label(aes(x=110000, y=1555000, label="Caxias do Sul"), color="#773bb0")
 
 ```
+
+### Quanto Caxias do Sul gastou com merenda por aluno em 2018?
+
+```{r}
+gasto_2018 <- sum(valores_empenhos$Pagamento)
+qtd_alunos <- sum(nmr_estudantes$qtd_estudantes)
+
+custo_por_estudantes <- gasto_2018/qtd_alunos
+
+custo_por_estudantes
+
+```
+
 
 
