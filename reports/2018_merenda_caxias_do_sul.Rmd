@@ -26,6 +26,8 @@ library(hrbrthemes)
 library(ggbeeswarm)
 library(lubridate)
 library(DT)
+library(ggchicklet)
+library(viridis)
 theme_set(theme_minimal())
 
 source(here::here("code/licitacoes/processa_licitacoes.R"))
@@ -71,6 +73,8 @@ cpp <- licitacoes_cx %>%
   mutate(DT_ADJUDICACAO = as.Date(DT_ADJUDICACAO),
          DT_ABERTURA = as.Date(DT_ABERTURA))
 
+itens <- read_csv("data/licitacoes/2018/item.csv") %>% filter(CD_TIPO_MODALIDADE == "CPP")
+
 itens_cx <- read_csv("data/licitacoes/2018/item.csv") %>% filter(CD_ORGAO == 45000)
 
 itens_cx_cpp <- itens_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
@@ -92,7 +96,8 @@ empenhos_cx_cpp <- empenhos_cx %>% filter(mod_licitacao == "CPP") %>%
 censo_escolar_cx <- read_csv("data/censo_escolar/censo_escolar_2018.csv") %>% filter(municipio == "CAXIAS DO SUL")
 ```
 
-Quantidade
+### Licitações
+
 ```{r}
 licitacoes_qtd <- licitacoes_cpp %>% 
   group_by(CD_ORGAO, NM_ORGAO) %>% 
@@ -100,27 +105,36 @@ licitacoes_qtd <- licitacoes_cpp %>%
 
 licitacoes_qtd %>% 
   ggplot(aes(x = num_licitacoes)) + 
-  geom_histogram() +
-  geom_label(aes(x=3, y=120, label="Caxias do Sul está aqui"), color="#69b3a2")
+  geom_histogram(binwidth = 0.5, fill="#69b3a2") +
+  geom_label(aes(x=2.2, y=122, label="Caxias do Sul está aqui"), color="#69b3a2") +
+  labs(x = "Número de licitações",
+       y = "Quantidade de licitações",
+       title = "Quantidade de licitações por cidade",
+       subtitle = "Considerando o ano de 2018") +
+  theme_ipsum_rc()
 ```
-
-Tempo
 
 O município de Caxias do Sul possui duas licitações da modalidade CPP e o intervalo de tempo entre a data de adjudicação e homologação foi de zero dias.
 
-Valor
 ```{r}
 licitacoes_cpp %>% 
   ggplot(aes(x = "", 
              y = VL_LICITACAO, 
-             colour=if_else(NM_ORGAO == "PM DE CAXIAS DO SUL", "red", "black"),
-             alpha = .8)) +
-  ggbeeswarm::geom_quasirandom()
+             colour=if_else(NM_ORGAO == "PM DE CAXIAS DO SUL", "red", "black"))) +
+  ggbeeswarm::geom_quasirandom(alpha = 0.8) +
+  geom_label(aes(x=1, y=1550000, label="Caxias do Sul"), color="#69b3a2") +
+  labs(x = "",
+       y = "Valor das licitações (R$)",
+       title = "Distribuição dos valores de licitações",
+       subtitle = "Considerando todas as licitações CPP no RS") +
+  theme_ipsum_rc() +
+  theme(legend.position = "")
+  
   
 ```
 
+Podemos observar que o município de Caxias do Sul possui licitações com os maiores valores do tipo CPP em comparação com outros municípios do estado.
 
-Itens
 ```{r}
 itens_cx_cpp_tb <- itens_cx_cpp %>% 
   select(DS_ITEM, QT_ITENS, SG_UNIDADE_MEDIDA, VL_UNITARIO_ESTIMADO, VL_TOTAL_ESTIMADO) %>% 
@@ -128,50 +142,60 @@ itens_cx_cpp_tb <- itens_cx_cpp %>%
   mutate(nome_item = unlist(lapply(produto, "[[", 1))) %>% 
   select(-produto)
 
-itens <- read_csv("data/licitacoes/2018/item.csv") %>% filter(CD_TIPO_MODALIDADE == "CPP")
-
 itens_media_rs <- itens %>% 
   select(DS_ITEM, QT_ITENS, SG_UNIDADE_MEDIDA, VL_UNITARIO_ESTIMADO, VL_TOTAL_ESTIMADO) %>% 
   mutate(produto = strsplit(DS_ITEM, ",")) %>% 
   mutate(nome_item = unlist(lapply(produto, "[[", 1))) %>% 
   select(-produto) %>% 
   group_by(nome_item) %>% 
-  summarise(media_produto = format(round(mean(VL_UNITARIO_ESTIMADO)), nsmall=2))
+  summarise(media_produto = round(mean(VL_UNITARIO_ESTIMADO), digits = 2))
 
-itens_tab <- left_join(itens_cx_cpp_tb, itens_media_rs, by = "nome_item") %>% 
-  group_by(nome_item) %>% 
-  summarise(dif_preco = sum(abs(media_produto - VL_UNITARIO_ESTIMADO) < 0.1))
+itens_tab <- left_join(itens_cx_cpp_tb, itens_media_rs, by = "nome_item")
 
 ```
 
+Sabendo que o município possui os maiores valores de licitações CPP, logo abaixo podemos observar em que itens é gasto e a diferença de preço entre os mesmos itens com relação a média de preços no estado:
+
 ```{r}
+itens_tab <- itens_tab %>% mutate(diferenca_valor = media_produto - VL_UNITARIO_ESTIMADO)
+
 itens_tab %>% 
   arrange(desc(media_produto)) %>% 
-  select(nome_item, QT_ITENS, SG_UNIDADE_MEDIDA, VL_UNITARIO_ESTIMADO, media_produto, VL_TOTAL_ESTIMADO) %>% 
+  select(nome_item, QT_ITENS, SG_UNIDADE_MEDIDA, VL_UNITARIO_ESTIMADO, media_produto, diferenca_valor, VL_TOTAL_ESTIMADO) %>% 
   datatable(class = 'cell-border stripe',
             filter = 'top',
             rownames = FALSE, 
             options = list(pageLength = 10,
                            dom = 'ftp'),
-            colnames = c("Nome", "Quantidade", "Unid. de medida", "Valor unid. estimado", "Preço médio - estado", "Valor tot. estimado"))
+            colnames = c("Nome", "Quantidade", "Unid. de medida", "Valor unid. estimado", "Preço médio - estado", "Diferença entre CS e RS", "Valor tot. estimado"))
 ```
 
-Contratos
+### Contratos
 
-Quem ganhou
+#### Quem ganhou os contratos?
 ```{r}
-contratos_cx_cpp %>% 
+cnpj_nomes <- tibble::tibble(empresa = c("COOPERATIVA DE AGRICULTORES E AGROINDUSTRIAS FAMILIARES E CAXIAS DO SUL LTDA",
+                                          "COOPERATIVA ECONATIVA DE PRODUTORES ECOLOGISTAS LTDA",
+                                          "COOPERATIVA AECIA DE AGRICULTORES ECOLOGISTAS LTDA",
+                                          "COOPERATIVA MISTA DE AGRICULTORES FAMILIARES DE ITATI, 
+                                          TERRA DE AREIA E TRES FORQUILHAS COOMAFITT",
+                                          "COOPERATIVA VINICOLA GARIBALDI LTDA",
+                                          "COOPERATIVA AGRICOLA MISTA NOVA PALMA LTDA"))
+
+contratos_compl <- bind_cols(contratos_cx_cpp, cnpj_nomes)
+
+contratos_compl %>% 
   arrange(desc(VL_CONTRATO)) %>% 
-  select(NR_DOCUMENTO, DT_INICIO_VIGENCIA, DT_FINAL_VIGENCIA, DT_ASSINATURA, VL_CONTRATO) %>% 
+  select(NR_DOCUMENTO, empresa, DT_INICIO_VIGENCIA, DT_FINAL_VIGENCIA, DT_ASSINATURA, VL_CONTRATO) %>% 
   datatable(class = 'cell-border stripe',
             filter = 'top',
             rownames = FALSE, 
             options = list(pageLength = 10,
                            dom = 'ftp'),
-            colnames = c("CNPJ", "Início Vigência", "Fim da vigência", "Data de assinatura", "Valor do contrato"))
+            colnames = c("CNPJ", "Empresa", "Início Vigência", "Fim da vigência", "Data de assinatura", "Valor do contrato"))
 ```
 
-Alteração
+A partir dos contratos, podemos ver, logo abaixo, se houve alguma alteração no valor:
 
 ```{r}
 alt_cx_cpp <- alteracao_cx_cpp %>% select(CD_ORGAO, 
@@ -186,13 +210,33 @@ alt_cx_cpp <- alteracao_cx_cpp %>% select(CD_ORGAO,
                                           VL_ACRESCIMO,
                                           id)
 
-alteracao_valor <- left_join(alteracao_cx_cpp, contratos_cx_cpp, by = "NR_CONTRATO", all.x = TRUE)
+alteracao_valor <- left_join(alteracao_cx_cpp, contratos_cx_cpp, by = "NR_CONTRATO", all.x = TRUE) %>% 
+  mutate(vl_total = VL_ACRESCIMO + VL_CONTRATO)
+
+alteracao_acrescimo <- alteracao_valor %>% 
+  select(NR_CONTRATO, valor = VL_ACRESCIMO) %>% 
+  mutate(tipo = "acrescimo")
+alteracao_contrato <- alteracao_valor %>% 
+  select(NR_CONTRATO, valor = VL_CONTRATO) %>% 
+  mutate(tipo = "original")
+
+alteracao_valor <- bind_rows(alteracao_acrescimo, alteracao_contrato) 
 
 ```
 
 ```{r}
-alteracao_cx_cpp %>% 
-  ggplot(aes(x = id, y = VL_ACRESCIMO)) +
-  geom_point()
+alteracao_valor %>% 
+  ggplot(aes(y = valor, x = as_factor(NR_CONTRATO), fill=tipo)) +
+  geom_bar(position = 'dodge', stat = 'identity') +
+  geom_text(aes(label = valor),
+          vjust = -0.5,
+          size = 3.3,
+          color = "#333333") +
+  labs(x = "Id. do contrato",
+       y = "Valor (R$)",
+       title = "Valores de contratos vs Valores de acréscimos",
+       subtitle = "Considerando período de 2018") +
+  theme_ipsum_rc()
+ 
 ```
 
