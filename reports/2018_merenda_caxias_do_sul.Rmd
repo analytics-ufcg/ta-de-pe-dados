@@ -112,7 +112,7 @@ licitacoes_qtd %>%
   geom_histogram(binwidth = 0.5, fill="#00AFBB") +
   geom_label(aes(x=2.2, y=122, label="Caxias do Sul está aqui"), color="#00AFBB") +
   labs(x = "Número de licitações",
-       y = "Quantidade de licitações",
+       y = "Quantidade de municípios",
        title = "Quantidade de licitações por cidade",
        subtitle = "Considerando o ano de 2018") +
   theme_ipsum_rc()
@@ -123,12 +123,12 @@ O município de Caxias do Sul possui duas licitações da modalidade CPP e o int
 ```{r}
 licitacoes_cpp %>% 
   ggplot(aes(x = "", 
-             y = VL_LICITACAO)) +
+             y = VL_LICITACAO/1e6)) +
   ggbeeswarm::geom_quasirandom(alpha = 0.8, 
              colour=if_else(licitacoes_cpp$NM_ORGAO == "PM DE CAXIAS DO SUL", "#773bb0", "#00AFBB")) +
-  geom_label(aes(x=1, y=1550000, label="Caxias do Sul"), color="#773bb0") +
+  geom_label(aes(x=1, y=1.55, label="Caxias do Sul"), color="#773bb0") +
   labs(x = "",
-       y = "Valor das licitações (R$)",
+       y = "Valor das licitações (em milhões de reais)",
        title = "Distribuição dos valores de licitações",
        subtitle = "Considerando todas as licitações CPP no RS") +
   theme_ipsum_rc() +
@@ -144,24 +144,27 @@ itens_cx_cpp_tb <- itens_cx_cpp %>%
   select(DS_ITEM, QT_ITENS, SG_UNIDADE_MEDIDA, VL_UNITARIO_ESTIMADO, VL_TOTAL_ESTIMADO, NR_DOCUMENTO) %>% 
   mutate(produto = strsplit(DS_ITEM, ":")) %>% 
   mutate(nome_item = unlist(lapply(produto, "[[", 1))) %>% 
+  filter(!grepl("TOMATEa)", produto)) %>% 
   select(-produto)
+
 
 itens_media_rs <- itens %>% 
   select(DS_ITEM, QT_ITENS, SG_UNIDADE_MEDIDA, VL_UNITARIO_ESTIMADO, VL_TOTAL_ESTIMADO) %>% 
   mutate(produto = strsplit(DS_ITEM, ",")) %>% 
-  mutate(nome_item = unlist(lapply(produto, "[[", 1))) %>% 
+  mutate(nome_item = unlist(lapply(produto, "[[", 1))) %>%
+  mutate(nome_item = toupper(nome_item)) %>% 
   select(-produto) %>% 
   group_by(nome_item) %>% 
   summarise(media_produto = round(mean(VL_UNITARIO_ESTIMADO), digits = 2))
 
-itens_tab <- left_join(itens_cx_cpp_tb, itens_media_rs, by = "nome_item")
+itens_tab <- left_join(itens_cx_cpp_tb, itens_media_rs, by = "nome_item") %>% na.omit()
 
 ```
 
 Sabendo que o município possui os maiores valores de licitações CPP, logo abaixo podemos observar em que itens é gasto e a diferença de preço entre os mesmos itens com relação a média de preços no estado:
 
 ```{r}
-itens_tab <- itens_tab %>% mutate(diferenca_valor = media_produto - VL_UNITARIO_ESTIMADO)
+itens_tab <- itens_tab %>% mutate(diferenca_valor = round(media_produto - VL_UNITARIO_ESTIMADO, 2))
 
 itens_tab %>% 
   arrange(desc(diferenca_valor)) %>% 
@@ -230,16 +233,15 @@ alteracao_valor <- bind_rows(alteracao_acrescimo, alteracao_contrato)
 
 ```{r}
 alteracao_valor %>% 
-  ggplot(aes(y = valor, x = as_factor(NR_CONTRATO), fill=tipo)) +
-  geom_bar(position = 'dodge', stat = 'identity') +
-  geom_text(aes(label = valor),
-          vjust = -0.5,
-          size = 3.3,
-          color = "#333333") +
+  ggplot(aes(y = valor/1e3, x = as_factor(NR_CONTRATO), fill=tipo, colour=tipo)) +
+  scale_color_manual(values = c("acrescimo" = "#773bb0", "original" = "#00AFBB"), guide = "none") +
+  scale_fill_manual(values = c("acrescimo" = "#773bb0", "original" = "#00AFBB")) +
+  geom_chicklet(width = .5, radius = grid::unit(3, "pt"), position = 'dodge') +
   labs(x = "Id. do contrato",
-       y = "Valor (R$)",
-       title = "Valores de contratos vs Valores de acréscimos",
-       subtitle = "Considerando período de 2018") +
+       y = "Valor (em milhares de reais)",
+       title = "Valores de contratos vs valores de acréscimos",
+       subtitle = "Considerando período de 2018",
+       fill = "Origem do valor") +
   theme_ipsum_rc()
  
 ```
@@ -249,15 +251,22 @@ alteracao_valor %>%
 
 ### Qual o período do ano em que os empenhos são feitos?
 
-```{r echo=TRUE, warning=FALSE}
+```{r echo=FALSE, warning=FALSE}
 empenhos_por_mes <- empenhos_merenda %>% 
   mutate(mes_empenho = lubridate::month(lubridate::ymd(dt_empenho))) %>% 
   group_by(mes_empenho) %>% 
   summarise(qtd_empenhos = n())
 
+mes_empenho <- c(6, 10)
+qtd_empenhos <- c(0, 0)
+
+meses_vazios <- data.frame(mes_empenho, qtd_empenhos)
+
+empenhos_por_mes %<>% bind_rows(meses_vazios)
+
 empenhos_por_mes %>% 
   ggplot(aes(x = as.factor(mes_empenho), y = qtd_empenhos)) +
-  geom_chicklet(width = .7, radius = grid::unit(5, "pt"), fill = "steelblue") +
+  geom_chicklet(width = .7, radius = grid::unit(3, "pt"), fill = "#00AFBB") +
   labs(x = "Mês do ano",
        y = "Número de empenhos",
        title = "Empenhos feitos por mês em 2018") +
@@ -273,7 +282,7 @@ origem_verba <- empenhos_merenda %>%
 
 origem_verba %>% 
   ggplot(aes(x = nm_recurso, y = numero_empenhos)) +
-  geom_chicklet(width = .3, radius = grid::unit(5, "pt"), fill = "steelblue") +
+  geom_chicklet(width = .3, radius = grid::unit(5, "pt"), fill = "#00AFBB") +
   labs(x = "Recurso",
        y = "Número de empenhos",
        title = "Origem da verba dos empenhos") +
@@ -291,33 +300,12 @@ uso_verba <- empenhos_merenda %>%
 
 uso_verba %>% 
   ggplot(aes(x = reorder(mod_licitacao, qtd_empenhos), y = qtd_empenhos)) +
-  geom_chicklet(width = .3, radius = grid::unit(5, "pt"), fill = "steelblue") +
+  geom_chicklet(width = .3, radius = grid::unit(5, "pt"), fill = "#00AFBB") +
   labs(x = "Modalidade da licitação",
        y = "Número de empenhos",
        title = "Número de empenhos por modalidade de licitação") +
   theme_ipsum_rc(grid="Y")
 
-```
-
-### Empenho x Liquidação x Pagamento
-
-```{r}
-
-valores_empenhos <- empenhos_merenda %>% 
-  select(nr_empenho, vl_empenho, vl_liquidacao, vl_pagamento)
-valores_empenhos[is.na(valores_empenhos)] <- 0
-valores_empenhos <- valores_empenhos %>% group_by(nr_empenho) %>% 
-  summarise(Empenho = sum(vl_empenho),
-            Liquidação = sum(vl_liquidacao),
-            Pagamento = sum(vl_pagamento))
-
-ggparcoord(valores_empenhos,
-    columns = 2:4, 
-    scale="globalminmax",
-    title = "Original",
-    alphaLines = 0.3
-    ) + 
-  theme_ipsum_rc()
 ```
 
 ## Custo Aluno
@@ -343,29 +331,37 @@ gasto_licitacoes <- licitacoes_cpp %>%
   summarise(media_gasto = mean(VL_LICITACAO)) %>% 
   select(municipio, media_gasto) %>% inner_join(nmr_estudantes)
 
-gasto_licitacoes %>% ggplot(aes(x=qtd_estudantes, y=media_gasto)) +
+gasto_licitacoes %>% ggplot(aes(x=qtd_estudantes/1e3, y=media_gasto/1e3)) +
   geom_point(color=if_else(gasto_licitacoes$municipio == "CAXIAS DO SUL", "#773bb0", "#00AFBB")) +
   hrbrthemes::theme_ipsum_rc(grid=FALSE) + 
   labs(
-  x = "Número de alunos", y = "Média do valor das licitações CPP", fill = NULL,
+  x = "Número de alunos (em milhares)", y = "Média do valor das licitações CPP (em milhares de reais)", fill = NULL,
   title = "Valor médio das licitações pela quantidade de alunos"
   ) +
   theme(legend.title = element_blank()) +
-  geom_label(aes(x=110000, y=1555000, label="Caxias do Sul"), color="#773bb0")
+  geom_label(aes(x=110, y=1555, label="Caxias do Sul"), color="#773bb0")
 
 ```
 
 ### Quanto Caxias do Sul gastou com merenda por aluno em 2018?
 
 ```{r}
+
+valores_empenhos <- empenhos_merenda %>% 
+  select(nr_empenho, vl_empenho, vl_liquidacao, vl_pagamento)
+valores_empenhos[is.na(valores_empenhos)] <- 0
+valores_empenhos <- valores_empenhos %>% group_by(nr_empenho) %>% 
+  summarise(Empenho = sum(vl_empenho),
+            Liquidação = sum(vl_liquidacao),
+            Pagamento = sum(vl_pagamento))
+
 gasto_2018 <- sum(valores_empenhos$Pagamento)
 qtd_alunos <- sum(nmr_estudantes$qtd_estudantes)
 
 custo_por_estudantes <- gasto_2018/qtd_alunos
 
-custo_por_estudantes
-
 ```
 
+Caxias do Sul gastou 3.08 reais por aluno no ano de 2018
 
 
