@@ -75,29 +75,29 @@ cpp <- licitacoes_cx %>%
   mutate(DT_ADJUDICACAO = as.Date(DT_ADJUDICACAO),
          DT_ABERTURA = as.Date(DT_ABERTURA))
 
-itens <- read_csv("./data/licitacoes/2018/item.csv") %>% filter(CD_TIPO_MODALIDADE == "CPP")
+itens <- read_csv("../data/licitacoes/2018/item.csv") %>% filter(CD_TIPO_MODALIDADE == "CPP")
 
-itens_cx <- read_csv("./data/licitacoes/2018/item.csv") %>% filter(CD_ORGAO == 45000)
+itens_cx <- read_csv("../data/licitacoes/2018/item.csv") %>% filter(CD_ORGAO == 45000)
 
 itens_cx_cpp <- itens_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
   mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
 
-contratos_cx <- read_csv("./data/contratos/2018/contrato.csv") %>% filter(CD_ORGAO == 45000)
-alteracao_cx <- read_csv("./data/contratos/2018/alteracao.csv") %>% filter(CD_ORGAO == 45000) 
+contratos_cx <- read_csv("../data/contratos/2018/contrato.csv") %>% filter(CD_ORGAO == 45000)
+alteracao_cx <- read_csv("../data/contratos/2018/alteracao.csv") %>% filter(CD_ORGAO == 45000) 
 
 contratos_cx_cpp <- contratos_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
   mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
 alteracao_cx_cpp <- alteracao_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
   mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
 
-empenhos_cx <- read_csv("./data/empenhos/2018/caxias_do_sul.csv") %>% filter(cd_orgao == 45000)
+empenhos_cx <- read_csv("../data/empenhos/2018/caxias_do_sul.csv") %>% filter(cd_orgao == 45000)
 
 empenhos_cx_cpp <- empenhos_cx %>% filter(grepl("pnae", tolower(nm_recurso)) | mod_licitacao == "CPP") %>% 
   mutate(id = paste0(cd_orgao, mod_licitacao, nr_licitacao, ano_licitacao))
 
 empenhos_merenda <- empenhos_cx %>% filter(cd_funcao == 12, cd_subfuncao == 306, ano_empenho == 2018)
 
-censo_escolar_cx <- read_csv("./data/censo_escolar/censo_escolar_2018.csv")
+censo_escolar_cx <- read_csv("../data/censo_escolar/censo_escolar_2018.csv")
 ```
 
 ### Licitações
