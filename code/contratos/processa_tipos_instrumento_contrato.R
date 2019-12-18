@@ -1,10 +1,10 @@
 library(tidyverse)
 library(here)
 
-#' Cria dataframe com tipos de licitações
+#' Cria dataframe com tipos de instrumento de contrato
 #' 
 #' @examples 
-#' tipos_licitacoes <- processa_tipos_licitacoes()
+#' tipo_instrumento_contrato <- processa_tipos_instrumento_contrato()
 #' 
 processa_tipos_instrumento_contrato <- function() {
   tipo_instrumento_contrato <- data.frame(tp_instrumento_contrato = c("A", "C", "F", "P", "R", "T", "O", "U" ),
