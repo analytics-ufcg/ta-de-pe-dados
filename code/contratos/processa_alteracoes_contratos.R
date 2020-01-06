@@ -43,6 +43,15 @@ import_alteracoes_contratos_por_ano <- function(ano = 2017) {
   return(alteracoes_contratos)
 }
 
+#' Processa dados para a tabela de alterações dos contratos de merenda no Rio Grande do Sul
+#' 
+#' @param anos Vector de inteiros com anos para captura das alterações dos contratos
+#'
+#' @return Dataframe com informações das alterações dos contratos de merenda
+#'   
+#' @examples 
+#' info_alteracoes_contratos <- processa_info_alteracoes_contratos(c(2017, 2018, 2019))
+#' 
 processa_info_alteracoes_contratos <- function(anos = c(2017, 2018, 2019)) {
   source(here("code/contratos/processa_contratos.R"))
   source(here("code/contratos/processa_tipos_alteracao_contrato.R"))
