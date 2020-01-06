@@ -75,7 +75,22 @@ cpp <- licitacoes_cx %>%
   mutate(DT_ADJUDICACAO = as.Date(DT_ADJUDICACAO),
          DT_ABERTURA = as.Date(DT_ABERTURA))
 
-itens <- read_csv("./data/licitacoes/2018/item.csv") %>% filter(CD_TIPO_MODALIDADE == "CPP")
+itens <- read_csv("./data/licitacoes/2018/item.csv", 
+                  col_types = cols(
+                    .default = col_double(),
+                    CD_TIPO_MODALIDADE = col_character(),
+                    DS_ITEM = col_character(),
+                    SG_UNIDADE_MEDIDA = col_character(),
+                    DT_REF_VALOR_ESTIMADO = col_date(format = ""),
+                    CD_FONTE_REFERENCIA = col_character(),
+                    DS_FONTE_REFERENCIA = col_character(),
+                    TP_RESULTADO_ITEM = col_character(),
+                    TP_DOCUMENTO = col_character(),
+                    NR_DOCUMENTO = col_integer(),
+                    TP_BENEFICIO_MICRO_EPP = col_character(),
+                    PC_TX_ESTIMADA = col_logical(),
+                    PC_TX_HOMOLOGADA = col_logical())) %>% 
+  filter(CD_TIPO_MODALIDADE == "CPP")
 
 itens_cx <- read_csv("./data/licitacoes/2018/item.csv") %>% filter(CD_ORGAO == 45000)
 
