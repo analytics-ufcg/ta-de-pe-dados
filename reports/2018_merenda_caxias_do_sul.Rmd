@@ -75,22 +75,22 @@ cpp <- licitacoes_cx %>%
   mutate(DT_ADJUDICACAO = as.Date(DT_ADJUDICACAO),
          DT_ABERTURA = as.Date(DT_ABERTURA))
 
-itens <- read_csv("../data/licitacoes/2018/item.csv") %>% filter(CD_TIPO_MODALIDADE == "CPP")
+itens <- read_csv("./data/licitacoes/2018/item.csv") %>% filter(CD_TIPO_MODALIDADE == "CPP")
 
-itens_cx <- read_csv("../data/licitacoes/2018/item.csv") %>% filter(CD_ORGAO == 45000)
+itens_cx <- read_csv("./data/licitacoes/2018/item.csv") %>% filter(CD_ORGAO == 45000)
 
 itens_cx_cpp <- itens_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
   mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
 
-contratos_cx <- read_csv("../data/contratos/2018/contrato.csv") %>% filter(CD_ORGAO == 45000)
-alteracao_cx <- read_csv("../data/contratos/2018/alteracao.csv") %>% filter(CD_ORGAO == 45000) 
+contratos_cx <- read_csv("./data/contratos/2018/contrato.csv") %>% filter(CD_ORGAO == 45000)
+alteracao_cx <- read_csv("./data/contratos/2018/alteracao.csv") %>% filter(CD_ORGAO == 45000) 
 
 contratos_cx_cpp <- contratos_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
   mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
 alteracao_cx_cpp <- alteracao_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
   mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
 
-empenhos_cx <- read_csv("../data/empenhos/2018/caxias_do_sul.csv") %>% filter(cd_orgao == 45000)
+empenhos_cx <- read_csv("./data/empenhos/2018/caxias_do_sul.csv") %>% filter(cd_orgao == 45000)
 
 empenhos_cx_cpp <- empenhos_cx %>% filter(grepl("pnae", tolower(nm_recurso)) | mod_licitacao == "CPP") %>% 
   mutate(id = paste0(cd_orgao, mod_licitacao, nr_licitacao, ano_licitacao))
@@ -306,6 +306,38 @@ uso_verba %>%
        title = "Número de empenhos por modalidade de licitação") +
   theme_ipsum_rc(grid="Y")
 
+```
+
+### Quantos empenhos são gerados por recurso?
+
+```{r}
+empenhos_qnt <- empenhos_merenda %>% 
+  group_by(nr_empenho, 
+           dt_empenho, 
+           nm_recurso = if_else(grepl("pnae", tolower(nm_recurso)), "PNAE", "Recurso Livre")) %>% 
+  summarise(qtd_data = n())
+
+empenhos_qnt %>% 
+  ggplot(aes(x = dt_empenho,
+             y = qtd_data,
+             fill = nm_recurso)) +
+  geom_col(width = 7) +
+  facet_grid(~nm_recurso) +
+  theme_ipsum_rc()
+
+```
+
+### Quantos empenhos são gerados?
+
+```{r}
+empenhos_qnt %>% 
+  arrange(desc(qtd_data)) %>% 
+  datatable(class = 'cell-border stripe',
+            filter = 'top',
+            rownames = FALSE,
+            options = list(pageLength = 10,
+                           dom = 'ftp'),
+            colnames = c("Nº empenho", "Data", "Recurso", "Quantidade")) 
 ```
 
 ## Custo Aluno
