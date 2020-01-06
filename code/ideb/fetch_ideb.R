@@ -17,6 +17,7 @@ fetch_ideb_por_url <- function(url = "download.inep.gov.br/educacao_basica/porta
   download.file(url, 
                 tmp_file, mode = "wb")
   
+  dir.create(file.path(here("code/ideb/"), "data"), showWarnings = FALSE)
   output_path <- here("code/ideb/data")
   
   unzip(tmp_file, exdir = output_path)
@@ -72,12 +73,14 @@ process_ideb <- function(data_path = here::here("code/ideb/data/divulgacao_anos_
 #' Requer que os dados tenham sido baixados (é possível baixar todos os dados executando a 
 #' função fetch_ideb_all_data)
 #' 
+#' @param remover_data TRUE se após o processamento dos dados o diretório data deve ser removido. FALSE caso contrário
+#' 
 #' @return Dados do IDEB para municípios do RS em todos os níveis escolares
 #' 
 #' @examples 
 #' ideb_rs <- process_ideb_all_data()
 #'
-process_ideb_all_data <- function() {
+process_ideb_all_data <- function(remover_data = TRUE) {
   fundamental_anos_iniciais <- here("code/ideb/data/divulgacao_anos_iniciais_municipios2017-atualizado-Jun_2019.xlsx")
   fundamental_anos_finais <- here("code/ideb/data/divulgacao_anos_finais_municipios2017-atualizado-Jun_2019.xlsx")
 
@@ -90,6 +93,10 @@ process_ideb_all_data <- function() {
   ideb_all <- ideb_anos_iniciais %>% 
     rbind(ideb_anos_finais) %>% 
     select(periodo, dplyr::everything())
+  
+  if(remover_data) {
+    unlink(here("code/ideb/data"), recursive = T, force = T)
+  }
 
   return(ideb_all)
 }
