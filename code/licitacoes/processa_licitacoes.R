@@ -65,6 +65,9 @@ import_licitacoes_merenda <- function(anos = c(2017, 2018, 2019)) {
 #' @examples 
 #' licitacoes_merenda <- processa_info_licitacoes(c(2017, 2018, 2019))
 #' 
+#' Chave primária:
+#' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade)
+#' 
 processa_info_licitacoes <- function(anos = c(2017, 2018, 2019)) {
   source(here("code/licitacoes/processa_concorrentes.R"))
   source(here("code/licitacoes/processa_tipos_licitacoes.R"))
@@ -93,8 +96,8 @@ processa_info_licitacoes <- function(anos = c(2017, 2018, 2019)) {
                                          "cd_tipo_modalidade" = "CD_TIPO_MODALIDADE", 
                                          "nr_licitacao" = "NR_LICITACAO")) %>%
     
-    select(id_estado, id_orgao = cd_orgao, nr_licitacao, ano_licitacao, tipo_licitacao, 
-           permite_subcontratacao = bl_permite_subcontratacao, tp_fornecimento, 
+    select(id_estado, id_orgao = cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade,
+           tipo_licitacao, permite_subcontratacao = bl_permite_subcontratacao, tp_fornecimento, 
            descricao_objeto = ds_objeto, vl_estimado_licitacao = vl_licitacao, 
            data_adjudicacao = dt_adjudicacao, vl_homologado, total_concorrentes)
   

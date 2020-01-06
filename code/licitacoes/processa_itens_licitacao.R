@@ -45,7 +45,10 @@ import_itens_licitacao_por_ano <- function(ano = 2019) {
 #'   
 #' @examples 
 #' info_item_licitacao <- processa_info_item_licitacao(anos = c(2017, 2018, 2019))
-#'
+#' 
+#' Chave primária: 
+#' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_lote, nr_item)
+#' 
 processa_info_item_licitacao <- function(anos = c(2017, 2018, 2019)) {
   source(here("code/licitacoes/processa_licitacoes.R"))
   
@@ -59,7 +62,7 @@ processa_info_item_licitacao <- function(anos = c(2017, 2018, 2019)) {
     mutate(id_estado = "43") %>%
     distinct() %>%
     clean_names() %>%
-    select(id_estado, id_orgao = cd_orgao, ano_licitacao, nr_lote, nr_licitacao, nr_item, 
+    select(id_estado, id_orgao = cd_orgao, ano_licitacao, cd_tipo_modalidade, nr_lote, nr_licitacao, nr_item, 
            ds_item, qt_itens_licitacao = qt_itens, sg_unidade_medida, vl_unitario_estimado, 
            vl_total_estimado)
     
