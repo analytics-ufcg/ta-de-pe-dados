@@ -2,7 +2,7 @@
 
 Repositório de acesso a dados de licitações, empenhos e contratos do Tribunal de Contas do Estado do Rio Grande do Sul.
 
-## Como executar
+## Como baixar os dados
 
 Para baixar dados das licitações:
 ```sh
