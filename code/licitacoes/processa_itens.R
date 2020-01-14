@@ -11,7 +11,7 @@ rename_duplicate_columns <- function(itens) {
 
 
 #' Gera um identificador único para cada registro do dataframe
-#' @param itens Dataframe sem identificador único
+#' @param df Dataframe sem identificador único
 #' @param ano Inteiro com o ano para uso na criação do identificador
 #' @return Dataframe com identificador único
 generate_id <- function(df, ano) {
