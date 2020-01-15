@@ -1,5 +1,8 @@
 library(magrittr)
+source(here::here('code/licitacoes/processa_licitacoes.R'))
 source(here::here('code/licitacoes/processa_itens.R'))
+source(here::here('code/utils/utils.R'))
+source(here::here('code/utils/constants.R'))
 
 help <- "
 Usage:
@@ -15,6 +18,15 @@ if (length(args) < min_num_args) {
 ano <- args[1]
 export_path <- args[2]
 
-itens <- import_itens_licitacao_por_ano(ano) %>% rename_duplicate_columns() %>% generate_id(ano)
+licitacoes <- import_licitacoes_por_ano(ano) %>% generate_id(ano, TABELA_LICITACAO, L_ID)
+
+licitacoes_ids <- licitacoes %>% dplyr::select(CD_ORGAO, NR_LICITACAO, ANO_LICITACAO, CD_TIPO_MODALIDADE, LICITACAO_ID)
+
+itens <- import_itens_licitacao_por_ano(ano) %>% 
+  rename_duplicate_columns() %>% 
+  merge(licitacoes_ids) %>% 
+  generate_id(ano, TABELA_ITEM, I_ID)
+
+readr::write_csv(licitacoes, paste0(export_path, "/licitacoes/", ano, "/licitacao.csv"))
 
 readr::write_csv(itens, paste0(export_path, "/licitacoes/", ano, "/item.csv"))
