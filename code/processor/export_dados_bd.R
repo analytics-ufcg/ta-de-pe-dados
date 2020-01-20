@@ -15,6 +15,7 @@ if (length(args) < min_num_args) {
 ano <- args[1]
 
 source(here::here("code/utils/utils.R"))
+source(here::here("code/utils/constants.R"))
 
 ## Assume que os dados foram baixados usando o módulo do crawler de dados (presente no diretório crawler
 ## na raiz desse repositório)
@@ -33,7 +34,8 @@ licitacoes <- read_licitacoes(ano) %>%
   processa_info_licitacoes()
 tipo_licitacao <- processa_tipos_licitacoes()
 
-info_licitacoes <- join_licitacao_e_tipo(licitacoes, tipo_licitacao)
+info_licitacoes <- join_licitacao_e_tipo(licitacoes, tipo_licitacao) %>% 
+  generate_id(TABELA_LICITACAO, L_ID)
 
 ## Itens de licitações
 message("#### itens de licitações...")
