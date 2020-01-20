@@ -44,15 +44,21 @@ import_licitantes_por_ano <- function(ano = 2019) {
 #' @examples 
 #' licitantes <- processa_info_licitantes(c(2017, 2018, 2019, 2020))
 #' 
+#' Chave primária:
+#' (cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, tp_documento_licitante, nr_documento_licitante)
+#' 
 processa_info_licitantes <- function(anos = c(2017, 2018, 2019, 2020)) {
   source(here::here("code/utils/constants.R"))
   source(here::here("code/utils/utils.R"))
   
-  licitantes <- purrr::pmap_dfr(list(anos), 
-                                  ~ import_licitantes_por_ano(..1)) %>% 
+  licitantes <- tibble::tibble(ano_arquivo = anos) %>% 
+    dplyr::mutate(data = purrr::map(ano_arquivo,
+                                    import_licitantes_por_ano)) %>% 
+    tidyr::unnest(data) %>% 
     rename_duplicate_columns() %>% 
     janitor::clean_names() %>% 
-    generate_id("ano_licitacao", TABELA_LICITANTE, LICITANTE_ID)
+    generate_id("ano_arquivo", TABELA_LICITANTE, LICITANTE_ID) %>% 
+    select(-ano_arquivo)
   
   return(licitantes)
 }
