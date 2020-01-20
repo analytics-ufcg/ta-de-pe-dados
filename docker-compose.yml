@@ -1,0 +1,36 @@
+version: '3.5'
+
+services:   
+
+  feed:
+    build:
+      context: feed/
+    container_name: feed
+    image: feed-image
+    env_file:
+      - .env
+    volumes:
+      - ./data:/data
+      - ./feed:/feed
+    ports:
+      - 5421:5421
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:11.1-alpine
+    container_name: postgres-empenhos
+    restart: always
+    environment:
+      - POSTGRES_DB=orcamento
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
+      - TZ=GMT
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/    
+    ports:
+      - 5433:5432
+    
+volumes:
+  postgres_data:
+  

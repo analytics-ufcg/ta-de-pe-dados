@@ -1,5 +1,6 @@
 import os, sys
 import utils
+import subprocess
 
 if __name__ == "__main__":
     # Argumentos que o programa deve receber:
@@ -16,6 +17,7 @@ if __name__ == "__main__":
     path = output_path + '/contratos/' + year
     file_name = year + '.csv.zip'
     utils.download_zip(url, file_name)
-    utils.unzip_file(file_name, path)
+    utils.unzip_file(file_name, path)    
+    subprocess.call(['chmod', '-R', '0777', output_path + '/contratos/'])
     os.remove(file_name)
     
