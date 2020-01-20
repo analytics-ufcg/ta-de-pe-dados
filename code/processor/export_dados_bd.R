@@ -4,7 +4,7 @@ library(here)
 ## Assume que os dados foram baixados usando o módulo do crawler de dados (presente no diretório crawler
 ## na raiz desse repositório)
 
-anos = c(2017, 2018, 2019)
+anos = c(2017, 2018, 2019, 2020)
 
 # Processamento dos dados
 message("#### Iniciando processamento...")

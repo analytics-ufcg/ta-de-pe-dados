@@ -32,7 +32,8 @@ import_itens_contrato <- function(anos = c(2017, 2018, 2019)) {
 import_itens_contrato_por_ano <- function(ano = 2019) {
   message(paste0("Importando itens de contrato do ano ", ano))
   itens_contrato <- read_csv(here(paste0("data/contratos/", ano, "/item_con.csv")), 
-                              col_types = cols(.default = "c"))
+                              col_types = cols(.default = "c",
+                                               ANO_LICITACAO = "i"))
   
   return(itens_contrato)
 }

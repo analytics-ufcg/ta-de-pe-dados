@@ -31,8 +31,9 @@ import_itens_licitacao <- function(anos = c(2017, 2018, 2019)) {
 #' 
 import_itens_licitacao_por_ano <- function(ano = 2019) {
   message(paste0("Importando itens de licitação do ano ", ano))
-  itens_licitacao <- read_csv(here(paste0("data/licitacoes/", ano, "/item.csv")), col_types = cols(.default = "c", 
-                                                                                                   VL_LICITACAO = "d"))
+  itens_licitacao <- read_csv(here(paste0("data/licitacoes/", ano, "/item.csv")), 
+                              col_types = cols(.default = "c", 
+                                               ANO_LICITACAO = "i"))
   
   return(itens_licitacao)
 }

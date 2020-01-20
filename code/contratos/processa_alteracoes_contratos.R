@@ -38,7 +38,8 @@ import_alteracoes_contratos_por_ano <- function(ano = 2017) {
   
   ## Lendo dados tratados
   alteracoes_contratos <- read_csv(file_path, 
-                                   col_types = cols(.default = "c"))
+                                   col_types = cols(.default = "c",
+                                                    ANO_LICITACAO = "i"))
   
   return(alteracoes_contratos)
 }

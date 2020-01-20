@@ -30,7 +30,8 @@ import_concorrentes <- function(anos = c(2017, 2018, 2019)) {
 #' 
 import_concorrentes_por_ano <- function(ano = 2019) {
   message(paste0("Importando concorrentes do ano ", ano))
-  concorrentes <- read_csv(here(paste0("data/licitacoes/", ano, "/licitante.csv")), col_types = cols(.default = "c"))
+  concorrentes <- read_csv(here(paste0("data/licitacoes/", ano, "/licitante.csv")), 
+                           col_types = cols(.default = "c", ANO_LICITACAO = "i"))
   
   return(concorrentes)
 }
