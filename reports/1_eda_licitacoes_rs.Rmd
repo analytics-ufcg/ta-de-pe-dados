@@ -28,7 +28,7 @@ library(hrbrthemes)
 library(DT)
 theme_set(theme_minimal())
 source(here("code/licitacoes/processa_licitacoes.R"))
-source(here("code/licitacoes/processa_concorrentes.R"))
+source(here("code/licitacoes/processa_licitantes.R"))
 source(here("code/licitacoes/processa_pessoas.R"))
 ```
 
@@ -42,7 +42,7 @@ licitacoes_merenda <- import_licitacoes(anos) %>%
   mutate(DT_ADJUDICACAO = as.Date(DT_ADJUDICACAO),
          DT_ABERTURA = as.Date(DT_ABERTURA))
   
-licitantes <- purrr::pmap_dfr(list(anos), ~ import_concorrentes_por_ano(..1)) %>% 
+licitantes <- purrr::pmap_dfr(list(anos), ~ import_licitantes_por_ano(..1)) %>% 
   inner_join(licitacoes_merenda %>% distinct(CD_ORGAO, NR_LICITACAO, ANO_LICITACAO, CD_TIPO_MODALIDADE),
              by = c("CD_ORGAO", "NR_LICITACAO", "ANO_LICITACAO", "CD_TIPO_MODALIDADE"))
 pessoas <- processa_pessoas(anos) %>% 
