@@ -31,7 +31,9 @@ import_contratos <- function(anos = c(2017, 2018, 2019)) {
 #' 
 import_contratos_por_ano <- function(ano = 2019) {
   message(paste0("Importando contratos do ano ", ano))
-  contratos <- read_csv(here(paste0("data/contratos/", ano, "/contrato.csv")), col_types = cols(.default = "c"))
+  contratos <- read_csv(here(paste0("data/contratos/", ano, "/contrato.csv")), 
+                        col_types = cols(.default = "c",
+                                         ANO_LICITACAO = "i"))
   
   return(contratos)
 }
