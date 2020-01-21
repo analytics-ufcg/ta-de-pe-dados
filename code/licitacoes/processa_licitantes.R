@@ -1,7 +1,3 @@
-library(tidyverse)
-library(here)
-library(janitor)
-
 #' Renomeia as colunas repetidas do dataframe de licitantes
 #' 
 #' @param licitantes Dataframe de licitantes de licitações
@@ -10,7 +6,7 @@ library(janitor)
 #' 
 rename_duplicate_columns <- function(licitantes) {
   licitantes <- licitantes %>% 
-    rename(TP_DOCUMENTO_LICITANTE = TP_DOCUMENTO,
+    dplyr::rename(TP_DOCUMENTO_LICITANTE = TP_DOCUMENTO,
            NR_DOCUMENTO_LICITANTE = NR_DOCUMENTO,
            TP_DOCUMENTO_REPRES = TP_DOCUMENTO_1,
            NR_DOCUMENTO_REPRES = NR_DOCUMENTO_1)
@@ -38,20 +34,17 @@ import_licitantes_por_ano <- function(ano = 2019) {
 
 #' Processa dados de licitantes de licitações do Rio Grande do Sul
 #' 
-#' @param anos Vector de inteiros com anos para captura dos licitantes
+#' @param licitantes_df Dataframe de licitantes
 #'
-#' @return Dataframe com informações dos licitantes
+#' @return Dataframe com informações tratadas dos licitantes
 #'   
 #' @examples 
-#' licitantes <- processa_info_licitantes(c(2017, 2018, 2019, 2020))
+#' licitantes <- processa_info_licitantes(licitantes_df)
 #' 
 #' Chave primária:
 #' (cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, tp_documento_licitante, nr_documento_licitante)
 #' 
 processa_info_licitantes <- function(licitantes_df) {
-  source(here::here("code/utils/constants.R"))
-  source(here::here("code/utils/utils.R"))
-  
   licitantes <- licitantes_df %>% 
     rename_duplicate_columns() %>% 
     janitor::clean_names() %>% 
