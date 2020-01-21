@@ -67,7 +67,8 @@ info_contratos <-
                               dplyr::select(id_orgao, 
                                             nr_licitacao, 
                                             ano_licitacao, 
-                                            cd_tipo_modalidade)) %>% 
+                                            cd_tipo_modalidade,
+                                            licitacao_id)) %>% 
   
   join_contrato_e_instrumento(tipo_instrumento_contrato) %>% 
   generate_id(TABELA_CONTRATO, CONTRATO_ID)
