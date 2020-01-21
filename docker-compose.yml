@@ -13,24 +13,32 @@ services:
       - ./data:/data
       - ./feed:/feed
     ports:
-      - 5421:5421
+      - 7643:7643
     depends_on:
       - postgres
+    networks:
+      - proxynet
 
   postgres:
     image: postgres:11.1-alpine
-    container_name: postgres-empenhos
+    container_name: postgres-ta-na-mesa
     restart: always
     environment:
-      - POSTGRES_DB=orcamento
+      - POSTGRES_DB=tanamesa
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
       - TZ=GMT
     volumes:
       - postgres_data:/var/lib/postgresql/data/    
     ports:
-      - 5433:5432
-    
+      - 7655:5432
+    networks:
+      - proxynet
+
+networks:
+  proxynet:
+    name: ta_na_mesa_network
+      
 volumes:
   postgres_data:
   
