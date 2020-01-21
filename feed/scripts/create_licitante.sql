@@ -13,7 +13,9 @@ CREATE TABLE IF NOT EXISTS "licitante" (
     "tp_resultado_habilitacao" VARCHAR(1),
     "bl_beneficio_micro_epp" VARCHAR(1),
     "licitacao_id" INTEGER,
-    "licitante_id" VARCHAR(20),
+    "licitante_id" BIGINT,
     FOREIGN KEY ("licitacao_id") REFERENCES licitacao ("licitacao_id"),
+    CONSTRAINT licitante_key UNIQUE (id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, tp_documento_licitante, 
+    nr_documento_licitante),
     PRIMARY KEY("licitante_id")
 );

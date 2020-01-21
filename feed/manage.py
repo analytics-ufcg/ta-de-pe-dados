@@ -20,6 +20,10 @@ def create():
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create_item.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create_licitante.sql'])
 
+@click.command()
+def update_data():
+    """Atualiza as tabelas do Banco de Dados"""
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/update/update_licitante.sql'])
 
 @click.command()
 def import_data():
@@ -40,6 +44,7 @@ def shell():
 
 
 cli.add_command(create)
+cli.add_command(update_data)
 cli.add_command(import_data)
 cli.add_command(clean_data)
 cli.add_command(shell)
