@@ -16,6 +16,7 @@ ano <- args[1]
 
 source(here::here("code/utils/utils.R"))
 source(here::here("code/utils/constants.R"))
+source(here::here("code/utils/join_utils.R"))
 
 ## Assume que os dados foram baixados usando o módulo do crawler de dados (presente no diretório crawler
 ## na raiz desse repositório)
@@ -30,7 +31,6 @@ message("#### licitações...")
 
 source(here::here("code/licitacoes/processa_licitacoes.R"))
 source(here::here("code/licitacoes/processa_tipos_licitacoes.R"))
-source(here::here("code/utils/join_utils.R"))
 
 licitacoes <- read_licitacoes(ano) %>% 
   processa_info_licitacoes()
@@ -42,12 +42,31 @@ info_licitacoes <- join_licitacao_e_tipo(licitacoes, tipo_licitacao) %>%
 ## Itens de licitações
 message("#### itens de licitações...")
 source(here("code/licitacoes/processa_itens_licitacao.R"))
-info_item_licitacao <- processa_info_item_licitacao(anos)
+contratos <- read_contratos(ano) %>% 
+  processa_info_contratos()
+
+info_item_licitacao <- 
+  processa_info_item_licitacao(anos)
 
 ## Contratos
 message("#### contratos...")
 source(here("code/contratos/processa_contratos.R"))
-info_contratos <- processa_info_contratos(anos)
+
+contratos <- read_contratos(anos) %>% 
+  processa_info_contratos()
+  
+tipo_instrumento_contrato <- 
+  processa_tipos_instrumento_contrato()
+
+info_contratos <- 
+  join_contrato_e_licitacao(contratos, 
+                            info_licitacoes %>% 
+                              dplyr::select(id_orgao, 
+                                            nr_licitacao, 
+                                            ano_licitacao, 
+                                            cd_tipo_modalidade)) %>% 
+  
+  join_contrato_e_instrumento(tipo_instrumento_contrato)
 
 ## Itens de contratos
 message("#### itens de contratos...")
