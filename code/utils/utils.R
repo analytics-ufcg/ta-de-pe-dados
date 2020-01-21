@@ -56,3 +56,9 @@ read_itens <- function(source) {
                              
                            ))
 }
+
+read_licitantes <- function(source) {
+  licitantes <- readr::read_csv(here::here(paste0("data/licitacoes/", source, "/licitante.csv")), 
+                                col_types = cols(.default = readr::col_character(), 
+                                                 ANO_LICITACAO = readr::col_integer()))
+}

@@ -1,3 +1,5 @@
+source(here::here("code/utils/utils.R"))
+
 #' Renomeia as colunas repetidas do dataframe de licitantes
 #' 
 #' @param licitantes Dataframe de licitantes de licitações
@@ -14,6 +16,24 @@ rename_duplicate_columns <- function(licitantes) {
   return(licitantes)
 }
 
+#' Processa dados de licitantes do estado do Rio Grande do Sul para um conjunto de anos
+#' 
+#' @param anos Vector de inteiros com anos para captura dos licitantes
+#' 
+#' @return Dataframe com informações dos licitantes
+#' 
+#' @examples 
+#' licitantes <- import_licitantes(c(2017, 2018, 2019, 2020))
+#' 
+import_licitantes <- function(anos = c(2017, 2018, 2019, 2020)) {
+  
+  licitantes <- purrr::pmap_dfr(list(anos),
+                                ~ import_licitantes_por_ano(..1)
+  )
+  
+  return(licitantes)
+}
+
 #' Importa dados de licitantes em um ano específico para o estado do Rio Grande do Sul
 #' 
 #' @param ano Inteiro com o ano para recuperação dos licitantes
@@ -25,9 +45,7 @@ rename_duplicate_columns <- function(licitantes) {
 #' 
 import_licitantes_por_ano <- function(ano = 2019) {
   message(paste0("Importando licitantes do ano ", ano))
-  licitantes <- readr::read_csv(here::here(paste0("data/licitacoes/", ano, "/licitante.csv")), 
-                                  col_types = cols(.default = readr::col_character(), 
-                                                   ANO_LICITACAO = readr::col_integer()))
+  licitantes <- read_licitantes(ano)
   
   return(licitantes)
 }

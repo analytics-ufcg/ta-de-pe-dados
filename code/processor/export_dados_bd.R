@@ -1,5 +1,6 @@
 library(tidyverse)
 library(here)
+library(magrittr)
 
 help <- "
 Usage:
@@ -32,7 +33,7 @@ source(here::here("code/licitacoes/processa_licitacoes.R"))
 source(here::here("code/licitacoes/processa_tipos_licitacoes.R"))
 source(here::here("code/utils/join_utils.R"))
 
-licitacoes <- read_licitacoes(ano) %>% 
+licitacoes <- import_licitacoes(anos) %>% 
   processa_info_licitacoes()
 tipo_licitacao <- processa_tipos_licitacoes()
 
@@ -44,7 +45,7 @@ message("### licitantes...")
 
 source(here::here("code/licitacoes/processa_licitantes.R"))
 
-licitantes <- import_licitantes_por_ano(ano) %>% 
+licitantes <- import_licitantes(anos) %>% 
   processa_info_licitantes()
 
 info_licitantes <- join_licitante_e_licitacao(
@@ -56,8 +57,11 @@ info_licitantes <- join_licitante_e_licitacao(
 
 ## Itens de licitações
 message("#### itens de licitações...")
-source(here("code/licitacoes/processa_itens_licitacao.R"))
-info_item_licitacao <- processa_info_item_licitacao(anos)
+source(here::here("code/licitacoes/processa_itens_licitacao.R"))
+info_item_licitacao <- import_itens_licitacao(anos) %>%
+  processa_info_item_licitacao() %>% 
+  generate_id(TABELA_ITEM, I_ID) %>% 
+  join_licitacoes_e_itens(info_licitacoes) 
 
 ## Contratos
 message("#### contratos...")

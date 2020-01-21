@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS "licitante" (
     "tp_resultado_habilitacao" VARCHAR(1),
     "bl_beneficio_micro_epp" VARCHAR(1),
     "licitacao_id" INTEGER,
-    "licitante_id" INTEGER,
-    FOREIGN KEY (licitacao_id) REFERENCES licitacao ("licitacao_id"),
+    "licitante_id" VARCHAR(20),
+    FOREIGN KEY ("licitacao_id") REFERENCES licitacao ("licitacao_id"),
     PRIMARY KEY("licitante_id")
 );

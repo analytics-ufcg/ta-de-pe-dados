@@ -1,6 +1,30 @@
-library(tidyverse)
 library(here)
 library(janitor)
+source(here::here('code/utils/utils.R'))
+
+#' Renomeia as colunas repetidas do dataframe de itens
+#' @param itens Dataframe de itens das licitações
+#' @return Dataframe com nome das colunas de acordo Manual do leiaute do e-Validador 
+rename_duplicate_columns <- function(itens) {
+  names(itens)[names(itens) == 'TP_DOCUMENTO'] <- 'TP_DOCUMENTO_VENCEDOR'
+  names(itens)[names(itens) == 'NR_DOCUMENTO'] <- 'NR_DOCUMENTO_VENCEDOR'
+  names(itens)[names(itens) == 'TP_DOCUMENTO_1'] <- 'TP_DOCUMENTO_FORNECEDOR'
+  names(itens)[names(itens) == 'NR_DOCUMENTO_1'] <- 'NR_DOCUMENTO_FORNECEDOR'
+  itens
+}
+
+#' Importa itens das licitações de um ano específico para o estado do Rio Grande do Sul
+#' @param ano Inteiro com o ano para recuperação dos itens
+#' @return Dataframe com informações dos itens das licitações
+#' @examples 
+#' itens <- import_itens_licitacao_por_ano(2019)
+import_itens_licitacao_por_ano <- function(ano) {
+  message(paste0("Importando itens das licitações do ano ", ano))
+  
+  itens <- read_itens(ano)
+  
+  return(itens)
+}
 
 #' Processa dados de itens das licitações do estado do Rio Grande do Sul para um conjunto de anos
 #' 
@@ -13,27 +37,9 @@ library(janitor)
 #' 
 import_itens_licitacao <- function(anos = c(2017, 2018, 2019)) {
   
-  itens_licitacao <- pmap_dfr(list(anos),
+  itens_licitacao <- purrr::pmap_dfr(list(anos),
                          ~ import_itens_licitacao_por_ano(..1)
   )
-  
-  return(itens_licitacao)
-}
-
-#' Importa dados de itens das licitações em um ano específico para o estado do Rio Grande do Sul
-#' 
-#' @param ano Inteiro com o ano para recuperação dos itens das licitações
-#'
-#' @return Dataframe com informações dos itens das licitações
-#'   
-#' @examples 
-#' itens_licitacao <- import_itens_licitacao_por_ano(2019)
-#' 
-import_itens_licitacao_por_ano <- function(ano = 2019) {
-  message(paste0("Importando itens de licitação do ano ", ano))
-  itens_licitacao <- read_csv(here(paste0("data/licitacoes/", ano, "/item.csv")), 
-                              col_types = cols(.default = "c", 
-                                               ANO_LICITACAO = "i"))
   
   return(itens_licitacao)
 }
@@ -50,20 +56,12 @@ import_itens_licitacao_por_ano <- function(ano = 2019) {
 #' Chave primária: 
 #' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_lote, nr_item)
 #' 
-processa_info_item_licitacao <- function(anos = c(2017, 2018, 2019)) {
-  source(here("code/licitacoes/processa_licitacoes.R"))
-  
-  licitacoes_merenda <- import_licitacoes_merenda(anos) %>% 
-    select(CD_ORGAO, NR_LICITACAO, ANO_LICITACAO, CD_TIPO_MODALIDADE)
-  
-  itens_licitacao <- import_itens_licitacao(anos)
+processa_info_item_licitacao <- function(itens_licitacao) {
   
   info_item_licitacao <- itens_licitacao %>% 
-    right_join(licitacoes_merenda, by = c("CD_ORGAO", "NR_LICITACAO", "ANO_LICITACAO", "CD_TIPO_MODALIDADE")) %>% 
-    mutate(id_estado = "43") %>%
-    distinct() %>%
-    clean_names() %>%
-    select(id_estado, id_orgao = cd_orgao, ano_licitacao, cd_tipo_modalidade, nr_lote, nr_licitacao, nr_item, 
+    rename_duplicate_columns() %>% 
+    janitor::clean_names() %>%
+    dplyr::select(id_orgao = cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_lote,  nr_item, 
            ds_item, qt_itens_licitacao = qt_itens, sg_unidade_medida, vl_unitario_estimado, 
            vl_total_estimado)
     
