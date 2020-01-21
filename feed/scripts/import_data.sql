@@ -1,6 +1,6 @@
 SET datestyle = ymd;
-\copy licitacao FROM '/data/licitacoes/processado/licitacao.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
-\copy item FROM '/data/licitacoes/processado/item.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
+\copy licitacao FROM '/data/bd/info_licitacao.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
+\copy item FROM '/data/bd/info_item_licitacao.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
 
 -- ALTER TABLE empenho DROP CONSTRAINT empenho_pkey;
 -- ALTER TABLE empenho DROP CONSTRAINT empenho_cd_orgao_fkey;

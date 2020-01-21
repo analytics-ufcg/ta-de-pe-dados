@@ -83,9 +83,10 @@ processa_info_licitacoes <- function(licitacoes_df) {
            vl_homologado = as.numeric(vl_homologado),
            vl_licitacao = as.numeric(vl_licitacao)) %>%
     
-    dplyr::select(id_estado, id_orgao = cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, 
-           permite_subcontratacao = bl_permite_subcontratacao, tp_fornecimento, 
-           descricao_objeto = ds_objeto, vl_estimado_licitacao = vl_licitacao, 
+    dplyr::select(id_estado, id_orgao = cd_orgao, nm_orgao, nr_licitacao, ano_licitacao, 
+           cd_tipo_modalidade, permite_subcontratacao = bl_permite_subcontratacao,
+           tp_fornecimento, descricao_objeto = ds_objeto, vl_estimado_licitacao = vl_licitacao, 
+           data_abertura = dt_abertura, data_homologacao = dt_homologacao,
            data_adjudicacao = dt_adjudicacao, vl_homologado, tp_licitacao)
   
   return(info_licitacoes)
