@@ -15,7 +15,7 @@ import_licitacoes <- function(ano) {
   
   licitacoes <- pmap_dfr(list(ano),
                          ~ import_licitacoes_por_ano(..1)
-                         )
+  )
   
   return(licitacoes)
 }
@@ -29,27 +29,27 @@ import_licitacoes <- function(ano) {
 import_licitacoes_por_ano <- function(ano) {
   message(paste0("Importando licitações do ano ", ano))
   licitacoes <- readr::read_csv(here::here(paste0("data/licitacoes/", ano, "/licitacao.csv")), 
-                         col_types = list(
-                           .default = readr::col_character(),
-                           ANO_LICITACAO = readr::col_integer(),
-                           ANO_PROCESSO = readr::col_integer(),
-                           DT_AUTORIZACAO_ADESAO = readr::col_datetime(format = ""),
-                           ANO_LICITACAO_ORIGINAL = readr::col_integer(),
-                           DT_ATA_REGISTRO_PRECO = readr::col_datetime(format = ""),
-                           PC_TAXA_RISCO = readr::col_double(),
-                           DT_INICIO_INSCR_CRED = readr::col_datetime(format = ""),
-                           DT_FIM_INSCR_CRED = readr::col_datetime(format = ""),
-                           DT_INICIO_VIGEN_CRED = readr::col_datetime(format = ""),
-                           DT_FIM_VIGEN_CRED = readr::col_datetime(format = ""),
-                           VL_LICITACAO = readr::col_double(),
-                           DT_ABERTURA = readr::col_datetime(format = ""),
-                           DT_HOMOLOGACAO = readr::col_datetime(format = ""),
-                           DT_ADJUDICACAO = readr::col_datetime(format = ""),
-                           VL_HOMOLOGADO = readr::col_double(),
-                           PC_TX_ESTIMADA = readr::col_double(),
-                           PC_TX_HOMOLOGADA = readr::col_double()
-                           
-                         ))
+                                col_types = list(
+                                  .default = readr::col_character(),
+                                  ANO_LICITACAO = readr::col_integer(),
+                                  ANO_PROCESSO = readr::col_integer(),
+                                  DT_AUTORIZACAO_ADESAO = readr::col_datetime(format = ""),
+                                  ANO_LICITACAO_ORIGINAL = readr::col_integer(),
+                                  DT_ATA_REGISTRO_PRECO = readr::col_datetime(format = ""),
+                                  PC_TAXA_RISCO = readr::col_double(),
+                                  DT_INICIO_INSCR_CRED = readr::col_datetime(format = ""),
+                                  DT_FIM_INSCR_CRED = readr::col_datetime(format = ""),
+                                  DT_INICIO_VIGEN_CRED = readr::col_datetime(format = ""),
+                                  DT_FIM_VIGEN_CRED = readr::col_datetime(format = ""),
+                                  VL_LICITACAO = readr::col_double(),
+                                  DT_ABERTURA = readr::col_datetime(format = ""),
+                                  DT_HOMOLOGACAO = readr::col_datetime(format = ""),
+                                  DT_ADJUDICACAO = readr::col_datetime(format = ""),
+                                  VL_HOMOLOGADO = readr::col_double(),
+                                  PC_TX_ESTIMADA = readr::col_double(),
+                                  PC_TX_HOMOLOGADA = readr::col_double()
+                                  
+                                ))
   
   return(licitacoes)
 }
@@ -67,17 +67,17 @@ filter_licitacoes_merenda <- function(licitacoes_df) {
   
   licitacoes_cpp <- licitacoes_df %>% 
     dplyr::filter(CD_TIPO_MODALIDADE == "CPP",
-           CD_TIPO_FASE_ATUAL == "ADH")
+                  CD_TIPO_FASE_ATUAL == "ADH")
   
   licitacoes_palavra_chave <- licitacoes_df %>% 
     dplyr::filter(grepl("merenda", 
-                 tolower(DS_OBJETO)), 
-           CD_TIPO_FASE_ATUAL == "ADH")
+                        tolower(DS_OBJETO)), 
+                  CD_TIPO_FASE_ATUAL == "ADH")
   
   licitacoes_merenda <- dplyr::bind_rows(licitacoes_cpp, 
                                          licitacoes_palavra_chave) %>% 
     dplyr::distinct()
-
+  
   return(licitacoes_merenda)
 }
 

@@ -1,6 +1,4 @@
-library(tidyverse)
-library(here)
-library(janitor)
+source(here::here("code/utils/utils.R"))
 
 #' Processa dados de contratos do estado do Rio Grande do Sul para um conjunto de anos
 #' 
@@ -13,7 +11,7 @@ library(janitor)
 #' 
 import_contratos <- function(anos = c(2017, 2018, 2019)) {
   
-  contratos <- pmap_dfr(list(anos),
+  contratos <- purrr::pmap_dfr(list(anos),
                          ~ import_contratos_por_ano(..1)
   )
   
@@ -31,9 +29,7 @@ import_contratos <- function(anos = c(2017, 2018, 2019)) {
 #' 
 import_contratos_por_ano <- function(ano = 2019) {
   message(paste0("Importando contratos do ano ", ano))
-  contratos <- read_csv(here(paste0("data/contratos/", ano, "/contrato.csv")), 
-                        col_types = cols(.default = "c",
-                                         ANO_LICITACAO = "i"))
+  contratos <- read_contratos(ano)
   
   return(contratos)
 }

@@ -21,7 +21,7 @@ source(here::here("code/utils/join_utils.R"))
 ## Assume que os dados foram baixados usando o módulo do crawler de dados (presente no diretório crawler
 ## na raiz desse repositório)
 
-anos = c(2017, 2018, 2019, 2020)
+anos = c(2017, 2018, 2019)
 
 # Processamento dos dados
 message("#### Iniciando processamento...")
@@ -32,7 +32,7 @@ message("#### licitações...")
 source(here::here("code/licitacoes/processa_licitacoes.R"))
 source(here::here("code/licitacoes/processa_tipos_licitacoes.R"))
 
-licitacoes <- read_licitacoes(ano) %>% 
+licitacoes <- import_contratos(anos) %>% 
   processa_info_licitacoes()
 tipo_licitacao <- processa_tipos_licitacoes()
 
@@ -52,7 +52,7 @@ info_item_licitacao <-
 message("#### contratos...")
 source(here("code/contratos/processa_contratos.R"))
 
-contratos <- read_contratos(anos) %>% 
+contratos <- import_contratos(anos) %>% 
   processa_info_contratos()
   
 tipo_instrumento_contrato <- 
@@ -66,7 +66,8 @@ info_contratos <-
                                             ano_licitacao, 
                                             cd_tipo_modalidade)) %>% 
   
-  join_contrato_e_instrumento(tipo_instrumento_contrato)
+  join_contrato_e_instrumento(tipo_instrumento_contrato) %>% 
+  generate_id(TABELA_CONTRATO, CONTRATO_ID)
 
 ## Itens de contratos
 message("#### itens de contratos...")
