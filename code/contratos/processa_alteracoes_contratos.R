@@ -11,7 +11,7 @@ library(janitor)
 #' @examples 
 #' alteracoes_contratos <- import_alteracoes_contratos_por_ano(2019)
 #' 
-import_alteracoes_contratos_por_ano <- function(ano = 2017) {
+import_alteracoes_contratos_por_ano <- function(ano = 2019) {
   message(paste0("Importando alterações dos contratos do ano ", ano))
 
   ## Limpando dados 
@@ -27,35 +27,23 @@ import_alteracoes_contratos_por_ano <- function(ano = 2017) {
 }
 
 #' Processa dados para a tabela de alterações dos contratos no Rio Grande do Sul
-#' 
-#' @param anos Vector de inteiros com anos para captura das alterações dos contratos
+#'
+#' @param alteracoes_df Dataframe de alterações de contrato
 #'
 #' @return Dataframe com informações das alterações dos contratos
 #'   
 #' @examples 
-#' info_alteracoes_contratos <- processa_info_alteracoes_contratos(c(2017, 2018, 2019))
+#' info_alteracoes_contratos <- processa_info_alteracoes_contratos(alteracoes_df)
 #' 
 #' Chave primária: 
 #' (cd_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, 
 #' tp_instrumento_contrato, id_evento_contrato)
-processa_info_alteracoes_contratos <- function(anos = c(2017, 2018, 2019, 2020)) {
-  source(here::here("code/contratos/processa_tipos_alteracao_contrato.R"))
-  source(here::here("code/utils/constants.R"))
-  source(here::here("code/utils/utils.R"))
-  
-  alteracoes_contratos <- tibble::tibble(ano_arquivo = anos) %>% 
-    dplyr::mutate(data = purrr::map(ano_arquivo,
-                                    import_alteracoes_contratos_por_ano)) %>% 
-    tidyr::unnest(data)
-  
-  tipo_operacao_alteracao <- processa_tipos_alteracao_contrato()
-  
-  info_alteracoes_contrato <- alteracoes_contratos %>%
+processa_info_alteracoes_contratos <- function(alteracoes_df) {
+
+  info_alteracoes_contrato <- alteracoes_df %>%
     janitor::clean_names() %>%
-    dplyr::left_join(tipo_operacao_alteracao, by = c("cd_tipo_operacao")) %>%
     dplyr::select(
-      ano_arquivo,
-      cd_orgao,
+      id_orgao = cd_orgao,
       ano_licitacao,
       nr_licitacao,
       cd_tipo_modalidade,
@@ -69,12 +57,9 @@ processa_info_alteracoes_contratos <- function(anos = c(2017, 2018, 2019, 2020))
       vl_reducao,
       pc_acrescimo,
       pc_reducao,
-      ds_justificativa,
-      motivo_alteracao_contrato = tipo_operacao_alteracao
+      ds_justificativa
     ) %>% 
-    dplyr::filter(!is.na(ano_licitacao)) %>% 
-    generate_id("ano_arquivo", TABELA_ALTERACOES_CONTRATO, ALTERACOES_CONTRATO_ID) %>% 
-    select(-ano_arquivo)
+    dplyr::filter(!is.na(ano_licitacao))
   
   return(info_alteracoes_contrato)
 }
