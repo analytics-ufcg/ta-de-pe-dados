@@ -9,11 +9,11 @@ library(janitor)
 #' @return Dataframe com informações das licitações
 #' 
 #' @examples 
-#' licitacoes <- import_licitacoes(c(2017, 2018, 2019))
+#' licitacoes <- import_licitacoes(2019)
 #' 
-import_licitacoes <- function(anos = c(2017, 2018, 2019)) {
+import_licitacoes <- function(ano) {
   
-  licitacoes <- pmap_dfr(list(anos),
+  licitacoes <- pmap_dfr(list(ano),
                          ~ import_licitacoes_por_ano(..1)
                          )
   
@@ -61,14 +61,22 @@ import_licitacoes_por_ano <- function(ano) {
 #' @return Dataframe com informações das licitações de merenda
 #'   
 #' @examples 
-#' licitacoes_merenda <- import_licitacoes_merenda(c(2017, 2018, 2019))
+#' licitacoes_merenda <- filter_licitacoes_merenda(2019)
 #' 
-import_licitacoes_merenda <- function(anos = c(2017, 2018, 2019)) {
-  todas_licitacoes <- import_licitacoes(anos)
+filter_licitacoes_merenda <- function(licitacoes_df) {
   
-  licitacoes_merenda <- todas_licitacoes %>% 
-    filter(CD_TIPO_MODALIDADE == "CPP",
+  licitacoes_cpp <- licitacoes_df %>% 
+    dplyr::filter(CD_TIPO_MODALIDADE == "CPP",
            CD_TIPO_FASE_ATUAL == "ADH")
+  
+  licitacoes_palavra_chave <- licitacoes_df %>% 
+    dplyr::filter(grepl("merenda", 
+                 tolower(DS_OBJETO)), 
+           CD_TIPO_FASE_ATUAL == "ADH")
+  
+  licitacoes_merenda <- dplyr::bind_rows(licitacoes_cpp, 
+                                         licitacoes_palavra_chave) %>% 
+    dplyr::distinct()
 
   return(licitacoes_merenda)
 }
@@ -80,24 +88,15 @@ import_licitacoes_merenda <- function(anos = c(2017, 2018, 2019)) {
 #' @return Dataframe com informações das licitações de merenda
 #'   
 #' @examples 
-#' licitacoes_merenda <- processa_info_licitacoes(c(2017, 2018, 2019))
+#' licitacoes_merenda <- processa_info_licitacoes(2019)
 #' 
 #' Chave primária:
 #' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade)
 #' 
-processa_info_licitacoes <- function(anos = c(2017, 2018, 2019)) {
-  source(here("code/licitacoes/processa_concorrentes.R"))
-  source(here("code/licitacoes/processa_tipos_licitacoes.R"))
+processa_info_licitacoes <- function(licitacoes_df) {
   
-  licitacoes_merenda <- import_licitacoes_merenda(anos)
-  
-  todos_concorrentes <- import_concorrentes(anos) %>% 
-    group_by(CD_ORGAO, ANO_LICITACAO, CD_TIPO_MODALIDADE, NR_LICITACAO) %>%
-    summarise(total_concorrentes = n_distinct(NR_DOCUMENTO))
-  
-  tipo_licitacao <- processa_tipos_licitacoes()
-
-  info_licitacoes <- licitacoes_merenda %>%
+  info_licitacoes <- licitacoes_df %>% 
+    filter_licitacoes_merenda() %>% 
     clean_names() %>% 
     mutate(id_estado = "43",
            tp_fornecimento = ifelse(tp_fornecimento == "I" , "Integral", 
@@ -107,16 +106,10 @@ processa_info_licitacoes <- function(anos = c(2017, 2018, 2019)) {
            vl_homologado = as.numeric(vl_homologado),
            vl_licitacao = as.numeric(vl_licitacao)) %>%
     
-    left_join(tipo_licitacao, by = c("tp_licitacao")) %>%
-    left_join(todos_concorrentes, by = c("cd_orgao" = "CD_ORGAO", 
-                                         "ano_licitacao" = "ANO_LICITACAO", 
-                                         "cd_tipo_modalidade" = "CD_TIPO_MODALIDADE", 
-                                         "nr_licitacao" = "NR_LICITACAO")) %>%
-    
-    select(id_estado, id_orgao = cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade,
-           tipo_licitacao, permite_subcontratacao = bl_permite_subcontratacao, tp_fornecimento, 
+    select(id_estado, id_orgao = cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, 
+           permite_subcontratacao = bl_permite_subcontratacao, tp_fornecimento, 
            descricao_objeto = ds_objeto, vl_estimado_licitacao = vl_licitacao, 
-           data_adjudicacao = dt_adjudicacao, vl_homologado, total_concorrentes)
+           data_adjudicacao = dt_adjudicacao, vl_homologado, tp_licitacao)
   
   return(info_licitacoes)
 }
