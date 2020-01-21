@@ -1,6 +1,4 @@
-library(tidyverse)
-library(here)
-library(janitor)
+source(here::here("code/utils/utils.R"))
 
 #' Processa dados de licitações do estado do Rio Grande do Sul para um conjunto de anos
 #' 
@@ -13,7 +11,7 @@ library(janitor)
 #' 
 import_licitacoes <- function(ano) {
   
-  licitacoes <- pmap_dfr(list(ano),
+  licitacoes <- purrr::pmap_dfr(list(ano),
                          ~ import_licitacoes_por_ano(..1)
                          )
   
@@ -28,28 +26,7 @@ import_licitacoes <- function(ano) {
 #' 
 import_licitacoes_por_ano <- function(ano) {
   message(paste0("Importando licitações do ano ", ano))
-  licitacoes <- readr::read_csv(here::here(paste0("data/licitacoes/", ano, "/licitacao.csv")), 
-                         col_types = list(
-                           .default = readr::col_character(),
-                           ANO_LICITACAO = readr::col_integer(),
-                           ANO_PROCESSO = readr::col_integer(),
-                           DT_AUTORIZACAO_ADESAO = readr::col_datetime(format = ""),
-                           ANO_LICITACAO_ORIGINAL = readr::col_integer(),
-                           DT_ATA_REGISTRO_PRECO = readr::col_datetime(format = ""),
-                           PC_TAXA_RISCO = readr::col_double(),
-                           DT_INICIO_INSCR_CRED = readr::col_datetime(format = ""),
-                           DT_FIM_INSCR_CRED = readr::col_datetime(format = ""),
-                           DT_INICIO_VIGEN_CRED = readr::col_datetime(format = ""),
-                           DT_FIM_VIGEN_CRED = readr::col_datetime(format = ""),
-                           VL_LICITACAO = readr::col_double(),
-                           DT_ABERTURA = readr::col_datetime(format = ""),
-                           DT_HOMOLOGACAO = readr::col_datetime(format = ""),
-                           DT_ADJUDICACAO = readr::col_datetime(format = ""),
-                           VL_HOMOLOGADO = readr::col_double(),
-                           PC_TX_ESTIMADA = readr::col_double(),
-                           PC_TX_HOMOLOGADA = readr::col_double()
-                           
-                         ))
+  licitacoes <- read_licitacoes(ano)
   
   return(licitacoes)
 }
@@ -97,8 +74,8 @@ processa_info_licitacoes <- function(licitacoes_df) {
   
   info_licitacoes <- licitacoes_df %>% 
     filter_licitacoes_merenda() %>% 
-    clean_names() %>% 
-    mutate(id_estado = "43",
+    janitor::clean_names() %>% 
+    dplyr::mutate(id_estado = "43",
            tp_fornecimento = ifelse(tp_fornecimento == "I" , "Integral", 
                                     ifelse(tp_fornecimento == "P", "Parcelado", NA)),
            vl_homologado = ifelse(vl_homologado == "", NA, vl_homologado),
@@ -106,9 +83,10 @@ processa_info_licitacoes <- function(licitacoes_df) {
            vl_homologado = as.numeric(vl_homologado),
            vl_licitacao = as.numeric(vl_licitacao)) %>%
     
-    select(id_estado, id_orgao = cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, 
-           permite_subcontratacao = bl_permite_subcontratacao, tp_fornecimento, 
-           descricao_objeto = ds_objeto, vl_estimado_licitacao = vl_licitacao, 
+    dplyr::select(id_estado, id_orgao = cd_orgao, nm_orgao, nr_licitacao, ano_licitacao, 
+           cd_tipo_modalidade, permite_subcontratacao = bl_permite_subcontratacao,
+           tp_fornecimento, descricao_objeto = ds_objeto, vl_estimado_licitacao = vl_licitacao, 
+           data_abertura = dt_abertura, data_homologacao = dt_homologacao,
            data_adjudicacao = dt_adjudicacao, vl_homologado, tp_licitacao)
   
   return(info_licitacoes)
