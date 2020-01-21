@@ -24,8 +24,8 @@ services:
     container_name: postgres-ta-na-mesa
     restart: always
     environment:
-      - POSTGRES_DB=tanamesa
-      - POSTGRES_USER=postgres
+      - POSTGRES_DB=${POSTGRES_DB:-secret}
+      - POSTGRES_USER=${POSTGRES_USER:-secret}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
       - TZ=GMT
     volumes:
