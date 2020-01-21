@@ -29,8 +29,9 @@ rename_duplicate_columns <- function(licitantes) {
 #' 
 import_licitantes_por_ano <- function(ano = 2019) {
   message(paste0("Importando licitantes do ano ", ano))
-  licitantes <- readr::read_csv(here(paste0("data/licitacoes/", ano, "/licitante.csv")), 
-                                  col_types = cols(.default = "c", ANO_LICITACAO = "i"))
+  licitantes <- readr::read_csv(here::here(paste0("data/licitacoes/", ano, "/licitante.csv")), 
+                                  col_types = cols(.default = readr::col_character(), 
+                                                   ANO_LICITACAO = readr::col_integer()))
   
   return(licitantes)
 }
@@ -47,18 +48,16 @@ import_licitantes_por_ano <- function(ano = 2019) {
 #' Chave primária:
 #' (cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, tp_documento_licitante, nr_documento_licitante)
 #' 
-processa_info_licitantes <- function(anos = c(2017, 2018, 2019, 2020)) {
+processa_info_licitantes <- function(licitantes_df) {
   source(here::here("code/utils/constants.R"))
   source(here::here("code/utils/utils.R"))
   
-  licitantes <- tibble::tibble(ano_arquivo = anos) %>% 
-    dplyr::mutate(data = purrr::map(ano_arquivo,
-                                    import_licitantes_por_ano)) %>% 
-    tidyr::unnest(data) %>% 
+  licitantes <- licitantes_df %>% 
     rename_duplicate_columns() %>% 
     janitor::clean_names() %>% 
-    generate_id("ano_arquivo", TABELA_LICITANTE, LICITANTE_ID) %>% 
-    select(-ano_arquivo)
+    dplyr::select(id_orgao = cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, tp_documento_licitante,
+           nr_documento_licitante, tp_documento_repres, nr_documento_repres, tp_condicao,
+           tp_resultado_habilitacao, bl_beneficio_micro_epp)
   
   return(licitantes)
 }
