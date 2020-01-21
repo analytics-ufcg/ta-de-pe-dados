@@ -1,7 +1,3 @@
-library(tidyverse)
-library(here)
-library(janitor)
-
 #' Importa dados de contratos em um ano específico para o estado do Rio Grande do Sul
 #' 
 #' @param ano Inteiro com o ano para recuperação das alterações dos contratos
