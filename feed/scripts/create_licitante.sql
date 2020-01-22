@@ -1,6 +1,8 @@
 DROP TABLE IF EXISTS licitante;
 
 CREATE TABLE IF NOT EXISTS "licitante" (    
+    "id_licitante" BIGINT,
+    "id_licitacao" INTEGER,
     "id_orgao" VARCHAR(20),
     "nr_licitacao" VARCHAR(20),
     "ano_licitacao" INTEGER,
@@ -12,10 +14,8 @@ CREATE TABLE IF NOT EXISTS "licitante" (
     "tp_condicao" VARCHAR(3),
     "tp_resultado_habilitacao" VARCHAR(1),
     "bl_beneficio_micro_epp" VARCHAR(1),
-    "licitacao_id" INTEGER,
-    "licitante_id" BIGINT,
-    FOREIGN KEY ("licitacao_id") REFERENCES licitacao ("licitacao_id"),
+    FOREIGN KEY ("id_licitacao") REFERENCES licitacao ("id_licitacao"),
     CONSTRAINT licitante_key UNIQUE (id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, tp_documento_licitante, 
     nr_documento_licitante),
-    PRIMARY KEY("licitante_id")
+    PRIMARY KEY("id_licitante")
 );

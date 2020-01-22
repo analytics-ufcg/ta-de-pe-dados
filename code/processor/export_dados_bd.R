@@ -38,7 +38,8 @@ licitacoes <- import_licitacoes(anos) %>%
 tipo_licitacao <- processa_tipos_licitacoes()
 
 info_licitacoes <- join_licitacao_e_tipo(licitacoes, tipo_licitacao) %>% 
-  generate_id(TABELA_LICITACAO, L_ID)
+  generate_id(TABELA_LICITACAO, L_ID) %>% 
+  dplyr::select(id_licitacao, dplyr::everything())
 
 ## Licitantes
 message("### licitantes...")
@@ -53,7 +54,8 @@ info_licitantes <- join_licitante_e_licitacao(
   info_licitacoes %>%
     dplyr::select(id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, L_ID)
 ) %>% 
-  generate_id(TABELA_LICITANTE, LICITANTE_ID)
+  generate_id(TABELA_LICITANTE, LICITANTE_ID) %>% 
+  dplyr::select(id_licitante, id_licitacao, dplyr::everything())
 
 ## Itens de licitações
 message("#### itens de licitações...")

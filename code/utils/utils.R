@@ -12,6 +12,7 @@ read_licitacoes <- function(source) {
   licitacoes <- readr::read_csv(here::here(paste0("data/licitacoes/", source,"/licitacao.csv")), 
                                             col_types = list(
                                               .default = readr::col_character(),
+                                              NR_LICITACAO = readr::col_integer(),
                                               ANO_LICITACAO = readr::col_integer(),
                                               ANO_PROCESSO = readr::col_integer(),
                                               DT_AUTORIZACAO_ADESAO = readr::col_datetime(format = ""),
@@ -59,6 +60,7 @@ read_itens <- function(source) {
 
 read_licitantes <- function(source) {
   licitantes <- readr::read_csv(here::here(paste0("data/licitacoes/", source, "/licitante.csv")), 
-                                col_types = cols(.default = readr::col_character(), 
+                                col_types = cols(.default = readr::col_character(),
+                                                 NR_LICITACAO = readr::col_integer(),
                                                  ANO_LICITACAO = readr::col_integer()))
 }
