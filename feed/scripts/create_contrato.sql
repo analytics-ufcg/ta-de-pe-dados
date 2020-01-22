@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS "contrato" (
     "obs_contrato" VARCHAR(500),
     "licitacao_id" INTEGER,
     "tipo_instrumento_contrato" VARCHAR(50),
-    "contrato_id" INTEGER
-    FOREIGN KEY("licitacao_id") REFERENCES licitacao("licitacao_id"),
-    PRIMARY KEY("contrato_id")
+    "contrato_id" VARCHAR(20),
+    PRIMARY KEY("contrato_id"),
+    FOREIGN KEY("licitacao_id") REFERENCES licitacao("licitacao_id")
 );

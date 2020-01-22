@@ -53,7 +53,8 @@ info_item_licitacao <-
 
 ## Contratos
 message("#### contratos...")
-source(here("code/contratos/processa_contratos.R"))
+source(here::here("code/contratos/processa_contratos.R"))
+source(here::here("code/contratos/processa_tipos_instrumento_contrato.R"))
 
 contratos <- import_contratos(anos) %>% 
   processa_info_contratos()
