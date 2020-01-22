@@ -1,3 +1,5 @@
+source(here::here("code/utils/utils.R"))
+
 #' Importa dados de contratos em um ano específico para o estado do Rio Grande do Sul
 #' 
 #' @param ano Inteiro com o ano para recuperação das alterações dos contratos
@@ -10,16 +12,27 @@
 import_alteracoes_contratos_por_ano <- function(ano = 2019) {
   message(paste0("Importando alterações dos contratos do ano ", ano))
 
-  ## Limpando dados 
-  file_path <- here::here(paste0("data/contratos/", ano, "/alteracao.csv"))
-  writeLines(iconv(readLines(file_path, skipNul = TRUE)), file_path)
-  
-  ## Lendo dados tratados
-  alteracoes_contratos <- readr::read_csv(file_path, 
-                                   col_types = cols(.default = "c",
-                                                    ANO_LICITACAO = "i"))
+  alteracoes_contratos <- read_alteracoes_contratos(ano)
   
   return(alteracoes_contratos)
+}
+
+#' Processa dados de alterações de contratos do estado do Rio Grande do Sul para um conjunto de anos
+#' 
+#' @param anos Vector de inteiros com anos para captura das alterações de contratos
+#' 
+#' @return Dataframe com informações das alterações de contratos
+#' 
+#' @examples 
+#' contratos <- import_contratos(c(2017, 2018, 2019, 2020))
+#' 
+import_alteracoes_contratos <- function(anos = c(2017, 2018, 2019, 2020)) {
+  
+  alteracoes_contrato <- purrr::pmap_dfr(list(anos),
+                               ~ import_alteracoes_contratos_por_ano(..1)
+  )
+  
+  return(alteracoes_contrato)
 }
 
 #' Processa dados para a tabela de alterações dos contratos no Rio Grande do Sul
