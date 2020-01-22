@@ -15,6 +15,6 @@ CREATE TABLE IF NOT EXISTS "item" (
     "item_id" BIGINT,
     "licitacao_id" INTEGER,
     PRIMARY KEY("item_id"),
-    FOREIGN KEY("licitacao_id") REFERENCES licitacao("licitacao_id")
+    FOREIGN KEY("licitacao_id") REFERENCES licitacao("id_licitacao")
     
 );
