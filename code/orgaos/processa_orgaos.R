@@ -1,7 +1,7 @@
-#' Cria dataframe com informações dos Municípios participantes de licitações
+#' Cria dataframe com informações dos orgãos participantes de licitações
 #' 
 #' @examples 
-#' municipios <- processa_info_municipios()
+#' municipios <- processa_info_orgaos()
 #' 
 processa_info_orgaos <- function(licitacoes_df) {
   
