@@ -56,3 +56,32 @@ read_itens <- function(source) {
                              
                            ))
 }
+
+read_empenhos <- function(source) {
+  empenhos <- readr::read_csv(here::here(paste0("data/empenhos/", source,"/",source, ".csv")), 
+                                col_types = list(
+                                  .default = readr::col_character(),
+                                  ano_recebimento = readr::col_integer(),
+                                  mes_recebimento = readr::col_integer(),
+                                  cd_recebimento = readr::col_integer(),
+                                  cd_orgao_orcamentario = readr::col_integer(),
+                                  ano_empenho = readr::col_integer(),
+                                  ano_operacao = readr::col_integer(),
+                                  dt_empenho = readr::col_datetime(format = ""),
+                                  dt_operacao = readr::col_datetime(format = ""),
+                                  nr_empenho = readr::col_number(),
+                                  cd_funcao = readr::col_integer(),
+                                  cd_subfuncao = readr::col_integer(),
+                                  cd_programa = readr::col_integer(),
+                                  cd_projeto = readr::col_integer(),
+                                  cd_recurso = readr::col_integer(),
+                                  cd_credor = readr::col_number(),
+                                  cnpj_cpf = readr::col_number(),
+                                  cgc_te = readr::col_number(),
+                                  vl_empenho = readr::col_double(),
+                                  vl_liquidacao = readr::col_double(),
+                                  vl_pagamento = readr::col_double(),
+                                  ano_contrato = readr::col_integer(),
+                                  nr_contrato = readr::col_number()
+                                ))
+}

@@ -22,7 +22,7 @@ source(here::here("code/utils/constants.R"))
 ## Assume que os dados foram baixados usando o módulo do crawler de dados (presente no diretório crawler
 ## na raiz desse repositório)
 
-anos = c(2017, 2018, 2019, 2020)
+anos = c(2019)
 
 # Processamento dos dados
 message("#### Iniciando processamento...")
@@ -72,6 +72,18 @@ info_orgaos <- import_licitacoes(anos) %>%
 message("#### estados...")
 source(here::here("code/orgaos/processa_estados.R"))
 info_estados <- processa_info_estados()
+
+
+## Empenhos
+message("#### empenhos...")
+source(here::here("code/empenhos/processa_empenhos.R"))
+
+info_empenhos <- import_empenhos(anos)
+info_empenhos <- info %>% 
+  processa_info_empenhos() %>% 
+  join_licitacoes_e_empenhos(info_licitacoes) %>% 
+  generate_id(TABELA_EMPENHO, E_ID)
+
 
 # Escrita dos dados
 
