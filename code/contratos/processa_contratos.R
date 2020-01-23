@@ -25,7 +25,7 @@ import_contratos <- function(anos = c(2017, 2018, 2019)) {
 #' @return Dataframe com informações dos contratos
 #'   
 #' @examples 
-#' contratos <- import_contratos_por_ano(2019)
+#' contratos <- import_contratos_por_ano()
 #' 
 import_contratos_por_ano <- function(ano = 2019) {
   message(paste0("Importando contratos do ano ", ano))
