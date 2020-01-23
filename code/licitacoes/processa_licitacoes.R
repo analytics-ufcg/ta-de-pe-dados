@@ -13,7 +13,7 @@ import_licitacoes <- function(ano) {
   
   licitacoes <- purrr::pmap_dfr(list(ano),
                          ~ import_licitacoes_por_ano(..1)
-                         )
+  )
   
   return(licitacoes)
 }
@@ -44,17 +44,17 @@ filter_licitacoes_merenda <- function(licitacoes_df) {
   
   licitacoes_cpp <- licitacoes_df %>% 
     dplyr::filter(CD_TIPO_MODALIDADE == "CPP",
-           CD_TIPO_FASE_ATUAL == "ADH")
+                  CD_TIPO_FASE_ATUAL == "ADH")
   
   licitacoes_palavra_chave <- licitacoes_df %>% 
     dplyr::filter(grepl("merenda", 
-                 tolower(DS_OBJETO)), 
-           CD_TIPO_FASE_ATUAL == "ADH")
+                        tolower(DS_OBJETO)), 
+                  CD_TIPO_FASE_ATUAL == "ADH")
   
   licitacoes_merenda <- dplyr::bind_rows(licitacoes_cpp, 
                                          licitacoes_palavra_chave) %>% 
     dplyr::distinct()
-
+  
   return(licitacoes_merenda)
 }
 
