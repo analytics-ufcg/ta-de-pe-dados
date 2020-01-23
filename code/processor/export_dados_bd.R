@@ -56,7 +56,14 @@ info_contratos <- processa_info_contratos(anos)
 ## Itens de contratos
 message("#### itens de contratos...")
 source(here("code/contratos/processa_itens_contrato.R"))
-info_item_contrato <- processa_info_item_contrato(anos)
+
+info_item_contrato <- import_itens_contrato(anos) %>% 
+  processa_info_item_contrato() %>% 
+  join_contratos_e_itens(info_contratos %>% 
+                           dplyr::select(id_orgao, nr_licitacao, ano_licitacao, 
+                                         cd_tipo_modalidade, nr_contrato, ano_contrato, 
+                                         tp_instrumento_contrato)) %>% 
+  generate_id(TABELA_ITEM_CONTRATO, ITEM_CONTRATO_ID)
 
 ## Alterações contratos
 message("#### alterações de contratos...")
