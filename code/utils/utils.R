@@ -62,6 +62,7 @@ read_contratos <- function(source) {
   contratos <- readr::read_csv(here::here(paste0("data/contratos/", source, "/contrato.csv")),
                                col_types = list(
                                  .default = readr::col_character(),
+                                 CD_ORGAO = readr::col_integer(),
                                  ANO_LICITACAO = readr::col_integer(),
                                  NR_LICITACAO = readr::col_integer(),
                                  NR_CONTRATO = readr::col_integer(),
