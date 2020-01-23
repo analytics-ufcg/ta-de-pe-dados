@@ -22,7 +22,7 @@ source(here::here("code/utils/constants.R"))
 ## Assume que os dados foram baixados usando o módulo do crawler de dados (presente no diretório crawler
 ## na raiz desse repositório)
 
-anos = c(2017, 2018, 2019, 2020)
+anos = c(2018, 2019)
 
 # Processamento dos dados
 message("#### Iniciando processamento...")
@@ -99,7 +99,7 @@ readr::write_csv(info_item_licitacao, here("data/bd/info_item_licitacao.csv"))
 readr::write_csv(info_contratos, here("data/bd/info_contrato.csv"))
 readr::write_csv(info_item_contrato, here("data/bd/info_item_contrato.csv"))
 readr::write_csv(info_alteracoes_contrato, here("data/bd/info_alteracao_contrato.csv"))
-readr::write_csv(info_municipios, here("data/bd/info_municipio.csv"))
+readr::write_csv(info_orgaos, here("data/bd/info_orgaos.csv"))
 readr::write_csv(info_estados, here("data/bd/info_estados.csv"))
 
 message("#### Processamento concluído!")
