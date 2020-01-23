@@ -37,6 +37,7 @@ read_itens <- function(source) {
   itens <- readr::read_csv(here::here(paste0("data/licitacoes/", source,"/item.csv")), 
                            col_types = list(
                              .default = readr::col_character(),
+                             NR_LICITACAO = readr::col_integer(),
                              ANO_LICITACAO = readr::col_integer(),
                              NR_LOTE = readr::col_integer(),
                              NR_ITEM = readr::col_integer(),

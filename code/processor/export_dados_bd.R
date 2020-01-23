@@ -22,7 +22,7 @@ source(here::here("code/utils/join_utils.R"))
 ## Assume que os dados foram baixados usando o módulo do crawler de dados (presente no diretório crawler
 ## na raiz desse repositório)
 
-anos = c(2017, 2018, 2019)
+anos = c(2017, 2018, 2019, 2020)
 
 # Processamento dos dados
 message("#### Iniciando processamento...")
@@ -38,7 +38,8 @@ licitacoes <- import_licitacoes(anos) %>%
 tipo_licitacao <- processa_tipos_licitacoes()
 
 info_licitacoes <- join_licitacao_e_tipo(licitacoes, tipo_licitacao) %>% 
-  generate_id(TABELA_LICITACAO, L_ID)
+  generate_id(TABELA_LICITACAO, L_ID) %>% 
+  dplyr::select(id_licitacao, dplyr::everything())
 
 ## Itens de licitações
 message("#### itens de licitações...")
@@ -46,15 +47,13 @@ source(here::here("code/licitacoes/processa_itens_licitacao.R"))
 info_item_licitacao <- import_itens_licitacao(anos) %>%
   processa_info_item_licitacao() %>% 
   generate_id(TABELA_ITEM, I_ID) %>% 
-  join_licitacoes_e_itens(info_licitacoes) 
-
-info_item_licitacao <- 
-  processa_info_item_licitacao(anos)
+  join_licitacoes_e_itens(info_licitacoes) %>% 
+  dplyr::select(id_item, id_licitacao, dplyr::everything())
 
 ## Contratos
 message("#### contratos...")
-source(here("code/contratos/processa_contratos.R"))
-source(here("code/contratos/processa_tipos_instrumento_contrato.R"))
+source(here::here("code/contratos/processa_contratos.R"))
+source(here::here("code/contratos/processa_tipos_instrumento_contrato.R"))
 
 contratos <- import_contratos(anos) %>% 
   processa_info_contratos()
@@ -69,10 +68,11 @@ info_contratos <-
                                             nr_licitacao, 
                                             ano_licitacao, 
                                             cd_tipo_modalidade,
-                                            licitacao_id)) %>% 
+                                            id_licitacao)) %>% 
   
   join_contrato_e_instrumento(tipo_instrumento_contrato) %>% 
-  generate_id(TABELA_CONTRATO, CONTRATO_ID)
+  generate_id(TABELA_CONTRATO, CONTRATO_ID) %>% 
+  dplyr::select(id_contrato, id_licitacao, dplyr::everything())
 
 ## Itens de contratos
 message("#### itens de contratos...")
@@ -92,7 +92,8 @@ tipo_operacao_alteracao <- processa_tipos_alteracao_contrato()
 info_alteracoes_contrato <- alteracoes %>% 
   join_alteracoes_contrato_e_tipo(tipo_operacao_alteracao) %>% 
   join_alteracoes_contrato_e_contrato(info_contratos) %>% 
-  generate_id(TABELA_ALTERACOES_CONTRATO, ALTERACOES_CONTRATO_ID)
+  generate_id(TABELA_ALTERACOES_CONTRATO, ALTERACOES_CONTRATO_ID) %>% 
+  dplyr::select(id_alteracoes_contrato, id_contrato, dplyr::everything())
 
 ## Municípios
 message("#### municípios...")

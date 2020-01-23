@@ -1,6 +1,8 @@
 DROP TABLE IF EXISTS item;
 
 CREATE TABLE IF NOT EXISTS "item" (
+    "id_item" BIGINT,
+    "id_licitacao" INTEGER,
     "id_orgao" VARCHAR(20),
     "nr_licitacao" VARCHAR(20),	
     "ano_licitacao" INTEGER,
@@ -12,9 +14,7 @@ CREATE TABLE IF NOT EXISTS "item" (
     "sg_unidade_medida" VARCHAR(5),	
     "vl_unitario_estimado" REAL,
     "vl_total_estimado" REAL,
-    "item_id" BIGINT,
-    "licitacao_id" INTEGER,
-    PRIMARY KEY("item_id"),
-    FOREIGN KEY("licitacao_id") REFERENCES licitacao("licitacao_id")
+    PRIMARY KEY("id_item"),
+    FOREIGN KEY("id_licitacao") REFERENCES licitacao("id_licitacao")
     
 );

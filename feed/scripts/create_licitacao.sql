@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS licitacao;
 
 CREATE TABLE IF NOT EXISTS "licitacao" ( 
+    "id_licitacao" INTEGER,
     "id_estado" INTEGER,   
     "id_orgao" VARCHAR(20),
     "nm_orgao" VARCHAR(240),
@@ -17,6 +18,5 @@ CREATE TABLE IF NOT EXISTS "licitacao" (
     "vl_homologado" REAL,
     "tp_licitacao" VARCHAR(3),
     "tipo_licitacao" VARCHAR(100),
-    "licitacao_id" INTEGER,
-    PRIMARY KEY("licitacao_id")
+    PRIMARY KEY("id_licitacao")
 );

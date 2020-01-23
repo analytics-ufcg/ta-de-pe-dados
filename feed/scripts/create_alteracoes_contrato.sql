@@ -1,6 +1,8 @@
 DROP TABLE IF EXISTS alteracoes_contrato;
 
 CREATE TABLE IF NOT EXISTS "alteracoes_contrato" (    
+    "id_alteracoes_contrato" VARCHAR(20),
+    "id_contrato" VARCHAR(20),
     "id_orgao" VARCHAR(20),
     "ano_licitacao" INTEGER,
     "nr_licitacao" VARCHAR(20),
@@ -17,8 +19,6 @@ CREATE TABLE IF NOT EXISTS "alteracoes_contrato" (
     "pc_reducao" VARCHAR(8),
     "ds_justificativa" TEXT,
     "tipo_operacao_alteracao" VARCHAR(60),
-    "contrato_id" VARCHAR(20),
-    "alteracoes_contrato_id" VARCHAR(20),
-    FOREIGN KEY (contrato_id) REFERENCES contrato ("contrato_id"),
-    PRIMARY KEY("alteracoes_contrato_id")
+    FOREIGN KEY ("id_contrato") REFERENCES contrato ("id_contrato"),
+    PRIMARY KEY("id_alteracoes_contrato")
 );
