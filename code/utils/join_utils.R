@@ -8,3 +8,8 @@ join_licitacoes_e_itens <- function(itens_df, licitacoes_df) {
   itens_df %>% 
     dplyr::inner_join(licitacoes_df)
 }
+
+join_licitante_e_licitacao <- function(licitante_df, licitacao_df) {
+  licitante_df %>% 
+    dplyr::right_join(licitacao_df, by = c("id_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade"))
+}
