@@ -22,7 +22,7 @@ source(here::here("code/utils/constants.R"))
 ## Assume que os dados foram baixados usando o módulo do crawler de dados (presente no diretório crawler
 ## na raiz desse repositório)
 
-anos = c(2018, 2019)
+anos = c(2017, 2018, 2019, 2020)
 
 # Processamento dos dados
 message("#### Iniciando processamento...")
@@ -86,7 +86,7 @@ info_contratos <-
   
   join_contrato_e_instrumento(tipo_instrumento_contrato) %>% 
   generate_id(TABELA_CONTRATO, CONTRATO_ID) %>% 
-  dplyr::select(id_contrato, id_licitacao, dplyr::everything())
+  dplyr::select(id_contrato, id_licitacao, id_orgao, dplyr::everything())
 
 ## Itens de contratos
 message("#### itens de contratos...")

@@ -92,6 +92,7 @@ read_alteracoes_contratos <- function(source) {
                                                            ANO_CONTRATO = readr::col_integer()
                                                            )
                                           )
+
 }
 
 read_licitantes <- function(source) {
