@@ -36,7 +36,7 @@ import_contratos_por_ano <- function(ano = 2019) {
 
 #' Processa dados para tabela de informações dos contratos de licitações de merenda no RS
 #' 
-#' @param anos Vector de inteiros com anos para captura dos contratos
+#' @param contratos_df Dataframe de contratos para padronização
 #'
 #' @return Dataframe com informações dos contratos
 #'   
