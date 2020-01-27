@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS "licitacao" (
     "data_adjudicacao" DATE,
     "vl_homologado" REAL,
     "tp_licitacao" VARCHAR(3),
-    "tipo_licitacao" VARCHAR(100),    
+    "tipo_licitacao" VARCHAR(100),
     PRIMARY KEY("id_licitacao"),
     FOREIGN KEY("id_orgao") REFERENCES orgao("id_orgao")
 );

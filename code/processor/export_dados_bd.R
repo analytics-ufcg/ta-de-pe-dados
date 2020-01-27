@@ -85,9 +85,9 @@ info_contratos <-
                                             id_licitacao)) %>% 
   
   join_contrato_e_instrumento(tipo_instrumento_contrato) %>% 
-  generate_id(TABELA_CONTRATO, CONTRATO_ID) %>%
+  generate_id(TABELA_CONTRATO, CONTRATO_ID) %>% 
   dplyr::select(id_contrato, id_licitacao, id_orgao, dplyr::everything())
-  
+
 ## Itens de contratos
 message("#### itens de contratos...")
 source(here("code/contratos/processa_itens_contrato.R"))
