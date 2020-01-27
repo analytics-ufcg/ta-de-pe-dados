@@ -32,3 +32,8 @@ join_alteracoes_contrato_e_contrato <- function(alteracoes_contrato_df, contrato
                       by = c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", 
                                           "nr_contrato", "ano_contrato", "tp_instrumento_contrato"))
 }
+
+join_licitante_e_licitacao <- function(licitante_df, licitacao_df) {
+  licitante_df %>% 
+    dplyr::right_join(licitacao_df, by = c("id_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade"))
+}

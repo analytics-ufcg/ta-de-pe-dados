@@ -8,4 +8,3 @@ LICITANTE_ID <- "id_licitante"
 I_ID <- "id_item"
 CONTRATO_ID <- "id_contrato"
 ALTERACOES_CONTRATO_ID <- "id_alteracoes_contrato" 
-
