@@ -20,6 +20,7 @@ def create():
     # subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create_empenho.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create_item.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create_contrato.sql'])
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create_item_contrato.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create_licitante.sql'])
 
 @click.command()
