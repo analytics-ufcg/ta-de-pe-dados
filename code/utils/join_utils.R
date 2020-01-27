@@ -9,7 +9,7 @@ join_licitacoes_e_itens <- function(itens_df, licitacoes_df) {
     dplyr::inner_join(licitacoes_df)
 }
 
-join_licitacoes_e_empenhos <- function(licitacoes_df, empenhos_df) {
+join_licitacoes_e_empenhos <- function(empenhos_df, licitacoes_df) {
   licitacoes_df %<>% dplyr::select("id_orgao", "ano_licitacao", "cd_tipo_modalidade", "nr_licitacao", "id_licitacao")
   empenhos_df %>% 
     dplyr::inner_join(licitacoes_df)

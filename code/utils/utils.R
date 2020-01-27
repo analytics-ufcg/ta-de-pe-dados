@@ -81,6 +81,7 @@ read_empenhos <- function(source) {
                                   vl_empenho = readr::col_double(),
                                   vl_liquidacao = readr::col_double(),
                                   vl_pagamento = readr::col_double(),
+                                  ano_licitacao = readr::col_integer(),
                                   ano_contrato = readr::col_integer(),
                                   nr_contrato = readr::col_number()
                                 ))

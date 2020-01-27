@@ -78,11 +78,11 @@ info_estados <- processa_info_estados()
 message("#### empenhos...")
 source(here::here("code/empenhos/processa_empenhos.R"))
 
-info_empenhos <- import_empenhos(anos)
-info_empenhos <- info %>% 
+info_empenhos <- import_empenhos(anos) %>% 
   processa_info_empenhos() %>% 
   join_licitacoes_e_empenhos(info_licitacoes) %>% 
-  generate_id(TABELA_EMPENHO, E_ID)
+  generate_id(TABELA_EMPENHO, E_ID) %>% 
+  dplyr::select(id_empenho, id_licitacao, id_orgao, dplyr::everything())
 
 
 # Escrita dos dados
@@ -95,6 +95,7 @@ write_csv(info_item_contrato, here("data/bd/info_item_contrato.csv"))
 write_csv(info_alteracoes_contrato, here("data/bd/info_alteracao_contrato.csv"))
 write_csv(info_orgaos, here("data/bd/info_orgaos.csv"))
 write_csv(info_estados, here("data/bd/info_estados.csv"))
+write_csv(info_empenhos, here("data/bd/info_empenhos.csv"))
 
 message("#### Processamento concluído!")
 message("#### Confira o diretório data/bd")
