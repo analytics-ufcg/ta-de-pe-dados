@@ -36,12 +36,12 @@ import_itens_contrato_por_ano <- function(ano = 2019) {
 
 #' Processa dados para a tabela de informações dos itens dos contratos de merenda
 #' 
-#' @param anos Vector de inteiros com anos para captura dos itens dos contratos
+#' @param itens_contrato_df Dataframe de itens de contrato
 #'
 #' @return Dataframe com informações dos itens dos contratos de merenda
 #'   
 #' @examples 
-#' info_item_contrato <- processa_info_item_contrato(anos = c(2017, 2018, 2019))
+#' info_item_contrato <- processa_info_item_contrato(itens_contrato_df)
 #'
 #' Chave primária: 
 #' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato,
