@@ -71,3 +71,9 @@ Para limpar o banco de dados execute:
 ```
 docker exec -it feed python3.6 /feed/manage.py clean-data
 ```
+
+Para atualizar o banco de dados execute:
+```
+docker exec -it feed python3.6 /feed/manage.py update-data
+```
+
