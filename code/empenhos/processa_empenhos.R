@@ -46,7 +46,7 @@ import_empenhos_por_ano <- function(ano) {
 #' 
 processa_info_empenhos <- function(empenhos_df) {
   
-  empenhos_df %<>% dplyr::select(ano_recebimento, mes_recebimento, id_orgao = cd_orgao, ano_empenho, ano_operacao, dt_empenho, dt_operacao, nr_empenho,
+  empenhos_df %<>% dplyr::select(id_licitacao, ano_recebimento, mes_recebimento, id_orgao = cd_orgao, ano_empenho, ano_operacao, dt_empenho, dt_operacao, nr_empenho,
                                     cd_funcao, ds_funcao, cd_subfuncao, ds_subfuncao, cd_programa, ds_programa, cd_projeto, nm_projeto, cd_recurso,
                                     nm_recurso, cd_credor, nm_credor, cnpj_cpf, vl_empenho, nr_liquidacao, vl_liquidacao, nr_pagamento, vl_pagamento,
                                     ano_licitacao, nr_licitacao, cd_tipo_modalidade = mod_licitacao, ano_contrato, nr_contrato)
