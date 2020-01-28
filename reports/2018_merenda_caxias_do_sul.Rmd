@@ -75,37 +75,22 @@ cpp <- licitacoes_cx %>%
   mutate(DT_ADJUDICACAO = as.Date(DT_ADJUDICACAO),
          DT_ABERTURA = as.Date(DT_ABERTURA))
 
-itens <- read_csv("./data/licitacoes/2018/item.csv", 
-                  col_types = cols(
-                    .default = col_double(),
-                    CD_TIPO_MODALIDADE = col_character(),
-                    DS_ITEM = col_character(),
-                    SG_UNIDADE_MEDIDA = col_character(),
-                    DT_REF_VALOR_ESTIMADO = col_date(format = ""),
-                    CD_FONTE_REFERENCIA = col_character(),
-                    DS_FONTE_REFERENCIA = col_character(),
-                    TP_RESULTADO_ITEM = col_character(),
-                    TP_DOCUMENTO = col_character(),
-                    NR_DOCUMENTO = col_integer(),
-                    TP_BENEFICIO_MICRO_EPP = col_character(),
-                    PC_TX_ESTIMADA = col_logical(),
-                    PC_TX_HOMOLOGADA = col_logical())) %>% 
-  filter(CD_TIPO_MODALIDADE == "CPP")
+itens <- read_csv("../data/licitacoes/2018/item.csv") %>% filter(CD_TIPO_MODALIDADE == "CPP")
 
-itens_cx <- read_csv("./data/licitacoes/2018/item.csv") %>% filter(CD_ORGAO == 45000)
+itens_cx <- read_csv("../data/licitacoes/2018/item.csv") %>% filter(CD_ORGAO == 45000)
 
 itens_cx_cpp <- itens_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
   mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
 
-contratos_cx <- read_csv("./data/contratos/2018/contrato.csv") %>% filter(CD_ORGAO == 45000)
-alteracao_cx <- read_csv("./data/contratos/2018/alteracao.csv") %>% filter(CD_ORGAO == 45000) 
+contratos_cx <- read_csv("../data/contratos/2018/contrato.csv") %>% filter(CD_ORGAO == 45000)
+alteracao_cx <- read_csv("../data/contratos/2018/alteracao.csv") %>% filter(CD_ORGAO == 45000) 
 
 contratos_cx_cpp <- contratos_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
   mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
 alteracao_cx_cpp <- alteracao_cx %>% filter(CD_TIPO_MODALIDADE == "CPP") %>% 
   mutate(id = paste0(CD_ORGAO, CD_TIPO_MODALIDADE, NR_LICITACAO, ANO_LICITACAO))
 
-empenhos_cx <- read_csv("./data/empenhos/2018/caxias_do_sul.csv") %>% filter(cd_orgao == 45000)
+empenhos_cx <- read_csv("../data/empenhos/2018/caxias_do_sul.csv") %>% filter(cd_orgao == 45000)
 
 empenhos_cx_cpp <- empenhos_cx %>% filter(grepl("pnae", tolower(nm_recurso)) | mod_licitacao == "CPP") %>% 
   mutate(id = paste0(cd_orgao, mod_licitacao, nr_licitacao, ano_licitacao))
@@ -115,7 +100,30 @@ empenhos_merenda <- empenhos_cx %>% filter(cd_funcao == 12, cd_subfuncao == 306,
 censo_escolar_cx <- read_csv("../data/censo_escolar/censo_escolar_2018.csv")
 ```
 
+O município de Caxias do Sul teve abertura de dois editais durante o ano de 2018 para fornecimento de gêneros alimentícios e, antes de analisar os valores das licitações, contratos e afins, um passo interessante é rever os editais de chamada pública, todos os editais e documentos estão [aqui](http://www1.tce.rs.gov.br/aplicprod/f?p=50500:1:::NO:::).  
+
+### Edital
+
+A princípio, ambos correspondem ao mesmo formato, sendo ele requisitando a apresentação de credenciamento e dos documentos do fornecedor que se interesse em concorrer, sendo eles:  
+- Habilitação jurídica  
+- Declaração do licitante  
+- Habilitação fiscal  
+- Qualificação econômico-financeira  
+- Habilitação trabalhista  
+- Qualificação técnica  
+- Extrato da DAP jurídica para associações e cooperativas  
+- Declarações sem fins de habilitação  
+- Razão social e CNPJ  
+- Certificado de registro cadastral (CRC)  
+
+Outra etapa do edital é dispor uma tabela de itens que serão fornecidos para escolas de ens. inf e ens. fund. com suas respectivas quantidades (unidades ou kg), intervalo de tempo para realização da entrega, tempo mínimo de validade do produto, lista de pedidos de marcas e recomendações de como o produto deve estar durante a entrega. Após essas recomendações é anexado diversos documentos como termos de recebimento e forma de declarações. Abaixo estão os links dos dois editais lançados no ano de 2018.  
+[Edital - Janeiro](https://bit.ly/2Z6PCdP)  
+[Edital - Julho](https://bit.ly/2S7xcbB)  
+
+
 ### Licitações
+
+#### Quantas licitações Caxias do Sul fez no ano de 2018 comparado com o restante dos municípios?
 
 ```{r}
 licitacoes_qtd <- licitacoes_cpp %>% 
@@ -133,7 +141,9 @@ licitacoes_qtd %>%
   theme_ipsum_rc()
 ```
 
-O município de Caxias do Sul possui duas licitações da modalidade CPP e o intervalo de tempo entre a data de adjudicação e homologação foi de zero dias.
+O município de Caxias do Sul teve duas licitações da modalidade CPP e o intervalo de tempo entre a data de adjudicação e homologação foi de zero dias.
+
+#### Qual o valor dessas licitações?
 
 ```{r}
 licitacoes_cpp %>% 
@@ -323,45 +333,14 @@ uso_verba %>%
 
 ```
 
-### Quantos empenhos são gerados por recurso?
-
-```{r}
-empenhos_qnt <- empenhos_merenda %>% 
-  group_by(nr_empenho, 
-           dt_empenho, 
-           nm_recurso = if_else(grepl("pnae", tolower(nm_recurso)), "PNAE", "Recurso Livre")) %>% 
-  summarise(qtd_data = n())
-
-empenhos_qnt %>% 
-  ggplot(aes(x = dt_empenho,
-             y = qtd_data,
-             fill = nm_recurso)) +
-  geom_col(width = 7) +
-  facet_grid(~nm_recurso) +
-  theme_ipsum_rc()
-
-```
-
-### Quantos empenhos são gerados?
-
-```{r}
-empenhos_qnt %>% 
-  arrange(desc(qtd_data)) %>% 
-  datatable(class = 'cell-border stripe',
-            filter = 'top',
-            rownames = FALSE,
-            options = list(pageLength = 10,
-                           dom = 'ftp'),
-            colnames = c("Nº empenho", "Data", "Recurso", "Quantidade")) 
-```
-
 ## Custo Aluno
 
 ### Qual a relação entre o valor das licitações e o número de alunos de um município?
 
 ```{r}
 
-nmr_estudantes <- censo_escolar_cx %>% 
+nmr_estudantes <- censo_escolar_cx %>%
+  filter(esfera != "Estadual Urbana", esfera != "Estadual Rural", esfera != "Estadual e Municipal") %>% 
   group_by(municipio) %>% 
   summarise(qtd_estudantes = sum(creche_parcial, creche_integral, pre_escola_parcial,
                                  pre_escola_integral, fundamental_inicial_parcial,
@@ -386,7 +365,7 @@ gasto_licitacoes %>% ggplot(aes(x=qtd_estudantes/1e3, y=media_gasto/1e3)) +
   title = "Valor médio das licitações pela quantidade de alunos"
   ) +
   theme(legend.title = element_blank()) +
-  geom_label(aes(x=110, y=1555, label="Caxias do Sul"), color="#773bb0")
+  geom_label(aes(x=28, y=1555, label="Caxias do Sul"), color="#773bb0")
 
 ```
 
@@ -402,6 +381,8 @@ valores_empenhos <- valores_empenhos %>% group_by(nr_empenho) %>%
             Liquidação = sum(vl_liquidacao),
             Pagamento = sum(vl_pagamento))
 
+nmr_estudantes <- nmr_estudantes %>% filter(municipio == "CAXIAS DO SUL")
+
 gasto_2018 <- sum(valores_empenhos$Pagamento)
 qtd_alunos <- sum(nmr_estudantes$qtd_estudantes)
 
@@ -409,6 +390,6 @@ custo_por_estudantes <- gasto_2018/qtd_alunos
 
 ```
 
-Caxias do Sul gastou 3.08 reais por aluno no ano de 2018
+Caxias do Sul gastou R$ 336.5 por aluno no ano de 2018. Aproximadamente R$ 1.68 para cada aluno por dia letivo, considerando a Lei de Diretrizes e Bases da Educação Nacional, que estipula um mínimo de 200 dias letivos e 800 horas de efetivo trabalho escolar.
 
 
