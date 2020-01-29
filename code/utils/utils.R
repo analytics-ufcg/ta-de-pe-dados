@@ -97,16 +97,13 @@ read_contratos <- function(source) {
 }
 
 read_alteracoes_contratos <- function(source) {
-  ## Limpando dados 
   file_path <- here::here(paste0("data/contratos/", source, "/alteracao.csv"))
-  writeLines(iconv(readLines(file_path, skipNul = TRUE)), file_path)
   
-  ## Lendo dados tratados
-  alteracoes_contratos <- readr::read_csv(file_path, 
+  alteracoes_contratos <- readr::read_csv(file = readLines(file_path, skipNul = TRUE), 
                                           col_types = cols(.default = readr::col_character(),
                                                            ANO_LICITACAO = readr::col_integer(),
-                                                           NR_LICITACAO = readr::col_integer(),
-                                                           NR_CONTRATO = readr::col_integer(),
+                                                           NR_LICITACAO = readr::col_number(),
+                                                           NR_CONTRATO = readr::col_number(),
                                                            ANO_CONTRATO = readr::col_integer()
                                                            )
                                           )
