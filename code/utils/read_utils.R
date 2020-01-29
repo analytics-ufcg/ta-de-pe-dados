@@ -54,6 +54,49 @@ read_itens <- function(source) {
                            ))
 }
 
+#' Lê arquivo csv de contratos
+#' @param source Ano correspondente ao arquivo para leitura
+#' @return Dataframe de contratos
+read_contratos <- function(source) {
+  contratos <- readr::read_csv(here::here(paste0("data/contratos/", source, "/contrato.csv")),
+                               col_types = list(
+                                 .default = readr::col_character(),
+                                 ANO_LICITACAO = readr::col_integer(),
+                                 NR_LICITACAO = readr::col_integer(),
+                                 NR_CONTRATO = readr::col_integer(),
+                                 ANO_CONTRATO = readr::col_integer(),
+                                 ANO_PROCESSO = readr::col_integer(),
+                                 DT_INICIO_VIGENCIA = readr::col_datetime(format = ""),
+                                 DT_FINAL_VIGENCIA = readr::col_datetime(format = ""),
+                                 VL_CONTRATO = readr::col_double(),
+                                 DT_ASSINATURA = readr::col_datetime(format = ""),
+                                 NR_DIAS_PRAZO = readr::col_integer()
+                                 
+                               ))
+  
+}
+
+#' Lê arquivo csv de itens de contratos
+#' @param source Ano correspondente ao arquivo para leitura
+#' @return Dataframe de itens de contratos
+read_itens_contrato <- function(source) {
+  itens <- readr::read_csv(here::here(paste0("data/contratos/", source, "/item_con.csv")),
+                           col_types = list(
+                             .default = readr::col_character(),
+                             ANO_LICITACAO = readr::col_integer(),
+                             NR_LICITACAO = readr::col_integer(),
+                             NR_CONTRATO = readr::col_integer(),
+                             ANO_CONTRATO = readr::col_integer(),
+                             NR_LOTE = readr::col_integer(),
+                             NR_ITEM = readr::col_integer(),
+                             QT_ITENS = readr::col_integer(),
+                             VL_ITEM = readr::col_double(),
+                             VL_TOTAL_ITEM = readr::col_double(),
+                             PC_BDI = readr::col_double(),
+                             PC_ENCARGOS_SOCIAIS = readr::col_double()
+                           ))
+}
+
 #' Lê arquivo csv de licitantes
 #' @param source Ano correspondente ao arquivo para leitura
 #' @return Dataframe de licitantes
