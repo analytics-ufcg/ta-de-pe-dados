@@ -22,7 +22,7 @@ source(here::here("code/utils/constants.R"))
 ## Assume que os dados foram baixados usando o módulo do crawler de dados (presente no diretório crawler
 ## na raiz desse repositório)
 
-anos = c(2019)
+anos = c(2017, 2018, 2019, 2020)
 
 # Processamento dos dados
 message("#### Iniciando processamento...")
@@ -104,18 +104,13 @@ info_item_contrato <- import_itens_contrato(anos) %>%
 ## Alterações contratos
 message("#### alterações de contratos...")
 source(here("code/contratos/processa_alteracoes_contratos.R"))
-info_alteracoes_contrato <- processa_info_alteracoes_contratos(anos)
+#info_alteracoes_contrato <- processa_info_alteracoes_contratos(anos)
 
 ## Municípios
 message("#### municípios...")
 source(here::here("code/orgaos/processa_orgaos.R"))
 info_orgaos <- import_licitacoes(anos) %>% 
   processa_info_orgaos()
-
-## Estados
-message("#### estados...")
-source(here::here("code/orgaos/processa_estados.R"))
-info_estados <- processa_info_estados()
 
 
 # Escrita dos dados
@@ -127,9 +122,8 @@ readr::write_csv(info_licitantes, here("data/bd/info_licitante.csv"))
 readr::write_csv(info_item_licitacao, here("data/bd/info_item_licitacao.csv"))
 readr::write_csv(info_contratos, here("data/bd/info_contrato.csv"))
 readr::write_csv(info_item_contrato, here("data/bd/info_item_contrato.csv"))
-readr::write_csv(info_alteracoes_contrato, here("data/bd/info_alteracao_contrato.csv"))
+#readr::write_csv(info_alteracoes_contrato, here("data/bd/info_alteracao_contrato.csv"))
 readr::write_csv(info_orgaos, here("data/bd/info_orgaos.csv"))
-readr::write_csv(info_estados, here("data/bd/info_estados.csv"))
 
 message("#### Processamento concluído!")
 message("#### Confira o diretório data/bd")

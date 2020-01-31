@@ -45,6 +45,4 @@ CREATE TABLE IF NOT EXISTS "empenho_raw" (
     "mod_licitacao" VARCHAR(240),
     "ano_contrato" INTEGER,
     "nr_contrato" VARCHAR(40),
-    "tp_instrumento_contratual" VARCHAR(240),
-    PRIMARY KEY("cd_orgao", "cd_orgao_orcamentario", "cd_unidade_orcamentaria", "tp_unidade", "tipo_operacao", "ano_empenho", "ano_operacao", "nr_empenho", "nr_licitacao", "ano_licitacao", "mod_licitacao", "dt_empenho", "dt_operacao", "cd_credor")
-);
+    "tp_instrumento_contratual" VARCHAR(240));

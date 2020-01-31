@@ -12,9 +12,9 @@ source(here::here("code/empenhos/processa_empenhos.R"))
 
 
 con <- DBI::dbConnect(RPostgres::Postgres(),
-                      dbname = 'orcamento', 
-                      host = '172.19.0.2', 
-                      port = 5432,
+                      dbname = 'tanamesa', 
+                      host = 'localhost', 
+                      port = 7655,
                       user = 'postgres',
                       password = 'secret')
 
