@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS item;
 CREATE TABLE IF NOT EXISTS "item" (
     "id_item" BIGINT,
     "id_licitacao" INTEGER,
-    "id_orgao" VARCHAR(20),
+    "id_orgao" INTEGER,
     "nr_licitacao" VARCHAR(20),	
     "ano_licitacao" INTEGER,
     "cd_tipo_modalidade" VARCHAR(3),

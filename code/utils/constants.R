@@ -3,8 +3,10 @@ TABELA_LICITANTE <- 2
 TABELA_ITEM <- 3
 TABELA_CONTRATO <- 4
 TABELA_ITEM_CONTRATO <- 6
+TABELA_EMPENHO <- 7
 L_ID <- "id_licitacao"
 I_ID <- "id_item"
 CONTRATO_ID <- "id_contrato"
 ITEM_CONTRATO_ID <- "id_item_contrato"
 LICITANTE_ID <- "id_licitante"
+E_ID <- "id_empenho"
