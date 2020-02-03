@@ -6,8 +6,8 @@ SET datestyle = ymd;
 \copy alteracoes_contrato FROM '/data/bd/info_alteracao_contrato.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
 \copy item_contrato FROM '/data/bd/info_item_contrato.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
 \copy licitante FROM '/data/bd/info_licitante.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
-
--- ALTER TABLE empenho DROP CONSTRAINT empenho_pkey;
--- ALTER TABLE empenho DROP CONSTRAINT empenho_cd_orgao_fkey;
--- \copy empenho FROM '/data/empenhos/2019/2019.csv' WITH NULL AS '' DELIMITER ',' CSV HEADER;
-
+-- ALTER TABLE empenho_raw DROP CONSTRAINT empenho_raw_pkey;
+-- \copy empenho_raw FROM '/data/empenhos/2017/2017.csv' WITH NULL AS '' DELIMITER ',' CSV HEADER;
+\copy empenho_raw FROM '/data/empenhos/2018/2018.csv' WITH NULL AS '' DELIMITER ',' CSV HEADER;
+\copy empenho_raw FROM '/data/empenhos/2019/2019.csv' WITH NULL AS '' DELIMITER ',' CSV HEADER;
+-- \copy empenho_raw FROM '/data/empenhos/2020/2020.csv' WITH NULL AS '' DELIMITER ',' CSV HEADER;

@@ -123,10 +123,6 @@ source(here::here("code/orgaos/processa_orgaos.R"))
 info_orgaos <- import_licitacoes(anos) %>% 
   processa_info_orgaos()
 
-## Estados
-message("#### estados...")
-source(here::here("code/orgaos/processa_estados.R"))
-info_estados <- processa_info_estados()
 
 # Escrita dos dados
 
@@ -139,7 +135,6 @@ readr::write_csv(info_contratos, here("data/bd/info_contrato.csv"))
 readr::write_csv(info_item_contrato, here("data/bd/info_item_contrato.csv"))
 readr::write_csv(info_alteracoes_contrato, here("data/bd/info_alteracao_contrato.csv"))
 readr::write_csv(info_orgaos, here("data/bd/info_orgaos.csv"))
-readr::write_csv(info_estados, here("data/bd/info_estados.csv"))
 
 message("#### Processamento concluído!")
 message("#### Confira o diretório data/bd")

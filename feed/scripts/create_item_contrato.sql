@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS item_contrato;
 CREATE TABLE IF NOT EXISTS "item_contrato" (
     "id_item_contrato" VARCHAR(20),
     "id_contrato" VARCHAR(20),
-    "id_orgao" VARCHAR(20),
+    "id_orgao" INTEGER,
     "id_licitacao" INTEGER,
     "nr_lote" INTEGER,
     "nr_licitacao" INTEGER,

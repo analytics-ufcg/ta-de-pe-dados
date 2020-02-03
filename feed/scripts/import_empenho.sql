@@ -1,0 +1,1 @@
+\copy empenho FROM '/data/bd/info_empenhos.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
