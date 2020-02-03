@@ -93,6 +93,20 @@ read_contratos <- function(source) {
                                  NR_DIAS_PRAZO = readr::col_integer()
                                  
                                ))
+  
+}
+
+read_alteracoes_contratos <- function(source) {
+  file_path <- here::here(paste0("data/contratos/", source, "/alteracao.csv"))
+  
+  alteracoes_contratos <- readr::read_csv(file = readLines(file_path, skipNul = TRUE), 
+                                          col_types = cols(.default = readr::col_character(),
+                                                           ANO_LICITACAO = readr::col_integer(),
+                                                           NR_LICITACAO = readr::col_number(),
+                                                           NR_CONTRATO = readr::col_number(),
+                                                           ANO_CONTRATO = readr::col_integer()
+                                                           )
+                                          )
 
 }
 

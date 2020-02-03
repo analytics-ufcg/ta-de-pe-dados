@@ -16,6 +16,5 @@ CREATE TABLE IF NOT EXISTS "item" (
     "vl_total_estimado" REAL,
     PRIMARY KEY("id_item"),
     FOREIGN KEY("id_licitacao") REFERENCES licitacao("id_licitacao"),
-    FOREIGN KEY("id_orgao") REFERENCES orgao("id_orgao")
-    
+    FOREIGN KEY("id_orgao") REFERENCES orgao("id_orgao")    
 );
