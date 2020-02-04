@@ -26,7 +26,7 @@ run:
 .PHONY: run
 process-data:	
 	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_dados_bd.R $(anos)"
-.PHONY: run
+.PHONY: process-data
 process-data-empenhos:	
 	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_empenhos_bd.R"
-.PHONY: run
+.PHONY: process-data-empenhos
