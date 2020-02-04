@@ -2,6 +2,26 @@ version: '3.5'
 
 services:   
 
+  rbase:
+    build: 
+      context: code/
+    container_name: r-container
+    restart: always
+    environment:
+      - USER=${USER:-admin}
+      - PASSWORD=${PASSWORD:-secret}      
+      - POSTGRES_HOST=${POSTGRES_HOST:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-tanamesa}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
+    volumes:
+      - ./code:/app/code
+      - ./data:/app/data
+    ports:
+      - 8787:8787
+    networks:
+      - proxynet
+
   feed:
     build:
       context: feed/
@@ -24,8 +44,8 @@ services:
     container_name: postgres-ta-na-mesa
     restart: always
     environment:
-      - POSTGRES_DB=${POSTGRES_DB:-secret}
-      - POSTGRES_USER=${POSTGRES_USER:-secret}
+      - POSTGRES_DB=${POSTGRES_DB:-tanamesa}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
       - TZ=GMT
     volumes:
