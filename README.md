@@ -65,7 +65,7 @@ Uma vez baixados os dados para os anos de interesse. Execute o script de process
 
 Execute o comando auxiliar
 ```
-process-data anos=2018,2019,2020
+make process-data anos=2018,2019,2020
 ```
 Obs: o parâmetro anos pode conter um ou mais anos (estes separados por vírgula).
 

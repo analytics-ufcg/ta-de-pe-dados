@@ -15,6 +15,8 @@ help:
 	@echo "    process-data anos=2017,2018,2019,2020 - Executa o módulo de processamento de dados brutos para o formato usado na aplicação."
 	@echo "    Assume um ou mais anos separados por vírgula. Assume que os dados foram baixados."
 	@echo "    "	
+	@echo "    process-data-empenhos - Executa o processamento de dados de empenhos.
+	@echo "    "	
 .PHONY: help
 build:
 	docker build -t crawler-ta-na-mesa scripts/	
@@ -24,4 +26,7 @@ run:
 .PHONY: run
 process-data:	
 	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_dados_bd.R $(anos)"
+.PHONY: run
+process-data-empenhos:	
+	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_empenhos_bd.R"
 .PHONY: run
