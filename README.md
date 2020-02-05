@@ -76,6 +76,15 @@ docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_dado
 
 Os dados processados estarão disponíveis no diretório `data/bd`.
 
+Para processar dados de empenhos é possível executar o comando:
+Obs: Execute esse processamento após ter populado o banco de dados usando os passos descritos no README do diretório **feed**.
+
+```
+make process-data-empenhos
+```
+
+Os dados processados de empenhos estarão disponíveis no diretório `data/bd`.
+
 ### Como executar outros scripts?
 
 Para executar outros scripts criados usando R no Serviço r-process basta alterar o caminho para o arquivo no comando docker.
