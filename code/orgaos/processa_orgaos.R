@@ -1,15 +1,29 @@
+source(here::here("code/utils/utils.R"))
+
+
+#' Importa dados dos orgãos do estado do Rio Grande do Sul
+#' @return Dataframe com informações das orgãos
+#' @examples 
+#' orgaos <- import_orgaos()
+#' 
+import_orgaos <- function() {
+  message("Importando orgaos")
+  orgaos <- read_orgaos()
+  
+  return(orgaos)
+}
+
 #' Cria dataframe com informações dos orgãos participantes de licitações
 #' 
 #' @examples 
-#' municipios <- processa_info_orgaos()
+#' orgaos <- processa_info_orgaos()
 #' 
-processa_info_orgaos <- function(licitacoes_df) {
+processa_info_orgaos <- function(orgaos_df) {
   
-  info_orgaos <- licitacoes_df %>%
+  info_orgaos <- orgaos_df %>%
     janitor::clean_names() %>% 
-    dplyr::distinct(nm_orgao, cd_orgao) %>%
-    dplyr::mutate(id_estado = "43") %>% 
-    dplyr:: select(orgao_id = cd_orgao, id_estado, nm_orgao)
+    dplyr::select(id_orgao = cd_orgao, nm_orgao = nome_orgao, sigla_orgao, 
+                  esfera, home_page, nome_municipio, cd_municipio_ibge)
   
   return(info_orgaos)
 }

@@ -96,6 +96,16 @@ read_contratos <- function(source) {
   
 }
 
+read_orgaos <- function() {
+  orgaos <- readr::read_csv(here::here("data/orgaos/orgaos.csv"),
+                            col_types = list(
+                              .default = readr::col_character(),
+                              CD_ORGAO = readr::col_integer(),
+                              CD_MUNICIPIO_TCERS = readr::col_integer(),
+                              CD_MUNICIPIO_IBGE = readr::col_integer()
+                            ))
+}
+
 read_alteracoes_contratos <- function(source) {
   file_path <- here::here(paste0("data/contratos/", source, "/alteracao.csv"))
   
