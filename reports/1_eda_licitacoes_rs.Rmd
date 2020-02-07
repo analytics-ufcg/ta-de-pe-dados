@@ -34,7 +34,7 @@ source(here("code/licitacoes/processa_pessoas.R"))
 
 ```{r}
 anos <- c(2017, 2018, 2019)
-licitacoes_merenda <- processa_licitacoes(anos) %>% 
+licitacoes_merenda <- import_licitacoes(anos) %>% 
   filter(CD_TIPO_MODALIDADE == "CPP", ## Chamada pública PNAE
          CD_TIPO_FASE_ATUAL == "ADH") %>%  ## Adjudicadas (última fase da licitação)
   select(CD_ORGAO, NM_ORGAO, NR_LICITACAO, ANO_LICITACAO, CD_TIPO_MODALIDADE, DS_OBJETO, 
@@ -42,7 +42,7 @@ licitacoes_merenda <- processa_licitacoes(anos) %>%
   mutate(DT_ADJUDICACAO = as.Date(DT_ADJUDICACAO),
          DT_ABERTURA = as.Date(DT_ABERTURA))
   
-licitantes <- processa_licitantes(anos) %>% 
+licitantes <- purrr::pmap_dfr(list(anos), ~ import_licitantes_por_ano(..1)) %>% 
   inner_join(licitacoes_merenda %>% distinct(CD_ORGAO, NR_LICITACAO, ANO_LICITACAO, CD_TIPO_MODALIDADE),
              by = c("CD_ORGAO", "NR_LICITACAO", "ANO_LICITACAO", "CD_TIPO_MODALIDADE"))
 pessoas <- processa_pessoas(anos) %>% 
