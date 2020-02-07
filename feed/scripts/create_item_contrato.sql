@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS "item_contrato" (
     "ano_contrato" INTEGER,
     "tp_instrumento_contrato" VARCHAR(1),
     "nr_item" INTEGER,
-    "qt_itens_contrato" INTEGER,
+    "qt_itens_contrato" REAL,
     "vl_item_contrato" REAL,
     "vl_total_item_contrato" REAL,
     PRIMARY KEY ("id_item_contrato"),
