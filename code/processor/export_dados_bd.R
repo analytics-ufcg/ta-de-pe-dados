@@ -4,7 +4,11 @@ library(magrittr)
 
 help <- "
 Usage:
-Rscript export_dados_bd.R <ano>
+Rscript export_dados_bd.R <anos>
+<anos> pode ser um ano (2017) ou múltiplos anos separados por vírgula (2017,2018,2019)
+Exemplos:
+Rscript export_dados_bd.R 2019
+Rscript export_dados_bd.R 2018,2019,2020
 "
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -13,7 +17,8 @@ if (length(args) < min_num_args) {
   stop(paste("Wrong number of arguments!", help, sep = "\n"))
 }
 
-ano <- args[1]
+anos <- unlist(strsplit(args[1], split=","))
+# anos = c(2017, 2018, 2019, 2020)
 
 source(here::here("code/utils/utils.R"))
 source(here::here("code/utils/join_utils.R"))
@@ -21,8 +26,6 @@ source(here::here("code/utils/constants.R"))
 
 ## Assume que os dados foram baixados usando o módulo do crawler de dados (presente no diretório crawler
 ## na raiz desse repositório)
-
-anos = c(2017, 2018, 2019, 2020)
 
 # Processamento dos dados
 message("#### Iniciando processamento...")
