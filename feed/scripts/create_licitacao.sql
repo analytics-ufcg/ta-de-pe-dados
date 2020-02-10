@@ -19,5 +19,6 @@ CREATE TABLE IF NOT EXISTS "licitacao" (
     "tp_licitacao" VARCHAR(3),
     "tipo_licitacao" VARCHAR(100),
     PRIMARY KEY("id_licitacao"),
+    CONSTRAINT licitacao_key UNIQUE (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade),
     FOREIGN KEY("id_orgao") REFERENCES orgao("id_orgao")
 );
