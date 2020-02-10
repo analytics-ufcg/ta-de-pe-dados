@@ -4,7 +4,11 @@ library(magrittr)
 
 help <- "
 Usage:
-Rscript export_dados_bd.R <ano>
+Rscript export_dados_bd.R <anos>
+<anos> pode ser um ano (2017) ou múltiplos anos separados por vírgula (2017,2018,2019)
+Exemplos:
+Rscript export_dados_bd.R 2019
+Rscript export_dados_bd.R 2018,2019,2020
 "
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -13,7 +17,8 @@ if (length(args) < min_num_args) {
   stop(paste("Wrong number of arguments!", help, sep = "\n"))
 }
 
-ano <- args[1]
+anos <- unlist(strsplit(args[1], split=","))
+# anos = c(2017, 2018, 2019, 2020)
 
 source(here::here("code/utils/utils.R"))
 source(here::here("code/utils/join_utils.R"))
@@ -21,8 +26,6 @@ source(here::here("code/utils/constants.R"))
 
 ## Assume que os dados foram baixados usando o módulo do crawler de dados (presente no diretório crawler
 ## na raiz desse repositório)
-
-anos = c(2017, 2018, 2019, 2020)
 
 # Processamento dos dados
 message("#### Iniciando processamento...")
@@ -87,7 +90,7 @@ info_contratos <-
   join_contrato_e_instrumento(tipo_instrumento_contrato) %>% 
   generate_id(TABELA_CONTRATO, CONTRATO_ID) %>% 
   dplyr::select(id_contrato, id_licitacao, id_orgao, dplyr::everything())
-  
+
 ## Itens de contratos
 message("#### itens de contratos...")
 source(here("code/contratos/processa_itens_contrato.R"))
@@ -103,8 +106,19 @@ info_item_contrato <- import_itens_contrato(anos) %>%
 
 ## Alterações contratos
 message("#### alterações de contratos...")
-source(here("code/contratos/processa_alteracoes_contratos.R"))
-info_alteracoes_contrato <- processa_info_alteracoes_contratos(anos)
+source(here::here("code/contratos/processa_alteracoes_contratos.R"))
+source(here::here("code/contratos/processa_tipos_alteracao_contrato.R"))
+
+alteracoes <- import_alteracoes_contratos(anos) %>% 
+  processa_info_alteracoes_contratos()
+
+tipo_operacao_alteracao <- processa_tipos_alteracao_contrato()
+
+info_alteracoes_contrato <- alteracoes %>% 
+  join_alteracoes_contrato_e_tipo(tipo_operacao_alteracao) %>% 
+  join_alteracoes_contrato_e_contrato(info_contratos) %>% 
+  generate_id(TABELA_ALTERACOES_CONTRATO, ALTERACOES_CONTRATO_ID) %>% 
+  dplyr::select(id_alteracoes_contrato, id_contrato, dplyr::everything())
 
 ## Municípios
 message("#### municípios...")
@@ -112,10 +126,6 @@ source(here::here("code/orgaos/processa_orgaos.R"))
 info_orgaos <- import_licitacoes(anos) %>% 
   processa_info_orgaos()
 
-## Estados
-message("#### estados...")
-source(here::here("code/orgaos/processa_estados.R"))
-info_estados <- processa_info_estados()
 
 # Escrita dos dados
 
@@ -128,7 +138,6 @@ readr::write_csv(info_contratos, here("data/bd/info_contrato.csv"))
 readr::write_csv(info_item_contrato, here("data/bd/info_item_contrato.csv"))
 readr::write_csv(info_alteracoes_contrato, here("data/bd/info_alteracao_contrato.csv"))
 readr::write_csv(info_orgaos, here("data/bd/info_orgaos.csv"))
-readr::write_csv(info_estados, here("data/bd/info_estados.csv"))
 
 message("#### Processamento concluído!")
 message("#### Confira o diretório data/bd")

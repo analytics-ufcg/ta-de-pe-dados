@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS contrato;
 CREATE TABLE IF NOT EXISTS "contrato" ( 
     "id_contrato" VARCHAR(20),
     "id_licitacao" INTEGER,
-    "id_orgao" VARCHAR(20),
+    "id_orgao" INTEGER,
     "nr_contrato" INTEGER,
     "ano_contrato" INTEGER,
     "nm_orgao" VARCHAR(240),
@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS "contrato" (
     "obs_contrato" VARCHAR(500),
     "tipo_instrumento_contrato" VARCHAR(50),
     PRIMARY KEY("id_contrato"),
+    CONSTRAINT contrato_key UNIQUE (id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato),
     FOREIGN KEY("id_orgao") REFERENCES orgao("id_orgao"),
     FOREIGN KEY("id_licitacao") REFERENCES licitacao("id_licitacao")
 );
