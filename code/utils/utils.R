@@ -12,7 +12,7 @@ read_licitacoes <- function(source) {
   licitacoes <- readr::read_csv(here::here(paste0("data/licitacoes/", source,"/licitacao.csv")), 
                                             col_types = list(
                                               .default = readr::col_character(),
-                                              NR_LICITACAO = readr::col_integer(),
+                                              NR_LICITACAO = readr::col_number(),
                                               ANO_LICITACAO = readr::col_integer(),
                                               ANO_PROCESSO = readr::col_integer(),
                                               DT_AUTORIZACAO_ADESAO = readr::col_datetime(format = ""),
@@ -37,7 +37,7 @@ read_itens <- function(source) {
   itens <- readr::read_csv(here::here(paste0("data/licitacoes/", source,"/item.csv")), 
                            col_types = list(
                              .default = readr::col_character(),
-                             NR_LICITACAO = readr::col_integer(),
+                             NR_LICITACAO = readr::col_number(),
                              ANO_LICITACAO = readr::col_integer(),
                              NR_LOTE = readr::col_integer(),
                              NR_ITEM = readr::col_integer(),
@@ -64,12 +64,12 @@ read_itens_contrato <- function(source) {
                            col_types = list(
                              .default = readr::col_character(),
                              ANO_LICITACAO = readr::col_integer(),
-                             NR_LICITACAO = readr::col_integer(),
-                             NR_CONTRATO = readr::col_integer(),
+                             NR_LICITACAO = readr::col_number(),
+                             NR_CONTRATO = readr::col_number(),
                              ANO_CONTRATO = readr::col_integer(),
                              NR_LOTE = readr::col_integer(),
                              NR_ITEM = readr::col_integer(),
-                             QT_ITENS = readr::col_integer(),
+                             QT_ITENS = readr::col_number(),
                              VL_ITEM = readr::col_double(),
                              VL_TOTAL_ITEM = readr::col_double(),
                              PC_BDI = readr::col_double(),
@@ -82,8 +82,8 @@ read_contratos <- function(source) {
                                col_types = list(
                                  .default = readr::col_character(),
                                  ANO_LICITACAO = readr::col_integer(),
-                                 NR_LICITACAO = readr::col_integer(),
-                                 NR_CONTRATO = readr::col_integer(),
+                                 NR_LICITACAO = readr::col_number(),
+                                 NR_CONTRATO = readr::col_number(),
                                  ANO_CONTRATO = readr::col_integer(),
                                  ANO_PROCESSO = readr::col_integer(),
                                  DT_INICIO_VIGENCIA = readr::col_datetime(format = ""),
@@ -123,7 +123,7 @@ read_alteracoes_contratos <- function(source) {
 read_licitantes <- function(source) {
   licitantes <- readr::read_csv(here::here(paste0("data/licitacoes/", source, "/licitante.csv")), 
                                 col_types = cols(.default = readr::col_character(),
-                                                 NR_LICITACAO = readr::col_integer(),
+                                                 NR_LICITACAO = readr::col_number(),
                                                  ANO_LICITACAO = readr::col_integer()))
 
 }

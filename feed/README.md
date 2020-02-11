@@ -17,7 +17,7 @@ b) Preencha as variáveis contidas no .env.sample também para o `.env`. Altere 
 
 ### Passo 3
 
-Do **diretório raiz desse repositório** execute o comando a seguir que irá levantar os serviços feed e postgres
+Caso não tenha feito ainda, partindo do **diretório raiz desse repositório** execute o comando a seguir que irá levantar os serviços feed, postgres e rbase
 
 ```
 docker-compose up -d
@@ -25,6 +25,7 @@ docker-compose up -d
 
 feed: é o serviço que irá criar as tabelas e popular o banco de dados.
 postgres: é o serviço com o banco de dados.
+rbase: é o serviço de processamento dos dados usando R.
 
 ### Passo 4
 
@@ -46,10 +47,18 @@ Pronto! Agora o banco de dados para verificar o resultado dessas operações.
 
 ### **Como acessar o banco de dados**
 
-**1. (jeito mais complicado) Para acessar o banco de dados localmente execute:**
+**1. (jeito mais simples) Para acessar o banco de dados (local ou remoto)**
+
+Execute o comando disponível pela cli:
 
 ```
-docker exec -it postgres psql -h localhost -d <POSTGRES_DB> -U <POSTGRES_USER>
+docker exec -it feed python3.6 /feed/manage.py shell
+```
+
+**2. (jeito mais complicado) Para acessar o banco de dados localmente execute:**
+
+```
+docker exec -it postgres-ta-na-mesa psql -h localhost -d <POSTGRES_DB> -U <POSTGRES_USER>
 ```
 
 As credenciais (<POSTGRES_DB> e <POSTGRES_USER>) devem ser preenchidas conforme você especificou no arquivo .env.
@@ -58,13 +67,7 @@ A senha (preenchida no .env) será pedida ao executar este comando.
 
 Obs: Se você tem o psql instalado em sua máquina local, também é possível acessar o banco de dados diretamente usando a porta 5433 da sua máquina local. (psql -h localhost -d <POSTGRES_DB> -U <POSTGRES_USER> -P 5433)
 
-**2. (jeito mais simples) Para acessar o banco de dados (local ou remoto)**
-
-Execute o comando disponível pela cli:
-
-```
-docker exec -it feed python3.6 /feed/manage.py shell
-```
+### Comandos úteis
 
 Obs:
 Para limpar o banco de dados execute:

@@ -20,6 +20,8 @@ CREATE TABLE IF NOT EXISTS "alteracoes_contrato" (
     "ds_justificativa" TEXT,
     "tipo_operacao_alteracao" VARCHAR(60),
     PRIMARY KEY("id_alteracoes_contrato"),
+    CONSTRAINT alteracoes_contrato_key UNIQUE (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_contrato, 
+    ano_contrato, tp_instrumento_contrato, id_evento_contrato, cd_tipo_operacao),
     FOREIGN KEY ("id_contrato") REFERENCES contrato ("id_contrato"),
     FOREIGN KEY("id_orgao") REFERENCES orgao("id_orgao")
 );

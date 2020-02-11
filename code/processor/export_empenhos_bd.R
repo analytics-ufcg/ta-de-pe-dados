@@ -6,16 +6,25 @@ Usage:
 Rscript export_empenhos_bd.R
 "
 
+host <- Sys.getenv("POSTGRES_HOST")
+user <- Sys.getenv("POSTGRES_USER")
+database <- Sys.getenv("POSTGRES_DB")
+port <- Sys.getenv("POSTGRES_PORT")
+password <- Sys.getenv("POSTGRES_PASSWORD")
+
+message(paste0("Host: ", host))
+message(paste0("User: ", user))
+
 source(here::here("code/utils/utils.R"))
 source(here::here("code/utils/constants.R"))
 source(here::here("code/empenhos/processa_empenhos.R"))
 
 
 con <- DBI::dbConnect(RPostgres::Postgres(),
-                      dbname = 'tanamesa', 
-                      host = 'localhost', 
-                      port = 7655,
-                      user = 'postgres',
+                      dbname = database, 
+                      host = host, 
+                      port = port,
+                      user = user,
                       password = 'secret')
 
 res <- DBI::dbGetQuery(con, "SELECT licitacao.id_licitacao, empenho_raw.* FROM licitacao INNER JOIN empenho_raw ON 
