@@ -24,7 +24,8 @@ def create():
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create_alteracoes_contrato.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create_item_contrato.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create_licitante.sql'])
-
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create_tipo_novidade.sql'])
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create_novidade.sql'])
 
 @click.command()
 def update_data():
@@ -40,6 +41,11 @@ def import_data():
 def import_empenho():
     """Importa dados de empenhos para as tabelas do Banco de dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import_empenho.sql'])
+
+@click.command()
+def import_novidade():
+    """Importa novidades para as tabelas do Banco de dados"""
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import_novidade.sql'])
 
 @click.command()
 def clean_empenho():
@@ -62,6 +68,7 @@ cli.add_command(create)
 cli.add_command(update_data)
 cli.add_command(import_data)
 cli.add_command(import_empenho)
+cli.add_command(import_novidade)
 cli.add_command(clean_empenho)
 cli.add_command(clean_data)
 cli.add_command(shell)
