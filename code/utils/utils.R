@@ -127,3 +127,24 @@ read_licitantes <- function(source) {
                                                  ANO_LICITACAO = readr::col_integer()))
 
 }
+
+read_licitacoes_processadas <- function() {
+  licitacoes <- readr::read_csv(here::here("./data/bd/info_licitacao.csv"), 
+                                col_types = list(
+                                  .default = readr::col_character(),
+                                  id_licitacao = readr::col_number(),
+                                  id_estado = readr::col_number(),
+                                  id_orgao = readr::col_number(),
+                                  nr_licitacao = readr::col_number(),
+                                  ano_licitacao = readr::col_number(),
+                                  vl_estimado_licitacao = readr::col_number(),
+                                  data_abertura = readr::col_datetime(format = ""),
+                                  data_homologacao = readr::col_datetime(format = ""),
+                                  data_adjudicacao = readr::col_datetime(format = ""),
+                                  vl_homologado = readr::col_number()
+                                ))
+}
+
+read_orgaos_processados <- function() {
+  orgao_municipio <- readr::read_csv(here::here("./data/bd/info_orgaos.csv"))
+}
