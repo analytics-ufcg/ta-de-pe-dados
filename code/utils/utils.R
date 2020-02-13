@@ -5,5 +5,5 @@
 #' @return Dataframe com identificador único
 generate_id <- function(df, constante, id) {
   df[, id] <- paste0(constante, df$ano_licitacao, seq.int(nrow(df)))
-  df
+  return(df)
 }

@@ -24,7 +24,9 @@ read_licitacoes <- function(source) {
                                   PC_TX_ESTIMADA = readr::col_double(),
                                   PC_TX_HOMOLOGADA = readr::col_double()
                                 ))
+  return(licitacoes)
 }
+
 
 #' Lê arquivo csv de itens de licitações
 #' @param source Ano correspondente ao arquivo para leitura
@@ -53,6 +55,7 @@ read_itens <- function(source) {
                              PC_TX_HOMOLOGADA = readr::col_double()
                              
                            ))
+  return(itens)
 }
 
 #' Lê arquivo csv de contratos
@@ -74,6 +77,7 @@ read_contratos <- function(source) {
                                  NR_DIAS_PRAZO = readr::col_integer()
                                  
                                ))
+  return(contratos)
   
 }
 
@@ -96,6 +100,7 @@ read_itens_contrato <- function(source) {
                              PC_BDI = readr::col_double(),
                              PC_ENCARGOS_SOCIAIS = readr::col_double()
                            ))
+  return(itens)
 }
 
 #' Lê arquivo csv de licitantes
@@ -106,6 +111,8 @@ read_licitantes <- function(source) {
                                 col_types = cols(.default = readr::col_character(),
                                                  NR_LICITACAO = readr::col_number(),
                                                  ANO_LICITACAO = readr::col_integer()))
+  return(licitantes)
+  
 }
 
 #' Lê arquivo csv de alterações de contratos
@@ -120,7 +127,43 @@ read_alteracoes_contratos <- function(source) {
                                                            NR_LICITACAO = readr::col_number(),
                                                            NR_CONTRATO = readr::col_number(),
                                                            ANO_CONTRATO = readr::col_integer()
-                                          )
-  )
+                                          ))
+  return(alteracoes_contratos)
   
+}
+
+read_orgaos <- function() {
+  orgaos <- readr::read_csv(here::here("data/orgaos/orgaos.csv"),
+                            col_types = list(
+                              .default = readr::col_character(),
+                              CD_ORGAO = readr::col_integer(),
+                              CD_MUNICIPIO_TCERS = readr::col_integer(),
+                              CD_MUNICIPIO_IBGE = readr::col_integer()
+                            ))
+  
+  return(orgaos)
+}
+
+read_licitacoes_processadas <- function() {
+  licitacoes_processadas <- readr::read_csv(here::here("./data/bd/info_licitacao.csv"), 
+                                col_types = list(
+                                  .default = readr::col_character(),
+                                  id_licitacao = readr::col_number(),
+                                  id_estado = readr::col_number(),
+                                  id_orgao = readr::col_number(),
+                                  nr_licitacao = readr::col_number(),
+                                  ano_licitacao = readr::col_number(),
+                                  vl_estimado_licitacao = readr::col_number(),
+                                  data_abertura = readr::col_datetime(format = ""),
+                                  data_homologacao = readr::col_datetime(format = ""),
+                                  data_adjudicacao = readr::col_datetime(format = ""),
+                                  vl_homologado = readr::col_number()
+                                ))
+  return(licitacoes_processadas)
+  
+}
+
+read_orgaos_processados <- function() {
+  orgao_municipio <- readr::read_csv(here::here("./data/bd/info_orgaos.csv"))
+  return(orgao_municipio)
 }
