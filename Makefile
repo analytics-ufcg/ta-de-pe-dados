@@ -21,7 +21,8 @@ help:
 build:
 	docker build -t crawler-ta-na-mesa scripts/	
 .PHONY: build
-run:	
+run:
+	docker run --rm -it -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_orgaos.py ./data
 	docker run --rm -it -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_all_data.py $(ano) ./data
 .PHONY: run
 process-data:	

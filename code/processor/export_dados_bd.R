@@ -123,7 +123,7 @@ info_alteracoes_contrato <- alteracoes %>%
 ## Municípios
 message("#### municípios...")
 source(here::here("code/orgaos/processa_orgaos.R"))
-info_orgaos <- import_licitacoes(anos) %>% 
+info_orgaos <- import_orgaos() %>% 
   processa_info_orgaos()
 
 
