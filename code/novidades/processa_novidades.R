@@ -1,7 +1,7 @@
 gather_licitacoes <- function(licitacoes, orgao_municipio) {
   licitacoes %<>% dplyr::left_join(orgao_municipio) %>% 
     dplyr::select(id_licitacao, data_abertura, data_homologacao, 
-                  data_adjudicacao, nome_municipio) %>% 
+                  data_adjudicacao, nome_municipio, ano_licitacao) %>% 
     tidyr::gather("evento","data",2:4)
 }
 
