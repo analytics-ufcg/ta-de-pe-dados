@@ -18,7 +18,7 @@ if (length(args) < min_num_args) {
 }
 
 anos <- unlist(strsplit(args[1], split=","))
-# anos = c(2017, 2018, 2019, 2020)
+ # anos = c(2017, 2018, 2019, 2020)
 
 source(here::here("code/utils/utils.R"))
 source(here::here("code/utils/join_utils.R"))
