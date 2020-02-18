@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS "novidade" (
     "id_original" BIGINT,
     "nome_municipio" VARCHAR(30),
     PRIMARY KEY("id_novidade"),
+    CONSTRAINT novidade_key UNIQUE (id_novidade),
     FOREIGN KEY("id_licitacao") REFERENCES licitacao("id_licitacao"),
     FOREIGN KEY("id_tipo") REFERENCES tipo_novidade("id_tipo")
 );
