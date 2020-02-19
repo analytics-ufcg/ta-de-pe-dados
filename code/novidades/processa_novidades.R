@@ -43,14 +43,7 @@ transforma_empenhos_em_novidades <- function(empenhos) {
       (evento == "vl_empenho" & valor < 0) ~ 7,
       (evento == "vl_liquidacao" & valor < 0) ~ 8,
       (evento == "vl_pagamento" & valor < 0) ~ 9
-    ), texto_novidade = dplyr::case_when(
-      id_tipo == 4 ~ paste0("Empenho realizado no valor de R$ ", valor),
-      id_tipo == 5 ~ paste0("Liquidação realizada no valor de R$ ", valor),
-      id_tipo == 6 ~ paste0("Pagamento realizado no valor de R$ ", valor),
-      id_tipo == 7 ~ paste0("Estorno de empenho realizado no valor de R$ ", valor),
-      id_tipo == 8 ~ paste0("Estorno de liquidação realizado no valor de R$ ", valor),
-      id_tipo == 9 ~ paste0("Estorno de pagamento realizado no valor de R$ ", valor),
-    ), data = dt_operacao, id_original = id_empenho) %>% 
+    ), texto_novidade = valor, data = dt_operacao, id_original = id_empenho) %>% 
     dplyr::select(id_tipo, id_licitacao, data, id_original, 
                   nome_municipio, texto_novidade)
 }
