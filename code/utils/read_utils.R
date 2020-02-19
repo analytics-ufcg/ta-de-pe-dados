@@ -167,3 +167,8 @@ read_orgaos_processados <- function() {
   orgao_municipio <- readr::read_csv(here::here("./data/bd/info_orgaos.csv"))
   return(orgao_municipio)
 }
+
+read_empenhos_processados <- function() {
+  empenhos <- readr::read_csv(here::here("./data/bd/info_empenhos.csv"))
+  return(empenhos)
+}
