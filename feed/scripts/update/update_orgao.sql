@@ -10,9 +10,13 @@ FROM temp_orgao
 ON CONFLICT (id_orgao)
 DO
   UPDATE
-  SET
-    id_estado = EXCLUDED.id_estado,    
-    nm_orgao = EXCLUDED.nm_orgao;
+  SET     
+    nm_orgao = EXCLUDED.nm_orgao,
+    sigla_orgao = EXCLUDED.sigla_orgao,
+    esfera = EXCLUDED.esfera,
+    home_page = EXCLUDED.home_page,
+    nome_municipio = EXCLUDED.nome_municipio,
+    cd_municipio_ibge = EXCLUDED.cd_municipio_ibge;
 
 DROP TABLE temp_orgao;
 COMMIT;
