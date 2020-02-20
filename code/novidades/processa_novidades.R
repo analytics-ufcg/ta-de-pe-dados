@@ -14,12 +14,13 @@ gather_empenhos <- function(empenhos, orgao_municipio) {
 }
 
 create_tipo_novidades <- function() {
-  id_tipo <- c(1, 2, 3, 4, 5, 6, 7, 8, 9)
+  id_tipo <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
   texto_evento <- c("Abertura de licitação", "Licitação homologada", 
                     "Licitação adjudicada", "Empenho",
                     "Liquidação", "Pagamento",
                     "Estorno de empenho", "Estorno de liquidação",
-                    "Estorno de pagamento")
+                    "Estorno de pagamento", "Início de vigência",
+                    "Fim de vigência")
   tipos_novidades <- data.frame(id_tipo, texto_evento)
 }
 
@@ -29,6 +30,16 @@ transforma_licitacao_em_novidades <- function(licitacoes) {
       evento == "data_abertura" ~ 1,
       evento == "data_homologacao" ~ 2,
       evento == "data_adjudicacao" ~ 3
+    ), id_original = id_licitacao, texto_novidade = NA) %>% 
+    dplyr::select(id_tipo, id_licitacao, data, id_original, 
+                  nome_municipio, texto_novidade)
+}
+
+transforma_contrato_em_novidades <- function(contratos) {
+  novidades <- contratos %>%
+    dplyr::mutate(id_tipo = dplyr::case_when(
+      evento == "início de vigência" ~ 1,
+      evento == "fim de vigência" ~ 2
     ), id_original = id_licitacao, texto_novidade = NA) %>% 
     dplyr::select(id_tipo, id_licitacao, data, id_original, 
                   nome_municipio, texto_novidade)
