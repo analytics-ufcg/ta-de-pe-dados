@@ -1,13 +1,11 @@
-gather_licitacoes <- function(licitacoes, orgao_municipio) {
-  licitacoes %<>% dplyr::left_join(orgao_municipio) %>% 
-    dplyr::select(id_licitacao, data_abertura, data_homologacao, 
+gather_licitacoes <- function(licitacoes) {
+    licitacoes %<>% dplyr::select(id_licitacao, data_abertura, data_homologacao, 
                   data_adjudicacao, nome_municipio, ano_licitacao) %>% 
     tidyr::gather("evento","data",2:4)
 }
 
-gather_empenhos <- function(empenhos, orgao_municipio) {
-  empenhos %<>% dplyr::left_join(orgao_municipio) %>% 
-    dplyr::select(id_empenho, id_licitacao, dt_operacao, 
+gather_empenhos <- function(empenhos) {
+  empenhos %<>% dplyr::select(id_empenho, id_licitacao, dt_operacao, 
                   vl_empenho, vl_liquidacao, vl_pagamento,
                   nome_municipio) %>% 
     tidyr::gather("evento","valor",4:6) %>% na.omit(data)
