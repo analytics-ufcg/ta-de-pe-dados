@@ -8,6 +8,7 @@ source(here::here("code/utils/utils.R"))
 source(here::here("code/utils/read_utils.R"))
 source(here::here("code/utils/constants.R"))
 source(here::here("code/novidades/processa_novidades.R"))
+source(here::here("code/utils/utils.R"))
 
 tipos_novidades <- create_tipo_novidades()
 
