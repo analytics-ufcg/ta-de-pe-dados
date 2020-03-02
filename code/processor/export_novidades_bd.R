@@ -19,7 +19,10 @@ licitacoes <- read_licitacoes_processadas() %>% gather_licitacoes(orgao_municipi
 empenhos <- read_empenhos_processados() %>%  gather_empenhos(orgao_municipio) %>% 
   transforma_empenhos_em_novidades()
 
-novidades <- dplyr::bind_rows(licitacoes, empenhos) %>% generate_id(TABELA_NOVIDADE, NOVIDADE_ID) %>% 
+contratos <- read_contratos_processados() %>% gather_contratos() %>% 
+  transforma_contrato_em_novidades()
+
+novidades <- dplyr::bind_rows(licitacoes, contratos, empenhos) %>% generate_id(TABELA_NOVIDADE, NOVIDADE_ID) %>% 
   dplyr::select(id_novidade, dplyr::everything())
 
 readr::write_csv(tipos_novidades, here::here("data/bd/tipo_novidade.csv"))
