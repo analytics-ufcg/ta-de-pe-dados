@@ -20,7 +20,7 @@ licitacoes <- read_licitacoes_processadas() %>% join_licitacao_e_orgao(orgao_mun
 empenhos <- read_empenhos_processados() %>% join_empenho_e_orgao(orgao_municipio) %>% gather_empenhos() %>% 
   transforma_empenhos_em_novidades()
 
-contratos <- read_contratos_processados() %>% gather_contratos() %>% 
+contratos <- read_contratos_processados() %>% join_contrato_e_orgao(orgao_municipio) %>% gather_contratos() %>% 
   transforma_contrato_em_novidades()
 
 novidades <- dplyr::bind_rows(licitacoes, contratos, empenhos) %>% generate_id(TABELA_NOVIDADE, NOVIDADE_ID) %>% 
