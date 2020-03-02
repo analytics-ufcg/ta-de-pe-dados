@@ -46,3 +46,11 @@ join_licitante_e_licitacao <- function(licitante_df, licitacao_df) {
   licitante_df %>% 
     dplyr::inner_join(licitacao_df, by = c("id_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade"))
 }
+
+join_empenho_e_orgao <- function(empenhos, orgao_municipio) {
+  empenhos %<>% dplyr::left_join(orgao_municipio)
+}
+
+join_licitacao_e_orgao <- function(licitacoes, orgao_municipio) {
+  licitacoes %<>% dplyr::left_join(orgao_municipio)
+}
