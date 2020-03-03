@@ -185,13 +185,12 @@ read_contratos_processados <- function() {
                                  id_orgao = readr::col_integer(),
                                  nr_contrato = readr::col_integer(),
                                  ano_contrato = readr::col_integer(),
-                                 nm_orgao = readr::col_integer(),
                                  nr_licitacao = readr::col_integer(),
                                  ano_licitacao = readr::col_integer(),
                                  ano_processo = readr::col_integer(),
                                  dt_inicio_vigencia = readr::col_datetime(),
                                  dt_final_vigencia = readr::col_datetime(),
-                                 vl_contrato = readr::col_integer(),
+                                 vl_contrato = readr::col_double(),
                                  vigencia_original_do_contrato = readr::col_integer()
                                ))
 }

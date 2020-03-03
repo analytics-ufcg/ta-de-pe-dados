@@ -55,9 +55,11 @@ transforma_empenhos_em_novidades <- function(empenhos) {
 }
 
 transforma_contrato_em_novidades <- function(contratos) {
-  novidades <- contratos %>%
+  novidades_ <- contratos %>%
     dplyr::mutate(id_tipo = dplyr::case_when(
-      evento == "início de vigência" ~ 10,
-      evento == "fim de vigência" ~ 11
-    ), id_original = id_contrato)
+      (evento == "dt_inicio_vigencia") ~ 10,
+      (evento == "dt_final_vigencia") ~ 11
+    ), id_original = id_contrato, texto_novidade = NA, data = valor) %>% 
+    dplyr::select(id_tipo, id_contrato, id_licitacao,
+                  data, texto_novidade)
 }

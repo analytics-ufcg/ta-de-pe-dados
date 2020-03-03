@@ -14,7 +14,7 @@ tipos_novidades <- create_tipo_novidades()
 
 orgao_municipio <- read_orgaos_processados() %>% dplyr::select(id_orgao, nome_municipio)
 
-licitacoes <- read_licitacoes_processadas() %>% join_licitacao_e_orgao(orgao_municipio) %>%  gather_licitacoes() %>% 
+licitacoes <- read_licitacoes_processadas() %>% join_licitacao_e_orgao(orgao_municipio) %>% gather_licitacoes() %>% 
   transforma_licitacao_em_novidades()
 
 empenhos <- read_empenhos_processados() %>% join_empenho_e_orgao(orgao_municipio) %>% gather_empenhos() %>% 
