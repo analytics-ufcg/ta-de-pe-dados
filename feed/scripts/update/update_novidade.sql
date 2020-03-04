@@ -15,7 +15,6 @@ DO
     id_licitacao = EXCLUDED.id_licitacao,
     data = EXCLUDED.data,
     id_original = EXCLUDED.id_original,
-    id_contrato = EXCLUDED.id_contrato,
     texto_novidade = EXCLUDED.texto_novidade,
     nome_municipio = EXCLUDED.nome_municipio;
 
