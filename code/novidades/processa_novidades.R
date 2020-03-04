@@ -60,6 +60,6 @@ transforma_contrato_em_novidades <- function(contratos) {
       (evento == "dt_inicio_vigencia") ~ 10,
       (evento == "dt_final_vigencia") ~ 11
     ), id_original = id_contrato, texto_novidade = NA, data = valor) %>% 
-    dplyr::select(id_tipo, id_contrato, id_licitacao,
+    dplyr::select(id_tipo, id_original, id_licitacao,
                   data, texto_novidade)
 }
