@@ -14,13 +14,16 @@ tipos_novidades <- create_tipo_novidades()
 
 orgao_municipio <- read_orgaos_processados() %>% dplyr::select(id_orgao, nome_municipio)
 
-licitacoes <- read_licitacoes_processadas() %>% join_licitacao_e_orgao(orgao_municipio) %>%  gather_licitacoes() %>% 
+licitacoes <- read_licitacoes_processadas() %>% join_licitacao_e_orgao(orgao_municipio) %>% gather_licitacoes() %>% 
   transforma_licitacao_em_novidades()
 
 empenhos <- read_empenhos_processados() %>% join_empenho_e_orgao(orgao_municipio) %>% gather_empenhos() %>% 
   transforma_empenhos_em_novidades()
 
-novidades <- dplyr::bind_rows(licitacoes, empenhos) %>% generate_id(TABELA_NOVIDADE, NOVIDADE_ID) %>% 
+contratos <- read_contratos_processados() %>% join_contrato_e_orgao(orgao_municipio) %>% gather_contratos() %>% 
+  transforma_contrato_em_novidades()
+
+novidades <- dplyr::bind_rows(licitacoes, contratos, empenhos) %>% generate_id(TABELA_NOVIDADE, NOVIDADE_ID) %>% 
   dplyr::select(id_novidade, dplyr::everything())
 
 readr::write_csv(tipos_novidades, here::here("data/bd/tipo_novidade.csv"))

@@ -15,6 +15,7 @@ DO
     id_licitacao = EXCLUDED.id_licitacao,
     data = EXCLUDED.data,
     id_original = EXCLUDED.id_original,
+    texto_novidade = EXCLUDED.texto_novidade,
     nome_municipio = EXCLUDED.nome_municipio;
 
 DROP TABLE temp_novidade;

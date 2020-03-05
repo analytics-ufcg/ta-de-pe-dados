@@ -54,3 +54,7 @@ join_empenho_e_orgao <- function(empenhos, orgao_municipio) {
 join_licitacao_e_orgao <- function(licitacoes, orgao_municipio) {
   licitacoes %<>% dplyr::left_join(orgao_municipio)
 }
+
+join_contrato_e_orgao <- function(contratos, orgao_municipio) {
+  contratos %<>% dplyr::left_join(orgao_municipio)
+}
