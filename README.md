@@ -85,6 +85,15 @@ make process-data-empenhos
 
 Os dados processados de empenhos estarão disponíveis no diretório `data/bd`.
 
+Para processar dados de novidades é possível executar o comando:
+Obs: Execute esse processamento após ter gerado todo o pré-processamento para os dados de licitações, contratos e empenhos (seguindo os passos anteriores).
+
+```
+make process-data-novidades
+```
+
+Os dados processados de novidades estarão disponíveis no diretório `data/bd`.
+
 ### Como executar outros scripts?
 
 Para executar outros scripts criados usando R no Serviço r-process basta alterar o caminho para o arquivo no comando docker.

@@ -17,6 +17,8 @@ help:
 	@echo "    "	
 	@echo "    process-data-empenhos - Executa o processamento de dados de empenhos.
 	@echo "    "	
+	@echo "    process-data-novidades - Executa o processamento de dados de novidades.
+	@echo "    "	
 .PHONY: help
 build:
 	docker build -t crawler-ta-na-mesa scripts/	
@@ -31,3 +33,6 @@ process-data:
 process-data-empenhos:	
 	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_empenhos_bd.R"
 .PHONY: process-data-empenhos
+process-data-novidades:		
+	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_novidades_bd.R"
+.PHONY: process-data-novidades
