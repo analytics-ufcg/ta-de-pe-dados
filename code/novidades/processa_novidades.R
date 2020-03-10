@@ -14,7 +14,8 @@ gather_empenhos <- function(empenhos) {
 gather_contratos <- function(contratos) {
   contratos %<>% 
     dplyr::select(id_contrato, id_licitacao,
-                  dt_inicio_vigencia, dt_final_vigencia) %>% 
+                  dt_inicio_vigencia, dt_final_vigencia,
+                  nome_municipio) %>% 
     tidyr::gather("evento","valor",3:4) %>% na.omit(data)
 }
 
@@ -61,5 +62,5 @@ transforma_contrato_em_novidades <- function(contratos) {
       (evento == "dt_final_vigencia") ~ 11
     ), id_original = id_contrato, texto_novidade = NA, data = valor) %>% 
     dplyr::select(id_tipo, id_original, id_licitacao,
-                  data, texto_novidade)
+                  data, nome_municipio, texto_novidade)
 }
