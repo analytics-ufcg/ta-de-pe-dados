@@ -11,7 +11,20 @@ Este README é dividido em três partes principais.
 
 Todos os serviços utilizados pelo Tá na Mesa utilizam docker para configuração do ambiente e execução do script. 
 
-Instale o [docker](https://docs.docker.com/install/) e o [docker-compose](https://docs.docker.com/compose/install/).
+Instale o [docker](https://docs.docker.com/install/) e o [docker-compose](https://docs.docker.com/compose/install/). Tenha certeza que você também tem o [Make](https://www.gnu.org/software/make/) instalado.
+
+O processamento de dados do Tá na Mesa tem os seguintes passos:
+
+1. Download dos dados brutos no TCE-RS
+2. Processamento dos dados de licitações e contratos
+3. Importação dos dados de licitações e contratos para o BD.
+4. Importação dos dados de empenhos (vindos diretamento do TCE) para o BD.
+5. Processamento dos dados de empenhos de merenda.
+6. Importação dos dados de empenhos de merenda para o BD.
+7. Processamento dos dados de novidades.
+8. Importação dos dados de novidades para o BD.
+
+Para realizar estes passos siga o tutorial:
 
 ## Crawler Tá na Mesa
 
@@ -92,6 +105,13 @@ b) Importe os dados para as tabelas
 ```
 make feed-import-data
 ```
+
+c) Import os dados de empenhos (vindos diretamento do TCE)
+
+```
+make feed-import-empenho-raw
+```
+
 Obs: Este comando pode demorar bastante devido ao carregamento dos Empenhos.
 
 ### Passo 5
@@ -138,12 +158,27 @@ make feed-shell
 
 ## Outros comandos úteis
 
-TODO:
+Para dropar as tabelas dos dados processados pelo Tá na Mesa:
 
+```
+make feed-clean-data
+```
+
+Para dropar as tabelas dos dados de empenhos baixados no TCE e upados para o banco de dados:
+
+```
+make feed-clean-empenho
+```
+
+Para executar o script de atualização dos dados (considera que os CSV's na pasta `bd` já foram processados):
+
+```
+docker exec -it feed python3.6 /feed/manage.py update-data
+```
 
 ## Como executar outros scripts?
 
-Para executar outros scripts criados usando R no Serviço r-process basta alterar o caminho para o arquivo no comando docker.
+Para executar outros scripts criados usando R no Serviço **Processa dados Tá na Mesa** basta alterar o caminho para o arquivo no comando docker.
 
 Exemplo:
 ```

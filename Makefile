@@ -21,13 +21,19 @@ help:
 	@echo "    "	
 	@echo "    feed-create - Cria as tabelas usadas no Tá na Mesa no Banco de Dados.
 	@echo "    "	
-	@echo "    feed-import-data - Importa dados dos CSV's (licitações e contratos) para o Banco de dados 
+	@echo "    feed-import-data - Importa dados dos CSV's (licitações e contratos) para o Banco de dados.
 	@echo "    "	
-	@echo "    feed-import-empenho - Importa dados do CSV processado de empenhos para o Banco de dados 
+	@echo "    feed-import-empenho - Importa dados do CSV processado de empenhos para o Banco de dados.
 	@echo "    "
-	@echo "    feed-import-novidade - Importa dados do CSV processado de novidades para o Banco de dados 
+	@echo "    feed-import-empenho-raw - Importa dados do CSV de dados brutos vindos do TCE.
 	@echo "    "
-	@echo "    feed-shell - Abre terminal psql com o banco cadastrado nas variáveis de ambiente
+	@echo "    feed-import-novidade - Importa dados do CSV processado de novidades para o Banco de dados.
+	@echo "    "
+	@echo "    feed-shell - Abre terminal psql com o banco cadastrado nas variáveis de ambiente.
+	@echo "    "
+	@echo "    feed-clean-data - Dropa as tabelas processadas pelo Tá na Mesa (licitações, contratos e novidades).
+	@echo "    "
+	@echo "    feed-clean-empenho - Dropa as tabela de empenho (vinda do TCE) carregada no BD do Tá na Mesa.
 	@echo "    "
 .PHONY: help
 crawler-build:
@@ -55,9 +61,18 @@ feed-import-data:
 feed-import-empenho:	
 	docker exec -it feed python3.6 /feed/manage.py import-empenho
 .PHONY: feed-import-empenho
+feed-import-empenho-raw:	
+	docker exec -it feed python3.6 /feed/manage.py import-empenho-raw
+.PHONY: feed-import-empenho-raw
 feed-import-novidade:	
 	docker exec -it feed python3.6 /feed/manage.py import-novidade
 .PHONY: feed-import-novidade
 feed-shell:	
 	docker exec -it feed python3.6 /feed/manage.py shell
 .PHONY: feed-shell
+feed-clean-data:	
+	docker exec -it feed python3.6 /feed/manage.py clean-data
+.PHONY: feed-clean-data
+feed-clean-empenho:	
+	docker exec -it feed python3.6 /feed/manage.py clean-empenho
+.PHONY: feed-clean-empenho

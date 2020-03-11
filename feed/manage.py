@@ -46,6 +46,11 @@ def import_data():
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_data.sql'])
 
 @click.command()
+def import_empenho_raw():
+    """Importa dados (licitações e contratos) para as tabelas do Banco de dados"""
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_empenho_raw.sql'])
+
+@click.command()
 def import_empenho():
     """Importa dados de empenhos para as tabelas do Banco de dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_empenho.sql'])
@@ -80,6 +85,7 @@ cli.add_command(import_novidade)
 cli.add_command(clean_empenho)
 cli.add_command(clean_data)
 cli.add_command(shell)
+cli.add_command(import_empenho_raw)
 
 if __name__ == '__main__':
     cli()
