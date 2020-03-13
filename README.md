@@ -2,102 +2,197 @@
 
 Repositório de acesso a dados de licitações, empenhos e contratos do Tribunal de Contas do Estado do Rio Grande do Sul.
 
-Este readme é dividido em duas partes principais. O serviço que baixa os dados do TSE (**Serviço crawler**) e o serviço que processa os dados do TSE para o formato usado no tá na mesa (**Serviço r-process**). As duas seções seguintes explicam o uso destes serviços.
+Este README é dividido em três partes principais.
 
-## Para baixar os dados usando Docker - Serviço crawler
+- Explicação sobre o serviço que baixa os dados do TSE (**Crawler Tá na Mesa**)
+- Explicação sobre o serviço que processa os dados do TSE para o formato usado no tá na mesa (**Processa dados Tá na Mesa**).
+- Explicação sobre o serviço que gerencia o carregamento dos dados processados no banco de dados (**Feed Tá na Mesa**).
 
-O Docker irá facilitar a instalação dasa depedências e a configuração do ambiente de execução do crawler.
+## Antes de tudo
 
-### Passo 1
-Instale o [docker](https://docs.docker.com/install/) e o [docker-compose](https://docs.docker.com/compose/install/).
+Todos os serviços utilizados pelo Tá na Mesa utilizam docker para configuração do ambiente e execução do script.
 
-### Passo 2
+Instale o [docker](https://docs.docker.com/install/) e o [docker-compose](https://docs.docker.com/compose/install/). Tenha certeza que você também tem o [Make](https://www.gnu.org/software/make/) instalado.
+
+O processamento de dados do Tá na Mesa tem os seguintes passos:
+
+1. Download dos dados brutos no TCE-RS
+2. Processamento dos dados de licitações e contratos
+3. Importação dos dados de licitações e contratos para o BD.
+4. Importação dos dados de empenhos (vindos diretamento do TCE) para o BD.
+5. Processamento dos dados de empenhos de merenda.
+6. Importação dos dados de empenhos de merenda para o BD.
+7. Processamento dos dados de novidades.
+8. Importação dos dados de novidades para o BD.
+
+Para realizar estes passos siga o tutorial:
+
+## Crawler Tá na Mesa
+
+A primeira etapa para o setup do repositório é baixar os dados brutos de licitações, contratos e empenhos disponibilizados pelo [TCE-RS](http://dados.tce.rs.gov.br/) na forma de dados abertos.
+
+Para isto usaremos o **Crawler Tá na Mesa**
+
+### Passo 1.1
+
 Faça o build da imagem docker com as dependências do crawler
-```
-make build
-```
 
-Caso você não tenha o make instalado é possível executar o comando diretamente:
-
-```
-docker build -t crawler-ta-na-mesa scripts/	
+```shell
+make build-crawler
 ```
 
-### Passo 3
-Execute o crawler para baixar os dados
+Obs: todos comandos citados nesse README utilizam o make como facilitador para execução. Caso você queira executar os comandos docker diretamente confira o código correspondende a seu comando no arquivo `Makefile` na raiz desse repositório.
 
-```
-make run ano=<ano_para_baixar>
-```
+### Passo 1.2
 
-Substitua <ano_para_baixar> com um ano de sua escolha para download.
+Execute o **Crawler Tá na Mesa** para baixar os dados.
 
-É também possível executar o comando docker diretamente
-
-```
-docker run --rm -it -v `pwd`/data/:/code/scripts/data crawler-ta-na-mesa python3.6 fetch_all_data.py <ano_para_baixar> ./data
+```shell
+make run-crawler ano=<ano_para_baixar>
 ```
 
-Substitua <ano_para_baixar> com um ano de sua escolha para download.
+Substitua <ano_para_baixar> com um ano de sua escolha para download (2018, 2019 e 2020 foram os anos já testados para download).
 
-## Para realizar o processamento de dados - Serviço r-process
+## Serviços de processamento dos dados
 
-O docker irá facilitar a execução do processamento e limpeza de dados do TCE para o formato utilizado na aplicação Tá na Mesa!
+Nesta etapa iremos levantar os demais serviços usados no processamento de dados para o Tá na Mesa.
 
-### Passo 1
+### Passo 2.1
 
-Será preciso configurar as variáveis de ambiente necessárias para o serviço executar:
+Será preciso configurar as variáveis de ambiente necessárias para os serviços executarem:
 
 a) Crie uma cópia do arquivo .env.sample no **diretório raiz desse repositório** e renomeie para `.env` (deve também estar no diretório raiz desse repositório)
 
 b) Preencha as variáveis contidas no .env.sample também para o `.env`. Altere os valores conforme sua necessidade. Atente que se você está usando o banco local, o valor da variável POSTGRES_HOST deve ser *postgres*, que é o nome do serviço que será levantado pelo docker-compose.
 
-### Passo 2
+### Passo 2.2
 
 Do **diretório raiz desse repositório** execute o comando a seguir que irá levantar os serviços:
 
-```
+```shell
 docker-compose up -d
 ```
 
-### Passo 3
-Uma vez baixados os dados para os anos de interesse. Execute o script de processamento:
+É possível verificar os serviços em execução:
 
-Execute o comando auxiliar
+```shell
+docker ps
 ```
+
+### Passo 2.3
+
+Conforme explicado na seção anterior é preciso fazer o download dos dados para os anos de interesse usando o `Crawler Tá na Mesa`
+
+Execute o script de processamento dos dados gerais vindos do TSE:
+
+```shell
 make process-data anos=2018,2019,2020
 ```
-Obs: o parâmetro anos pode conter um ou mais anos (estes separados por vírgula).
 
-Ou se preferir execute o comando diretamente no docker
-```
-docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_dados_bd.R 2018,2019,2020"
-```
+Obs: o parâmetro anos pode conter um ou mais anos (estes separados por vírgula).
 
 Os dados processados estarão disponíveis no diretório `data/bd`.
 
-Para processar dados de empenhos é possível executar o comando:
-Obs: Execute esse processamento após ter populado o banco de dados usando os passos descritos no README do diretório **feed**.
+### Passo 2.4
 
+Importe os dados que foram processados (licitações e contratos) e os dados brutos de empenho no BD fazendo:
+
+a) Crie as tabelas necessárias
+
+```shell
+make feed-create
 ```
+
+b) Importe os dados para as tabelas
+
+```shell
+make feed-import-data
+```
+
+c) Import os dados de empenhos (vindos diretamento do TCE)
+
+```shell
+make feed-import-empenho-raw
+```
+
+Obs: Este comando pode demorar bastante devido ao carregamento dos Empenhos.
+
+### Passo 2.5
+
+Processe os dados de empenhos:
+
+```shell
 make process-data-empenhos
 ```
 
 Os dados processados de empenhos estarão disponíveis no diretório `data/bd`.
 
-### Como executar outros scripts?
+Importe os dados de empenhos processados para o BD:
 
-Para executar outros scripts criados usando R no Serviço r-process basta alterar o caminho para o arquivo no comando docker.
+```shell
+make feed-import-empenho
+```
+
+### Passo 2.6
+
+Processe os dados de novidades:
+
+```shell
+make process-data-novidades
+```
+
+Os dados processados de empenhos estarão disponíveis no diretório `data/bd`.
+
+Importe os dados de novidades para o BD:
+
+```shell
+make feed-import-novidade
+```
+
+Pronto! Todo o processamento de dados e carregamento para o banco de dados foi realizado.
+
+## Como acessar o banco de dados
+
+Uma vez que o serviços de preocessamento tiverem sido levantados (`docker-compose up -d`). O banco de dados também terá sido levantado.
+
+Para acessar basta:
+
+```shell
+make feed-shell
+```
+
+## Outros comandos úteis
+
+Para dropar as tabelas dos dados processados pelo Tá na Mesa:
+
+```shell
+make feed-clean-data
+```
+
+Para dropar as tabelas dos dados de empenhos baixados no TCE e upados para o banco de dados:
+
+```shell
+make feed-clean-empenho
+```
+
+Para executar o script de atualização dos dados (considera que os CSV's na pasta `bd` já foram processados):
+
+```shell
+docker exec -it feed python3.6 /feed/manage.py update-data
+```
+
+## Como executar outros scripts
+
+Para executar outros scripts criados usando R no Serviço **Processa dados Tá na Mesa** basta alterar o caminho para o arquivo no comando docker.
 
 Exemplo:
-```
+
+```shell
 docker exec -it r-container sh -c "cd /app/code/ideb && Rscript export_ideb.R"
 ```
 
 Este comando irá executar o script de exportação dos dados do IDEB.
 
-### Como adicionar novos pacotes?
-Caso algum pacote novo tenha que ser adicionado ao r-container, basta adicionar o nome do pacote na seção de instalação de dependências do Dockerfile presente no diretório `code`. Existe um exemplo para o pacote here neste Dockerfile.
+## Como adicionar novos pacotes
 
-## Como levantar o banco de dados?
-Para levantar o banco de dados siga os passos descritos no README do diretório **feed**. Lá serão apresentados os passos necessários para a utilização do serviço de configuração e alimentação do banco de dados. Atente-se para não repetir passos como o levantamento dos serviços usando o docker-compose.
+Caso algum pacote novo tenha que ser adicionado ao r-container, basta adicionar o nome do pacote na seção de instalação de dependências do Dockerfile presente no diretório `code`. Existe um exemplo para o pacote here neste Dockerfile.
