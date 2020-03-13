@@ -2,39 +2,25 @@ ano=2019
 
 .DEFAULT_GOAL : help
 help:
-	@echo "Ajuda do Serviço de dados do Tá na Mesa"
-	@echo "Este arquivo irá ajudar a baixar e processar os dados usados no Tá na Mesa"	
-	@echo "Você só precisa executar os comandos fazendo 'make <command>'"
-	@echo "    "	
-	@echo "    help - Mostra esta mensagem de ajuda"
-	@echo "    "	
-	@echo "    crawler-build - Realiza o build da imagem com as dependência do crawler do tá na mesa"
-	@echo "    "	
-	@echo "    crawler-run ano=<ano> - Executa a cli do crawler para o ano passado como parâmetro. (2019 é o default)"
-	@echo "    "	
-	@echo "    process-data anos=2017,2018,2019,2020 - Executa o módulo de processamento de dados brutos para o formato usado na aplicação."
-	@echo "    Assume um ou mais anos separados por vírgula. Assume que os dados foram baixados."
-	@echo "    "	
-	@echo "    process-data-empenhos - Executa o processamento de dados de empenhos.
-	@echo "    "	
-	@echo "    process-data-novidades - Executa o processamento de dados de novidades.
-	@echo "    "	
-	@echo "    feed-create - Cria as tabelas usadas no Tá na Mesa no Banco de Dados.
-	@echo "    "	
-	@echo "    feed-import-data - Importa dados dos CSV's (licitações e contratos) para o Banco de dados.
-	@echo "    "	
-	@echo "    feed-import-empenho - Importa dados do CSV processado de empenhos para o Banco de dados.
-	@echo "    "
-	@echo "    feed-import-empenho-raw - Importa dados do CSV de dados brutos vindos do TCE.
-	@echo "    "
-	@echo "    feed-import-novidade - Importa dados do CSV processado de novidades para o Banco de dados.
-	@echo "    "
-	@echo "    feed-shell - Abre terminal psql com o banco cadastrado nas variáveis de ambiente.
-	@echo "    "
-	@echo "    feed-clean-data - Dropa as tabelas processadas pelo Tá na Mesa (licitações, contratos e novidades).
-	@echo "    "
-	@echo "    feed-clean-empenho - Dropa as tabela de empenho (vinda do TCE) carregada no BD do Tá na Mesa.
-	@echo "    "
+	@echo "\nTá na mesa - Serviço de dados"
+	@echo "Este arquivo ajuda no download e processamento dos dados usados no Tá na Mesa\n"
+	@echo "COMO USAR:\n\t'make <comando>'\n"
+	@echo "COMANDOS:"
+	@echo "\thelp \t\t\t\tMostra esta mensagem de ajuda"
+	@echo "\tcrawler-build \t\t\tRealiza o build da imagem com as dependência do crawler do tá na mesa"
+	@echo "\tcrawler-run ano=<ano> \t\tExecuta a cli do crawler para o ano passado como parâmetro. (2019 é o default)"
+	@echo "\tprocess-data anos=<ano1,ano2> \tExecuta o módulo de processamento de dados brutos para o formato usado na aplicação."
+	@echo "\t\t\t\t\tAssume um ou mais anos separados por vírgula. Assume que os dados foram baixados."	
+	@echo "\tprocess-data-empenhos \t\tExecuta o processamento de dados de empenhos."
+	@echo "\tprocess-data-novidades \t\tExecuta o processamento de dados de novidades."
+	@echo "\tfeed-create \t\t\tCria as tabelas usadas no Tá na Mesa no Banco de Dados."
+	@echo "\tfeed-import-data \t\tImporta dados dos CSV's (licitações e contratos) para o Banco de dados."
+	@echo "\tfeed-import-empenho \t\tImporta dados do CSV processado de empenhos para o Banco de dados."
+	@echo "\tfeed-import-empenho-raw \tImporta dados do CSV de dados brutos vindos do TCE."
+	@echo "\tfeed-import-novidade \t\tImporta dados do CSV processado de novidades para o Banco de dados."
+	@echo "\tfeed-shell \t\t\tAbre terminal psql com o banco cadastrado nas variáveis de ambiente."
+	@echo "\tfeed-clean-data \t\tRemove as tabelas processadas pelo Tá na Mesa (licitações, contratos e novidades)."
+	@echo "\tfeed-clean-empenho \t\tRemove as tabela de empenho (vinda do TCE) carregada no BD do Tá na Mesa."
 .PHONY: help
 crawler-build:
 	docker build -t crawler-ta-na-mesa scripts/	
