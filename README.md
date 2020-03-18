@@ -38,7 +38,7 @@ Para isto usaremos o **Crawler Tá na Mesa**
 Faça o build da imagem docker com as dependências do crawler
 
 ```shell
-make build-crawler
+make crawler-build
 ```
 
 Obs: todos comandos citados nesse README utilizam o make como facilitador para execução. Caso você queira executar os comandos docker diretamente confira o código correspondende a seu comando no arquivo `Makefile` na raiz desse repositório.
@@ -48,7 +48,7 @@ Obs: todos comandos citados nesse README utilizam o make como facilitador para e
 Execute o **Crawler Tá na Mesa** para baixar os dados.
 
 ```shell
-make run-crawler ano=<ano_para_baixar>
+make crawler-run ano=<ano_para_baixar>
 ```
 
 Substitua <ano_para_baixar> com um ano de sua escolha para download (2018, 2019 e 2020 foram os anos já testados para download).
