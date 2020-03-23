@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS contrato;
 
 CREATE TABLE IF NOT EXISTS "contrato" ( 
-    "id_contrato" VARCHAR(20),
+    "id_contrato" INTEGER,
     "id_licitacao" INTEGER,
     "id_orgao" INTEGER,
     "nr_contrato" INTEGER,

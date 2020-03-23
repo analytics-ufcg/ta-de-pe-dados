@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS alteracoes_contrato;
 
 CREATE TABLE IF NOT EXISTS "alteracoes_contrato" (    
     "id_alteracoes_contrato" VARCHAR(20),
-    "id_contrato" VARCHAR(20),
+    "id_contrato" INTEGER,
     "id_orgao" INTEGER,
     "ano_licitacao" INTEGER,
     "nr_licitacao" VARCHAR(20),
