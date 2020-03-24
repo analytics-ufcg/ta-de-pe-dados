@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS item_contrato;
 
 CREATE TABLE IF NOT EXISTS "item_contrato" (
     "id_item_contrato" VARCHAR(20),
-    "id_contrato" VARCHAR(20),
+    "id_contrato" INTEGER,
     "id_orgao" INTEGER,
     "id_licitacao" INTEGER,
     "nr_lote" INTEGER,
@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS "item_contrato" (
     "qt_itens_contrato" REAL,
     "vl_item_contrato" REAL,
     "vl_total_item_contrato" REAL,
+    "ds_item" VARCHAR(2000),
     PRIMARY KEY ("id_item_contrato"),
     CONSTRAINT item_contrato_key UNIQUE (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, 
     tp_instrumento_contrato, nr_lote, nr_item),
