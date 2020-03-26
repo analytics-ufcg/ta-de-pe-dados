@@ -15,7 +15,7 @@ gather_contratos <- function(contratos) {
   contratos %<>% 
     dplyr::select(id_contrato, id_licitacao,
                   dt_inicio_vigencia, dt_final_vigencia,
-                  nome_municipio) %>% 
+                  nome_municipio, nr_contrato, ano_contrato) %>% 
     tidyr::gather("evento","valor",3:4) %>% na.omit(data)
 }
 
@@ -25,8 +25,8 @@ create_tipo_novidades <- function() {
                     "Licitação adjudicada", "Empenho",
                     "Liquidação", "Pagamento",
                     "Estorno de empenho", "Estorno de liquidação",
-                    "Estorno de pagamento", "Início de vigência",
-                    "Fim de vigência")
+                    "Estorno de pagamento", "Início de vigência de contrato",
+                    "Fim de vigência de contrato")
   tipos_novidades <- data.frame(id_tipo, texto_evento)
 }
 
@@ -50,7 +50,7 @@ transforma_empenhos_em_novidades <- function(empenhos) {
       (evento == "vl_empenho" & valor < 0) ~ 7,
       (evento == "vl_liquidacao" & valor < 0) ~ 8,
       (evento == "vl_pagamento" & valor < 0) ~ 9
-    ), texto_novidade = valor, data = dt_operacao, id_original = id_empenho) %>% 
+    ), texto_novidade = as.character(valor), data = dt_operacao, id_original = id_empenho) %>% 
     dplyr::select(id_tipo, id_licitacao, data, id_original, 
                   nome_municipio, texto_novidade)
 }
@@ -60,7 +60,7 @@ transforma_contrato_em_novidades <- function(contratos) {
     dplyr::mutate(id_tipo = dplyr::case_when(
       (evento == "dt_inicio_vigencia") ~ 10,
       (evento == "dt_final_vigencia") ~ 11
-    ), id_original = id_contrato, texto_novidade = NA, data = valor) %>% 
+    ), texto_novidade = paste0(nr_contrato, "/", ano_contrato), id_original = id_contrato, data = valor) %>% 
     dplyr::select(id_tipo, id_original, id_licitacao,
                   data, nome_municipio, texto_novidade)
 }
