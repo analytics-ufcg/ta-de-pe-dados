@@ -50,7 +50,7 @@ transforma_empenhos_em_novidades <- function(empenhos) {
       (evento == "vl_empenho" & valor < 0) ~ 7,
       (evento == "vl_liquidacao" & valor < 0) ~ 8,
       (evento == "vl_pagamento" & valor < 0) ~ 9
-    ), texto_novidade = valor, data = dt_operacao, id_original = id_empenho) %>% 
+    ), texto_novidade = as.character(valor), data = dt_operacao, id_original = id_empenho) %>% 
     dplyr::select(id_tipo, id_licitacao, data, id_original, 
                   nome_municipio, texto_novidade)
 }
