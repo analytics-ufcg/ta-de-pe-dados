@@ -15,7 +15,7 @@ gather_contratos <- function(contratos) {
   contratos %<>% 
     dplyr::select(id_contrato, id_licitacao,
                   dt_inicio_vigencia, dt_final_vigencia,
-                  nome_municipio, nr_contrato) %>% 
+                  nome_municipio, nr_contrato, ano_contrato) %>% 
     tidyr::gather("evento","valor",3:4) %>% na.omit(data)
 }
 
@@ -60,7 +60,7 @@ transforma_contrato_em_novidades <- function(contratos) {
     dplyr::mutate(id_tipo = dplyr::case_when(
       (evento == "dt_inicio_vigencia") ~ 10,
       (evento == "dt_final_vigencia") ~ 11
-    ), texto_novidade = nr_contrato, id_original = id_contrato, data = valor) %>% 
+    ), texto_novidade = paste0(nr_contrato, "/", ano_contrato), id_original = id_contrato, data = valor) %>% 
     dplyr::select(id_tipo, id_original, id_licitacao,
                   data, nome_municipio, texto_novidade)
 }
