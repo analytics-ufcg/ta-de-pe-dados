@@ -18,7 +18,7 @@ if (length(args) < min_num_args) {
 }
 
 anos <- unlist(strsplit(args[1], split=","))
-# anos = c(2017, 2018, 2019, 2020)
+# anos = c(2018, 2019, 2020)
 
 source(here::here("code/utils/utils.R"))
 source(here::here("code/utils/join_utils.R"))
@@ -91,6 +91,15 @@ info_contratos <-
   generate_id(TABELA_CONTRATO, CONTRATO_ID) %>% 
   dplyr::select(id_contrato, id_licitacao, id_orgao, dplyr::everything())
 
+## Fornecedores nos contratos
+message("#### fornecedores (contratos)...")
+source(here("code/contratos/processa_fornecedores.R"))
+
+info_fornecedores_contratos <- import_fornecedores(anos) %>% 
+  processa_info_fornecedores() %>% 
+  join_contratos_e_fornecedores(info_contratos %>% 
+                                  dplyr::select(nr_documento_contratado))
+
 ## Itens de contratos
 message("#### itens de contratos...")
 source(here("code/contratos/processa_itens_contrato.R"))
@@ -136,6 +145,7 @@ readr::write_csv(info_licitacoes, here("data/bd/info_licitacao.csv"))
 readr::write_csv(info_licitantes, here("data/bd/info_licitante.csv"))
 readr::write_csv(info_item_licitacao, here("data/bd/info_item_licitacao.csv"))
 readr::write_csv(info_contratos, here("data/bd/info_contrato.csv"))
+readr::write_csv(info_fornecedores_contratos, here("data/bd/info_fornecedores_contrato.csv"))
 readr::write_csv(info_item_contrato, here("data/bd/info_item_contrato.csv"))
 readr::write_csv(info_alteracoes_contrato, here("data/bd/info_alteracao_contrato.csv"))
 readr::write_csv(info_orgaos, here("data/bd/info_orgaos.csv"))

@@ -132,6 +132,18 @@ read_alteracoes_contratos <- function(source) {
   
 }
 
+#' Lê arquivo csv de fornecedores de contratos
+#' @param source Ano correspondente ao arquivo para leitura
+#' @return Dataframe de fornecedores de contratos
+read_fornecedores_contratos <- function(source) {
+  forencedores <- readr::read_csv(here::here(paste0("data/contratos/", source, "/pessoas.csv")),
+                                  col_types = list(
+                                    .default = readr::col_character())
+                                  )
+  return(forencedores)
+  
+}
+
 read_orgaos <- function() {
   orgaos <- readr::read_csv(here::here("data/orgaos/orgaos.csv"),
                             col_types = list(
