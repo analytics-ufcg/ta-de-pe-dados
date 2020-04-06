@@ -27,5 +27,6 @@ CREATE TABLE IF NOT EXISTS "contrato" (
     PRIMARY KEY("id_contrato"),
     CONSTRAINT contrato_key UNIQUE (id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato),
     FOREIGN KEY("id_orgao") REFERENCES orgao("id_orgao"),
-    FOREIGN KEY("id_licitacao") REFERENCES licitacao("id_licitacao")
+    FOREIGN KEY("id_licitacao") REFERENCES licitacao("id_licitacao"),
+    FOREIGN KEY("nr_documento_contratado") REFERENCES fornecedor("nr_documento")
 );

@@ -98,7 +98,8 @@ source(here("code/contratos/processa_fornecedores.R"))
 info_fornecedores_contratos <- import_fornecedores(anos) %>% 
   processa_info_fornecedores() %>% 
   join_contratos_e_fornecedores(info_contratos %>% 
-                                  dplyr::select(nr_documento_contratado))
+                                  dplyr::select(nr_documento_contratado)) %>% 
+  dplyr::distinct(nr_documento, .keep_all = TRUE)
 
 ## Itens de contratos
 message("#### itens de contratos...")
