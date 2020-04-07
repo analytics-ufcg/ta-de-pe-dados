@@ -21,12 +21,15 @@ gather_contratos <- function(contratos) {
 
 create_tipo_novidades <- function() {
   id_tipo <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
-  texto_evento <- c("Abertura de licitação", "Licitação homologada", 
-                    "Licitação adjudicada", "Empenho",
-                    "Liquidação", "Pagamento",
-                    "Estorno de empenho", "Estorno de liquidação",
-                    "Estorno de pagamento", "Início de vigência de contrato",
-                    "Fim de vigência de contrato")
+  texto_evento <- c("Abetura da licitação %s", "Licitação %s homologada", 
+                    "Licitação %s adjudicada", "Empenho de %s da licitação %s",
+                    "Liquidação de %s do empenho da licitação %s", 
+                    "Pagamento de %s de empenho da licitação %s",
+                    "Estorno de %s do empenho da licitação %s", 
+                    "Estorno de %s da liquidação da licitação %s",
+                    "Estorno de %s de pagamento da licitação %s", 
+                    "Início de vigência do contrato %s da licitação %s",
+                    "Fim de vigência do contrato %s da licitação %s")
   tipos_novidades <- data.frame(id_tipo, texto_evento)
 }
 
