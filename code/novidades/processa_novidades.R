@@ -21,7 +21,7 @@ gather_contratos <- function(contratos) {
 
 create_tipo_novidades <- function() {
   id_tipo <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
-  texto_evento <- c("Abetura da licitação %s", "Licitação %s homologada", 
+  texto_evento <- c("Abertura da licitação %s", "Licitação %s homologada", 
                     "Licitação %s adjudicada", "Empenho de %s da licitação %s",
                     "Liquidação de %s do empenho da licitação %s", 
                     "Pagamento de %s de empenho da licitação %s",
