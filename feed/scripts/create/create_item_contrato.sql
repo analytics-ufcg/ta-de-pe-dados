@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS "item_contrato" (
     "id_contrato" INTEGER,
     "id_orgao" INTEGER,
     "id_licitacao" INTEGER,
+    "id_item_licitacao" BIGINT,
     "nr_lote" INTEGER,
     "nr_licitacao" INTEGER,
     "ano_licitacao" INTEGER,
@@ -22,6 +23,6 @@ CREATE TABLE IF NOT EXISTS "item_contrato" (
     tp_instrumento_contrato, nr_lote, nr_item),
     FOREIGN KEY ("id_contrato") REFERENCES contrato("id_contrato"),
     FOREIGN KEY ("id_orgao") REFERENCES orgao("id_orgao"),
-    FOREIGN KEY ("id_licitacao") REFERENCES licitacao("id_licitacao")
-
+    FOREIGN KEY ("id_licitacao") REFERENCES licitacao("id_licitacao"),
+    FOREIGN KEY ("id_item_licitacao") REFERENCES item("id_item")
 );
