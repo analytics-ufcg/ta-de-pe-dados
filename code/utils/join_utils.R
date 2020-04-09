@@ -63,3 +63,10 @@ join_itens_contratos_e_licitacoes <- function(itens_contratos, itens_licitacoes)
   itens_licitacoes %<>% dplyr::select(id_licitacao, ds_item, nr_lote, nr_item)
   itens_contratos %<>% dplyr::left_join(itens_licitacoes) 
 }
+
+join_contratos_e_fornecedores <- function(fornecedores_df, contratos_df) {
+  fornecedores_df %>% 
+    dplyr::inner_join(contratos_df, 
+                      by = c("nr_documento" = "nr_documento_contratado"))
+}
+
