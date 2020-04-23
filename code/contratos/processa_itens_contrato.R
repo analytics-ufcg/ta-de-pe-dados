@@ -60,5 +60,36 @@ processa_info_item_contrato <- function(itens_contrato_df) {
            ano_contrato, tp_instrumento_contrato = tp_instrumento, nr_item, qt_itens_contrato, 
            vl_item_contrato, vl_total_item_contrato)
   
+
+  
   return(info_item_contrato)
+}
+
+#' Gera ids das categorias dos itens dos contratos de merenda de acordo com sua descrição
+#' 
+#' @param info_item_contrato Dataframe de itens de contrato
+#'
+#' @return Dataframe com informações dos itens dos contratos de merenda com id da categoria
+#'   
+#' @examples 
+#' info_item_contrato <- create_categoria(info_item_contrato)
+#'
+#' Chave primária: 
+#' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato,
+#' nr_lote, nr_item)
+create_categoria <- function(info_item_contrato) {
+  categorias <- info_item_contrato %>% 
+    select(ds_item) %>% 
+    ungroup() %>% 
+    mutate(ds_item =str_squish(str_to_lower(gsub("[[:punct:]]", "", ds_item )))) %>% 
+    unique()
+  
+  categorias$categoria <- seq.int(nrow(categorias))
+  
+  itens_com_categorias <- info_item_contrato %>% 
+    mutate(ds_item =str_squish(str_to_lower(gsub("[[:punct:]]", "", ds_item )))) %>% 
+    left_join(categorias) %>% 
+    select(id_item_contrato, categoria)
+  
+  info_item_contrato %<>% left_join(itens_com_categorias)
 }

@@ -113,8 +113,8 @@ info_item_contrato <- import_itens_contrato(anos) %>%
                                          tp_instrumento_contrato)) %>% 
   generate_id(TABELA_ITEM_CONTRATO, ITEM_CONTRATO_ID) %>% 
   join_itens_contratos_e_licitacoes(info_item_licitacao) %>% 
-  dplyr::select(id_item_contrato, id_contrato, id_orgao, id_licitacao, id_item_licitacao, dplyr::everything())
-
+  dplyr::select(id_item_contrato, id_contrato, id_orgao, id_licitacao, id_item_licitacao, dplyr::everything()) %>% 
+  create_categoria()
 
 ## Alterações contratos
 message("#### alterações de contratos...")
