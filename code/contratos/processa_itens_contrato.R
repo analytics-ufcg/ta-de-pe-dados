@@ -89,7 +89,8 @@ create_categoria <- function(info_item_contrato) {
   
   itens_com_categorias <- info_item_contrato %>% 
     mutate(ds_item =str_squish(str_to_lower(gsub("[[:punct:]]", "", ds_item )))) %>% 
-    left_join(categorias) %>% 
+    mutate(ds_item = iconv(ds_item, from="UTF-8", to="ASCII//TRANSLIT")) %>%
+    left_join(categorias) %>%
     select(id_item_contrato, categoria)
   
   info_item_contrato %<>% left_join(itens_com_categorias)
