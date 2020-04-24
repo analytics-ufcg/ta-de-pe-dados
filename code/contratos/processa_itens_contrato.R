@@ -82,7 +82,8 @@ create_categoria <- function(info_item_contrato) {
     select(ds_item) %>% 
     ungroup() %>% 
     mutate(ds_item =str_squish(str_to_lower(gsub("[[:punct:]]", "", ds_item )))) %>% 
-    unique()
+    mutate(ds_item = iconv(ds_item, from="UTF-8", to="ASCII//TRANSLIT")) %>%
+    distinct()
   
   categorias$categoria <- seq.int(nrow(categorias))
   
