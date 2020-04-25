@@ -30,7 +30,12 @@ create_tipo_novidades <- function() {
                     "Estorno de %s de pagamento da licitação %s", 
                     "Início de vigência do contrato %s da licitação %s",
                     "Fim de vigência do contrato %s da licitação %s")
-  tipos_novidades <- data.frame(id_tipo, texto_evento)
+  texto_resumo <- c("Abertura", "Homologação", "Adjudicação", "%s empenhado",
+                    "%s liquidado", "%s pago", "%s estornado do empenho", 
+                    "%s estornado da liquidação", "%s estornado do pagamento", 
+                    "Início de vigência do contrato %s",
+                    "Fim de vigência do contrato %s")
+  tipos_novidades <- data.frame(id_tipo, texto_evento, texto_resumo)
 }
 
 transforma_licitacao_em_novidades <- function(licitacoes) {

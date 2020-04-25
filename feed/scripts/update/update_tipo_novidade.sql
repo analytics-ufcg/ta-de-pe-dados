@@ -11,7 +11,8 @@ ON CONFLICT (id_tipo)
 DO
   UPDATE
   SET
-    texto_evento = EXCLUDED.texto_evento;
+    texto_evento = EXCLUDED.texto_evento,
+    texto_resumo = EXCLUDED.texto_resumo;
 
 DROP TABLE temp_tipo_novidade;
 COMMIT;
