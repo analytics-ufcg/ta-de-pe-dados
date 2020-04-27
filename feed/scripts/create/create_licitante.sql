@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS "licitante" (
     "tp_condicao" VARCHAR(3),
     "tp_resultado_habilitacao" VARCHAR(1),
     "bl_beneficio_micro_epp" VARCHAR(1),
-    FOREIGN KEY ("id_licitacao") REFERENCES licitacao ("id_licitacao"),
+    FOREIGN KEY ("id_licitacao") REFERENCES licitacao ("id_licitacao") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT licitante_key UNIQUE (id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, tp_documento_licitante, 
     nr_documento_licitante),
     PRIMARY KEY("id_licitante")
