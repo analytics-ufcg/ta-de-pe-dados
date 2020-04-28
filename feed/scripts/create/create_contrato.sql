@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS "contrato" (
     "tipo_instrumento_contrato" VARCHAR(50),
     PRIMARY KEY("id_contrato"),
     CONSTRAINT contrato_key UNIQUE (id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato),
-    FOREIGN KEY("id_orgao") REFERENCES orgao("id_orgao"),
-    FOREIGN KEY("id_licitacao") REFERENCES licitacao("id_licitacao"),
-    FOREIGN KEY("nr_documento_contratado") REFERENCES fornecedor("nr_documento")
+    FOREIGN KEY("id_orgao") REFERENCES orgao("id_orgao") ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY("id_licitacao") REFERENCES licitacao("id_licitacao") ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY("nr_documento_contratado") REFERENCES fornecedor("nr_documento") ON DELETE CASCADE ON UPDATE CASCADE
 );

@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS "empenho" (
     "cd_tipo_modalidade" VARCHAR(240),
     "ano_contrato" INTEGER,
     "nr_contrato" VARCHAR(40),
-    FOREIGN KEY ("id_licitacao") REFERENCES licitacao("id_licitacao"),
-    FOREIGN KEY ("id_orgao") REFERENCES orgao("id_orgao"),
+    FOREIGN KEY ("id_licitacao") REFERENCES licitacao("id_licitacao") ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY ("id_orgao") REFERENCES orgao("id_orgao") ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY("id_empenho")
 );
