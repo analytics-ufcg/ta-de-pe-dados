@@ -237,3 +237,19 @@ b) Preencha as variáveis contidas no .env.sample também para o `.env.prod`. Al
 ```
 
 Seus dados serão atualizados remotamente.
+
+### Configure a atualização periodicamente
+
+Para configurar a atualização periodicamente é possível adicionar no crontab o comando correspondente da atualização.
+
+Abra seu crontab para edição:
+```
+crontab -e
+```
+
+Adicione a seguinte linha (modifique o caminho de acordo com sua máquina):
+```
+0 7 2 * * cd <caminho_para_repositorio>; /bin/bash <caminho_para_repositorio>/update-data.sh -run-full-update; /bin/bash <caminho_para_repositorio>/update-data.sh -run-update-db-remote
+```
+
+No dia 2 de cada mês o script a atualização irá se iniciar as 7 horas da manhã.

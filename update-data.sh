@@ -1,4 +1,6 @@
-# Script para auxiliar atualização de dados do Tá na mesa
+#!/bin/bash
+
+PATH=$PATH:/usr/local/bin
 
 # Carrega variáveis de ambiente
 source .env.update
@@ -118,7 +120,6 @@ fi
 pprint "Iniciando atualização"
 # Registra a data de início
 inicio=$(date +%d-%m-%y_%H:%M)
-run_data_process_update    
 
 if [[ $@ == *'-run-full-update'* ]]; then run_full_update
 fi
