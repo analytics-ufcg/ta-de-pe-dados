@@ -196,3 +196,44 @@ Este comando irá executar o script de exportação dos dados do IDEB.
 ## Como adicionar novos pacotes
 
 Caso algum pacote novo tenha que ser adicionado ao r-container, basta adicionar o nome do pacote na seção de instalação de dependências do Dockerfile presente no diretório `code`. Existe um exemplo para o pacote here neste Dockerfile.
+
+
+## Como executar a atualização dos dados usando um helper
+
+Nesta seção iremos explorar como realizar a atualização dos dados usando o script de update: `update-data.sh`
+
+Obs: O arquivo update-data.sh faz uso de um arquivo de variáveis de ambiente: `env.update`. Neste arquivo é possível alterar o local de escrita do arquivo de log de execução do update-data.sh.
+
+Primeiro é preciso dar permissão de execução ao script:
+
+```
+chmod +x update-data.sh
+```
+
+É possível verificar quais os comandos possíveis de serem executados pelo helper fazendo:
+
+```
+./update.sh -help
+```
+
+### Para baixar e processar os dados pela primeira vez é possível executar
+
+```
+./update.sh -run-full-update
+```
+
+Este processo pode demorar bastante dependendo da sua conexão e da capacidade de processamento da sua máquina. Seu banco de dados local já estará pronto para uso.
+
+### Para atualizar o Banco de dados Remoto com os dados já processados
+
+Será preciso configurar as variáveis de ambiente necessárias para o serviço executar:
+
+a) Crie uma cópia do arquivo .env.sample no **diretório raiz desse repositório** e renomeie para `.env.prod` (deve também estar no diretório raiz desse repositório)
+
+b) Preencha as variáveis contidas no .env.sample também para o `.env.prod`. Altere os valores para o banco de dados remoto que você deseja atualizar.
+
+```
+./update.sh -run-update-db-remote
+```
+
+Seus dados serão atualizados remotamente.

@@ -19,22 +19,26 @@ def call_all_fetch(year, path):
 
 if __name__ == "__main__":
 
-    if len(sys.argv) != 3:
+    if len(sys.argv) < 3:
         utils.print_usage()
         exit(1)
 
-    print('Escolha uma opcao: ')
-    print('1 - Baixar contratos')
-    print('2 - Baixar licitacoes')
-    print('3 - Baixar empenhos')
-    print('4 - Baixar tudo')
+    if len(sys.argv) == 4:
+        action = str(sys.argv[3])
+    else:
+        print('Escolha uma opcao: ')
+        print('1 - Baixar contratos')
+        print('2 - Baixar licitacoes')
+        print('3 - Baixar empenhos')
+        print('4 - Baixar tudo')
 
-    action = input('Digite sua opcao: ')
+        action = input('Digite sua opcao: ')
 
     inp_year = str(sys.argv[1])
     path = str(sys.argv[2])
 
     if action == '4':
+        print("Baixando todos os dados!")
         call_all_fetch(inp_year, path)
             
     elif action == '1':
