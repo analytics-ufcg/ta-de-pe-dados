@@ -93,5 +93,6 @@ create_categoria <- function(info_item_contrato) {
     left_join(categorias) %>%
     select(id_item_contrato, categoria)
   
-  info_item_contrato %<>% left_join(itens_com_categorias)
+  info_item_contrato %<>% left_join(itens_com_categorias) %>% 
+    mutate(language = "portuguese")
 }

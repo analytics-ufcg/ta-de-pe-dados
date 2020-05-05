@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS "item_contrato" (
     "vl_total_item_contrato" REAL,
     "ds_item" VARCHAR(2000),
     "categoria" INTEGER,
+    "language" VARCHAR(15),
     PRIMARY KEY ("id_item_contrato"),
     CONSTRAINT item_contrato_key UNIQUE (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, 
     tp_instrumento_contrato, nr_lote, nr_item),
