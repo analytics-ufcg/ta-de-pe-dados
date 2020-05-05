@@ -20,12 +20,12 @@ download_data_tse() {
     docker build -t crawler-ta-na-mesa scripts/	
 
     pprint "2. Faz o Download dos Órgãos"
-    docker run --rm -it -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_orgaos.py ./data
+    docker run --rm -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_orgaos.py ./data
 
     pprint "3. Faz o Download dos dados brutos"
-	docker run --rm -it -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_all_data.py 2018 ./data 4
-    docker run --rm -it -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_all_data.py 2019 ./data 4
-    docker run --rm -it -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_all_data.py 2020 ./data 4
+    docker run --rm -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_all_data.py 2018 ./data 4
+    docker run --rm -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_all_data.py 2019 ./data 4
+    docker run --rm -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_all_data.py 2020 ./data 4
 
 }
 
@@ -36,34 +36,34 @@ run_data_process_update() {
     docker-compose up -d
 
     pprint "2. Dropa tabelas"
-    docker exec -it feed python3.6 /feed/manage.py clean-data
+    docker exec feed python3.6 /feed/manage.py clean-data
 
     pprint "3. Dropa tabela de empenho"
-    docker exec -it feed python3.6 /feed/manage.py clean-empenho
+    docker exec feed python3.6 /feed/manage.py clean-empenho
 
     pprint "4. Processa dados das tabelas gerais"
-    docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_dados_bd.R 2018,2019,2020"
+    docker exec r-container sh -c "cd /app/code/processor && Rscript export_dados_bd.R 2018,2019,2020"
 
     pprint "5. Cria schema do BD"
-    docker exec -it feed python3.6 /feed/manage.py create
+    docker exec feed python3.6 /feed/manage.py create
 
     pprint "6. Importa dados das tabelas gerais para o BD"
-    docker exec -it feed python3.6 /feed/manage.py import-data
+    docker exec feed python3.6 /feed/manage.py import-data
 
     pprint "7. Importa dados de empenhos para o BD (tabela completa)"
-    docker exec -it feed python3.6 /feed/manage.py import-empenho-raw
+    docker exec feed python3.6 /feed/manage.py import-empenho-raw
 
     pprint "8. Processa dados de empenhos para considerar apenas merenda"
-    docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_empenhos_bd.R"
+    docker exec r-container sh -c "cd /app/code/processor && Rscript export_empenhos_bd.R"
 
     pprint "9. Processa dados de novidades"
-    docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_novidades_bd.R"
+    docker exec r-container sh -c "cd /app/code/processor && Rscript export_novidades_bd.R"
 
     pprint "10. Importa dados de empenhos para o BD"
-    docker exec -it feed python3.6 /feed/manage.py import-empenho
+    docker exec feed python3.6 /feed/manage.py import-empenho
 
     pprint "11. Importa dados de novidades para o BD"
-    docker exec -it feed python3.6 /feed/manage.py import-novidade
+    docker exec feed python3.6 /feed/manage.py import-novidade
 
 }
 
@@ -73,19 +73,19 @@ run_update_db_remote() {
     docker-compose -f prod.yml up -d
 
     pprint "2. Dropa tabelas (prod)"
-    docker exec -it feed python3.6 /feed/manage.py clean-data
+    docker exec feed python3.6 /feed/manage.py clean-data
 
     pprint "3. Cria schema do BD (prod)"
-    docker exec -it feed python3.6 /feed/manage.py create
+    docker exec feed python3.6 /feed/manage.py create
 
     pprint "4. Importa dados das tabelas gerais para o BD (prod)"
-    docker exec -it feed python3.6 /feed/manage.py import-data
+    docker exec feed python3.6 /feed/manage.py import-data
 
     pprint "5. Importa dados de empenhos para o BD (prod)"
-    docker exec -it feed python3.6 /feed/manage.py import-empenho
+    docker exec feed python3.6 /feed/manage.py import-empenho
 
     pprint "6. Importa dados de novidades para o BD (prod)"
-    docker exec -it feed python3.6 /feed/manage.py import-novidade  
+    docker exec feed python3.6 /feed/manage.py import-novidade  
 
 }
 
