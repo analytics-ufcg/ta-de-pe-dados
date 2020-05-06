@@ -37,6 +37,10 @@ source(here::here("code/licitacoes/processa_tipos_licitacoes.R"))
 
 licitacoes <- import_licitacoes(anos) %>% 
   processa_info_licitacoes()
+
+orgaos_licitacao <- licitacoes %>% 
+  dplyr::distinct(id_orgao, nm_orgao)
+
 tipo_licitacao <- processa_tipos_licitacoes()
 info_licitacoes <- join_licitacao_e_tipo(licitacoes, tipo_licitacao) %>% 
   generate_id(TABELA_LICITACAO, L_ID) %>% 
@@ -135,9 +139,14 @@ info_alteracoes_contrato <- alteracoes %>%
 ## Municípios
 message("#### municípios...")
 source(here::here("code/orgaos/processa_orgaos.R"))
-info_orgaos <- import_orgaos() %>% 
+info_orgaos_municipios <- import_orgaos() %>% 
   processa_info_orgaos()
 
+## Completa CSV de órgãos com os órgãos presentes na tabela de licitação
+info_orgaos <- info_orgaos_municipios %>% 
+  dplyr::mutate(id_orgao = as.character(id_orgao)) %>% 
+  dplyr::bind_rows(orgaos_licitacao) %>% 
+  dplyr::distinct(id_orgao, .keep_all = TRUE)
 
 # Escrita dos dados
 

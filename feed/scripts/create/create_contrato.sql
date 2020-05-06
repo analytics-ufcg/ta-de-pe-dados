@@ -1,16 +1,16 @@
 DROP TABLE IF EXISTS contrato;
 
 CREATE TABLE IF NOT EXISTS "contrato" ( 
-    "id_contrato" INTEGER,
+    "id_contrato" BIGINT,
     "id_licitacao" INTEGER,
     "id_orgao" INTEGER,
-    "nr_contrato" INTEGER,
+    "nr_contrato" BIGINT,
     "ano_contrato" INTEGER,
     "nm_orgao" VARCHAR(240),
     "nr_licitacao" VARCHAR(20),
     "ano_licitacao" INTEGER,
     "cd_tipo_modalidade" VARCHAR(3),
-    "tp_instrumento_contrato" VARCHAR(1),
+    "tp_instrumento_contrato" VARCHAR(5),
     "nr_processo" VARCHAR(20),
     "ano_processo" INTEGER,
     "tp_documento_contratado" VARCHAR(1),
