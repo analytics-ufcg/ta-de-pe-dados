@@ -50,12 +50,19 @@ filter_licitacoes_merenda <- function(licitacoes_df) {
     dplyr::mutate(DS_OBJETO_PROCESSED = iconv(DS_OBJETO, 
                                               from="UTF-8", 
                                               to="ASCII//TRANSLIT")) %>% 
-    dplyr::mutate(isAlimentacao = grepl("^.*(genero.*aliment|alimenta|genero.*agric.*famil|merenda|pnae).*$",
-                                        tolower(DS_OBJETO_PROCESSED))) %>% 
-    dplyr::filter(isAlimentacao) %>% 
+    # Filtra descrições relacionadas a alimentaçã
+    dplyr::mutate(isAlimentacao = grepl("^.*(genero.*aliment|aliment.*esc|genero.*agric.*famil|merenda|pnae).*$",
+                                        tolower(DS_OBJETO_PROCESSED))) %>%
+    # Remove casos em que o filtro foi muito abrangente (falsos positivos)
+    dplyr::mutate(falso_positivo = grepl("^((?!(fontes de|som|bivolt|copiad|magn|trator|impressora|roda)).)*$",
+                                        tolower(DS_OBJETO_PROCESSED),
+                                        perl = TRUE)) %>%
+    # considera apenas alimentação e filtra fora os falso positivos
+    dplyr::filter(isAlimentacao, falso_positivo) %>% 
+    # Classifica como merenda casos de certeza
     dplyr::mutate(merenda = grepl("^.*(escol|educ|merenda|pnae).*$",
                                   tolower(DS_OBJETO_PROCESSED))) %>% 
-    dplyr::select(-DS_OBJETO_PROCESSED, -isAlimentacao)
+    dplyr::select(-DS_OBJETO_PROCESSED, -isAlimentacao, -falso_positivo)
 
   licitacoes_merenda <- dplyr::bind_rows(licitacoes_cpp, 
                                          licitacoes_palavra_chave) %>% 
