@@ -95,4 +95,26 @@ create_categoria <- function(info_item_contrato) {
   
   info_item_contrato %<>% left_join(itens_com_categorias) %>% 
     mutate(language = "portuguese")
+  
+}
+
+#' Particiona descrição dos itens
+#' 
+#' @param info_item_contrato Dataframe de itens de contrato
+#'
+#' @return Dataframe com informações dos itens dos contratos de merenda com colunas referentes a partes da descrição
+#'   
+#' @examples 
+#' info_item_contrato <- split_descricao(info_item_contrato)
+#'
+#' Chave primária: 
+#' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato,
+#' nr_lote, nr_item)
+split_descricao <- function(info_item_contrato) {
+  itens <- info_item_contrato %>% mutate(lista = str_split(ds_item, " |:")) %>% 
+    rowwise() %>%  
+    mutate(ds_1 = lista[1], 
+           ds_2 = paste(ds_1, if_else(is.na(lista[2]), "", lista[2])),
+           ds_3 = paste(ds_2, if_else(is.na(lista[3]), "", lista[3]))) %>% 
+    select(-lista)
 }
