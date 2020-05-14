@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS "item_contrato" (
     "qt_itens_contrato" REAL,
     "vl_item_contrato" REAL,
     "vl_total_item_contrato" REAL,
+    "dt_inicio_vigencia" DATE,
     "ds_item" VARCHAR(2000),
     "categoria" INTEGER,
     "language" VARCHAR(15),

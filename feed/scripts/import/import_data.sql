@@ -10,7 +10,7 @@ SET datestyle = ymd;
 
 
 CREATE MATERIALIZED VIEW item_search AS 
-SELECT ano_licitacao, id_item_contrato, id_licitacao, vl_item_contrato, vl_total_item_contrato, ds_item, 
+SELECT ano_licitacao, id_item_contrato, dt_inicio_vigencia, id_licitacao, vl_item_contrato, vl_total_item_contrato, ds_item,
     setweight(to_tsvector(item_contrato.language :: regconfig,item_contrato.ds_1),'A') || 
     setweight(to_tsvector(item_contrato.language :: regconfig,item_contrato.ds_2),'C') || 
     setweight(to_tsvector(item_contrato.language :: regconfig,item_contrato.ds_3),'D') || 
