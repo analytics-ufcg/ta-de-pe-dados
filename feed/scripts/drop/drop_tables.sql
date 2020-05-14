@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS "empenho";
 DROP TABLE IF EXISTS "alteracoes_contrato";
+DROP MATERIALIZED VIEW IF EXISTS item_search;
 DROP TABLE IF EXISTS "item_contrato";
 DROP TABLE IF EXISTS "contrato";
 DROP TABLE IF EXISTS "fornecedor";
