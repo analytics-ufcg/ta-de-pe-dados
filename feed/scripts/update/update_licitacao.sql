@@ -22,6 +22,7 @@ DO
     data_adjudicacao = EXCLUDED.data_adjudicacao,
     vl_homologado = EXCLUDED.vl_homologado,
     tp_licitacao = EXCLUDED.tp_licitacao,
+    merenda = EXCLUDED.merenda,
     tipo_licitacao = EXCLUDED.tipo_licitacao;
 
 DROP TABLE temp_licitacao;

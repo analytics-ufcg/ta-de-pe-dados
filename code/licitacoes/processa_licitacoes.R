@@ -43,17 +43,31 @@ import_licitacoes_por_ano <- function(ano) {
 filter_licitacoes_merenda <- function(licitacoes_df) {
   
   licitacoes_cpp <- licitacoes_df %>% 
-    dplyr::filter(CD_TIPO_MODALIDADE == "CPP",
-                  CD_TIPO_FASE_ATUAL == "ADH")
+    dplyr::filter(CD_TIPO_MODALIDADE == "CPP") %>% 
+    dplyr::mutate(merenda = TRUE)
   
-  licitacoes_palavra_chave <- licitacoes_df %>% 
-    dplyr::filter(grepl("merenda", 
-                        tolower(DS_OBJETO)), 
-                  CD_TIPO_FASE_ATUAL == "ADH")
-  
+  licitacoes_palavra_chave <- licitacoes_df %>%
+    dplyr::mutate(DS_OBJETO_PROCESSED = iconv(DS_OBJETO, 
+                                              from="UTF-8", 
+                                              to="ASCII//TRANSLIT")) %>% 
+    # Filtra descrições relacionadas a alimentaçã
+    dplyr::mutate(isAlimentacao = grepl("^.*(genero.*aliment|aliment.*esc|genero.*agric.*famil|merenda|pnae).*$",
+                                        tolower(DS_OBJETO_PROCESSED))) %>%
+    # Remove casos em que o filtro foi muito abrangente (falsos positivos)
+    dplyr::mutate(falso_positivo = grepl("^((?!(fontes de|som|bivolt|copiad|magn|trator|impressora|roda)).)*$",
+                                        tolower(DS_OBJETO_PROCESSED),
+                                        perl = TRUE)) %>%
+    # considera apenas alimentação e filtra fora os falso positivos
+    dplyr::filter(isAlimentacao, falso_positivo) %>% 
+    # Classifica como merenda casos de certeza
+    dplyr::mutate(merenda = grepl("^.*(escol|educ|merenda|pnae).*$",
+                                  tolower(DS_OBJETO_PROCESSED))) %>% 
+    dplyr::select(-DS_OBJETO_PROCESSED, -isAlimentacao, -falso_positivo)
+
   licitacoes_merenda <- dplyr::bind_rows(licitacoes_cpp, 
                                          licitacoes_palavra_chave) %>% 
-    dplyr::distinct()
+    dplyr::mutate(merenda = ifelse(CD_TIPO_MODALIDADE == "CPP",  TRUE, merenda)) %>% 
+    dplyr::distinct(CD_ORGAO, ANO_LICITACAO, NR_LICITACAO, CD_TIPO_MODALIDADE, .keep_all = TRUE)
   
   return(licitacoes_merenda)
 }
@@ -87,7 +101,7 @@ processa_info_licitacoes <- function(licitacoes_df) {
            cd_tipo_modalidade, permite_subcontratacao = bl_permite_subcontratacao,
            tp_fornecimento, descricao_objeto = ds_objeto, vl_estimado_licitacao = vl_licitacao, 
            data_abertura = dt_abertura, data_homologacao = dt_homologacao,
-           data_adjudicacao = dt_adjudicacao, vl_homologado, tp_licitacao)
+           data_adjudicacao = dt_adjudicacao, vl_homologado, tp_licitacao, merenda)
   
   return(info_licitacoes)
 }
