@@ -1,4 +1,6 @@
 scripts/__pycache__
 .env
+.env.prod
 .Rproj.user
 .Rhistory
+log_file.txt
