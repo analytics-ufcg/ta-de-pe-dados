@@ -34,6 +34,7 @@ message("#### Iniciando processamento...")
 message("#### licitações...")
 source(here::here("code/licitacoes/processa_licitacoes.R"))
 source(here::here("code/licitacoes/processa_tipos_licitacoes.R"))
+source(here::here("code/licitacoes/processa_tipos_modalidade_licitacoes.R"))
 
 licitacoes <- import_licitacoes(anos) %>% 
   processa_info_licitacoes()
@@ -42,7 +43,10 @@ orgaos_licitacao <- licitacoes %>%
   dplyr::distinct(id_orgao, nm_orgao)
 
 tipo_licitacao <- processa_tipos_licitacoes()
+tipo_modalidade_licitacao <- processa_tipos_modalidade_licitacoes()
+
 info_licitacoes <- join_licitacao_e_tipo(licitacoes, tipo_licitacao) %>% 
+  join_licitacao_e_tipo_modalidade(tipo_modalidade_licitacao) %>% 
   generate_id(TABELA_LICITACAO, L_ID) %>% 
   dplyr::select(id_licitacao, dplyr::everything())
 
