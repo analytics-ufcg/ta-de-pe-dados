@@ -23,7 +23,8 @@ DO
     vl_homologado = EXCLUDED.vl_homologado,
     tp_licitacao = EXCLUDED.tp_licitacao,
     merenda = EXCLUDED.merenda,
-    tipo_licitacao = EXCLUDED.tipo_licitacao;
+    tipo_licitacao = EXCLUDED.tipo_licitacao,
+    tipo_modalidade_licitacao = EXCLUDED.tipo_modalidade_licitacao;
 
 DROP TABLE temp_licitacao;
 COMMIT;
