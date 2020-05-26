@@ -22,9 +22,4 @@ processa_tipos_modalidade_licitacoes <- function() {
                                stringsAsFactors = FALSE)
   
   return(tipo_modalidade_licitacao)
-} 
-
-
-
-
-
+}
