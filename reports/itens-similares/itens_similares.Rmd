@@ -1,0 +1,77 @@
+---
+title: "Analisando distribuição da medida de similaridade entre itens de contrato"
+output: 
+  html_document:
+    css: styles.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.cap = '',
+  fig.align = 'center',
+  fig.width = 10,
+  fig.height = 6
+)
+```
+
+```{r}
+library(tidyverse)
+library(here)
+library(hrbrthemes)
+theme_set(theme_minimal())
+```
+
+<br>
+
+## *Resumo*
+
+Esta análise busca avaliar como a distribuição da medida de similaridade entre itens de contrato ocorre e qual seria um bom limite para considerar um item similar a outro.
+
+<br>
+
+### Como assim similaridade entre itens?
+
+A similaridade entre itens de contrato é calculada usando a ferramenta de pesquisa do POSTGRESQL. Mais informações sobre como a ferramenta funciona pode ser lida neste [post](http://rachbelaid.com/postgres-full-text-search-is-good-enough/). A pesquisa considera os 100 itens mais similares ao item de interesse passado como parâmetro. A pesquisa do Postgres retorna os itens ordenados por um ranking de relevância através da função ts_rank.
+
+O objetivo desta análise é avaliar se a pesquisa desses itens similares pode adotar um limite em que apenas itens acima deste limite sejam retornados. Desta forma, seriam evitados os itens que são pouco similares ao item de interesse.
+
+### Como será feito?
+
+Selecionaremos, aleatoriamente, 1000 itens de contrato e pesquisaremos os itens mais similares retornados segundo a pesquisa do Postgres. Em seguida, veremos como ocorre a distribuição da variável de relevância para estes itens. Por fim, avaliaremos qualitativamente um limite para o corte de itens mais similares.
+
+```{r}
+itens_similares <- read_csv(here("reports/itens-similares/data/itens_similares.csv"))
+```
+
+Ao consultarmos 1000 itens de contrato foram retornados `r itens_similares %>% nrow()` itens similares.
+
+### Distribuição da variável de similaridade
+
+O Postgres retorna uma variável de relevância do documento (neste caso o item) com a pesquisa. Esta variável de relevância é um número entre 0 e 1 e é fornecida pelo próprio Postgres como função de ranqueamento dos resultados da pesquisa.
+
+```{r}
+itens_similares %>% 
+  ggplot(aes(x = rel)) +
+  geom_histogram(boundary = 0, 
+                 color = "#491d8b", 
+                 fill = "white",
+                 binwidth = 0.05) +
+  scale_x_continuous(breaks = seq(0, 1, 0.2)) +
+  labs(title = "Distribuição da relevância de itens de contrato similares",
+       x = "Relevância dos itens similares retornados (ts_rank do Postgres)",
+       y = "Número de itens de contrato") +
+  theme_ipsum_rc()
+```
+
+Pela visualização é possível perceber que mais de 17 mil itens de contrato retornados tem uma relevância muito baixa (menor que 0.05). Isto pode acabar causado resultados não esperados nos quais o item retornado pouco tem a ver com o item de contrato usando como parâmetro na pesquisa.
+
+Pela visualização é possível perceber que acima do valor 0.6 é onde se concentra o maior número de itens retornados. Cada barra na visualização representa o número de itens de contrato presentes no intervalo de 0.05 na escala de 0 a 1 da variável de relevância fornecida pelo Postgres.
+
+### Considerações
+
+Pela análise qualitativa da visulização, o valor de 0.6 pode ser escolhido como o limite para determinar quais itens serão considerados similares ou não. Deixando de fora aqueles com valor abaixo de 0.6.
+
+É possível evoluir esta análise comparando outras técnicas de relevância/ranqueamento difrentes da função ts_rank e que também podem ser fornecidas pelo Postgres. Segundo o texto também é possível criar uma técnica personalizada de relevância/ranqueamento dos documentos.Também é possível evoluir analisando mais amostras aleatórias do conjunto de itens similares retornados ou também considerar um conjunto de entrada maior que 1000 itens de contrato.
