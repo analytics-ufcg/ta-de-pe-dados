@@ -47,7 +47,8 @@ tipo_modalidade_licitacao <- processa_tipos_modalidade_licitacoes()
 
 info_licitacoes <- join_licitacao_e_tipo(licitacoes, tipo_licitacao) %>% 
   join_licitacao_e_tipo_modalidade(tipo_modalidade_licitacao) %>% 
-  generate_id(TABELA_LICITACAO, L_ID) %>% 
+  generate_hash_id(c("id_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade"), 
+                   L_ID) %>% 
   dplyr::select(id_licitacao, dplyr::everything())
 
 ## Licitantes
@@ -63,7 +64,8 @@ info_licitantes <- join_licitante_e_licitacao(
   info_licitacoes %>%
     dplyr::select(id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, L_ID)
 ) %>% 
-  generate_id(TABELA_LICITANTE, LICITANTE_ID) %>% 
+  generate_hash_id(c("id_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade", 
+                     "tp_documento_licitante", "nr_documento_licitante"), LICITANTE_ID) %>% 
   dplyr::select(id_licitante, id_licitacao, dplyr::everything())
 
 ## Itens de licitações
@@ -71,8 +73,10 @@ message("#### itens de licitações...")
 source(here::here("code/licitacoes/processa_itens_licitacao.R"))
 info_item_licitacao <- import_itens_licitacao(anos) %>%
   processa_info_item_licitacao() %>% 
-  generate_id(TABELA_ITEM, I_ID) %>% 
   join_licitacoes_e_itens(info_licitacoes) %>% 
+  generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", 
+                     "cd_tipo_modalidade", "nr_lote", "nr_item"), 
+                   I_ID) %>% 
   dplyr::select(id_item, id_licitacao, dplyr::everything())
 
 ## Contratos
@@ -96,7 +100,8 @@ info_contratos <-
                                             id_licitacao)) %>% 
   
   join_contrato_e_instrumento(tipo_instrumento_contrato) %>% 
-  generate_id(TABELA_CONTRATO, CONTRATO_ID) %>% 
+  generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", 
+                     "nr_contrato", "ano_contrato", "tp_instrumento_contrato"), CONTRATO_ID) %>% 
   dplyr::select(id_contrato, id_licitacao, id_orgao, dplyr::everything())
 
 ## Fornecedores nos contratos
@@ -119,7 +124,8 @@ info_item_contrato <- import_itens_contrato(anos) %>%
                            dplyr::select(dt_inicio_vigencia, id_orgao, id_contrato, id_licitacao, nr_licitacao, ano_licitacao, 
                                          cd_tipo_modalidade, nr_contrato, ano_contrato, 
                                          tp_instrumento_contrato)) %>% 
-  generate_id(TABELA_ITEM_CONTRATO, ITEM_CONTRATO_ID) %>% 
+  generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", "nr_contrato", "ano_contrato", 
+                     "tp_instrumento_contrato", "nr_lote", "nr_item"), ITEM_CONTRATO_ID) %>% 
   join_itens_contratos_e_licitacoes(info_item_licitacao) %>% 
   dplyr::select(id_item_contrato, id_contrato, id_orgao, id_licitacao, id_item_licitacao, dplyr::everything()) %>% 
   create_categoria() %>%
@@ -138,7 +144,8 @@ tipo_operacao_alteracao <- processa_tipos_alteracao_contrato()
 info_alteracoes_contrato <- alteracoes %>% 
   join_alteracoes_contrato_e_tipo(tipo_operacao_alteracao) %>% 
   join_alteracoes_contrato_e_contrato(info_contratos) %>% 
-  generate_id(TABELA_ALTERACOES_CONTRATO, ALTERACOES_CONTRATO_ID) %>% 
+  generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", "nr_contrato", "ano_contrato", 
+                     "tp_instrumento_contrato", "id_evento_contrato", "cd_tipo_operacao"), ALTERACOES_CONTRATO_ID) %>% 
   dplyr::select(id_alteracoes_contrato, id_contrato, dplyr::everything())
 
 ## Municípios
