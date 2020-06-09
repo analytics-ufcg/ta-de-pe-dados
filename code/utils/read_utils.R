@@ -182,6 +182,7 @@ read_orgaos_processados <- function() {
 read_empenhos_processados <- function() {
   empenhos <- readr::read_csv(here::here("./data/bd/info_empenhos.csv"),
                               col_types = list(
+				id_empenho = readr::col_character(),
                                 dt_operacao = readr::col_datetime(format = "")
                               ))
   return(empenhos)

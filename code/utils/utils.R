@@ -17,11 +17,11 @@ generate_id <- function(df, constante, id) {
 #' @return Dataframe com identificador único
 generate_hash_id <- function(df, colunas, id_coluna) {
   df <- df %>% 
-    mutate(concat_chave_primaria = do.call(paste, lapply(colunas, function(x) get(x)))) %>% 
-    rowwise() %>% 
-    mutate(!!id_coluna := digest::digest(concat_chave_primaria, algo="md5", serialize=F)) %>% 
-    ungroup() %>% 
-    select(-concat_chave_primaria)
+    dplyr::mutate(concat_chave_primaria = do.call(paste, lapply(colunas, function(x) get(x)))) %>% 
+    dplyr::rowwise() %>% 
+    dplyr::mutate(!!id_coluna := digest::digest(concat_chave_primaria, algo="md5", serialize=F)) %>% 
+    dplyr::ungroup() %>% 
+    dplyr::select(-concat_chave_primaria)
   
   return(df)
 }
