@@ -19,7 +19,7 @@ generate_hash_id <- function(df, colunas, id_coluna) {
   df <- df %>% 
     mutate(concat_chave_primaria = do.call(paste, lapply(colunas, function(x) get(x)))) %>% 
     rowwise() %>% 
-    mutate(!!id_coluna := digest(concat_chave_primaria, algo="md5", serialize=F)) %>% 
+    mutate(!!id_coluna := digest::digest(concat_chave_primaria, algo="md5", serialize=F)) %>% 
     ungroup() %>% 
     select(-concat_chave_primaria)
   
