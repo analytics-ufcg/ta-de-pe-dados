@@ -10,11 +10,14 @@ SET datestyle = ymd;
 
 
 CREATE MATERIALIZED VIEW item_search AS 
-SELECT ano_licitacao, id_item_contrato, id_contrato, dt_inicio_vigencia, id_licitacao, vl_item_contrato, vl_total_item_contrato, ds_item,
-    setweight(to_tsvector(item_contrato.language :: regconfig,item_contrato.ds_1),'A') || 
-    setweight(to_tsvector(item_contrato.language :: regconfig,item_contrato.ds_2),'C') || 
-    setweight(to_tsvector(item_contrato.language :: regconfig,item_contrato.ds_3),'D') || 
-    setweight(to_tsvector(item_contrato.language :: regconfig,item_contrato.ds_item),'D') AS document 
-FROM item_contrato;
+SELECT o.nome_municipio, i.ano_licitacao, i.id_item_contrato, i.id_contrato, i.dt_inicio_vigencia, i.id_licitacao, 
+    i.vl_item_contrato, i.vl_total_item_contrato, ds_item,
+    setweight(to_tsvector(i.language :: regconfig,i.ds_1),'A') || 
+    setweight(to_tsvector(i.language :: regconfig,i.ds_2),'C') || 
+    setweight(to_tsvector(i.language :: regconfig,i.ds_3),'D') || 
+    setweight(to_tsvector(i.language :: regconfig,i.ds_item),'D') AS document 
+FROM item_contrato AS i
+LEFT JOIN orgao AS o
+ON i.id_orgao = o.id_orgao;
 
 CREATE INDEX idx_item_search ON item_search USING gin(document);
