@@ -38,7 +38,7 @@ contratos_df <- read_contratos_processados()
 
 info_empenhos <- res %>% 
   processa_info_empenhos() %>% 
-  join_empenhos_e_contratos(contratos_df)
+  join_empenhos_e_contratos(contratos_df) %>% 
   generate_id(TABELA_EMPENHO, E_ID) %>% 
   dplyr::select(id_empenho, id_licitacao, id_orgao, id_contrato, dplyr::everything())
 

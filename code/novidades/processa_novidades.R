@@ -7,8 +7,9 @@ gather_licitacoes <- function(licitacoes) {
 gather_empenhos <- function(empenhos) {
   empenhos %<>% dplyr::select(id_empenho, id_licitacao, dt_operacao, 
                   vl_empenho, vl_liquidacao, vl_pagamento,
-                  nome_municipio) %>% 
-    tidyr::gather("evento","valor",4:6) %>% na.omit(data)
+                  nome_municipio, id_contrato) %>% 
+    tidyr::gather("evento","valor",4:6) %>% 
+    dplyr::filter(!is.na(valor))
 }
 
 gather_contratos <- function(contratos) {
@@ -59,7 +60,7 @@ transforma_empenhos_em_novidades <- function(empenhos) {
       (evento == "vl_liquidacao" & valor < 0) ~ 8,
       (evento == "vl_pagamento" & valor < 0) ~ 9
     ), texto_novidade = as.character(valor), data = dt_operacao, id_original = id_empenho) %>% 
-    dplyr::select(id_tipo, id_licitacao, data, id_original, 
+    dplyr::select(id_tipo, id_licitacao, id_contrato, data, id_original, 
                   nome_municipio, texto_novidade)
 }
 
