@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS "empenho" (
     "id_empenho" BIGINT, 
     "id_licitacao" VARCHAR(32),
     "id_orgao" INTEGER,
+    "id_contrato" VARCHAR(32),
     "ano_recebimento" INTEGER,
     "mes_recebimento" INTEGER,
     "ano_empenho" INTEGER,
@@ -34,6 +35,7 @@ CREATE TABLE IF NOT EXISTS "empenho" (
     "cd_tipo_modalidade" VARCHAR(240),
     "ano_contrato" INTEGER,
     "nr_contrato" VARCHAR(40),
+    "tp_instrumento_contrato" VARCHAR(5),
     FOREIGN KEY ("id_licitacao") REFERENCES licitacao("id_licitacao") ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY ("id_orgao") REFERENCES orgao("id_orgao") ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY("id_empenho")
