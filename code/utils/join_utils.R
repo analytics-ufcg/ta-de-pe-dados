@@ -78,7 +78,7 @@ join_contratos_e_fornecedores <- function(fornecedores_df, contratos_df) {
 join_empenhos_e_contratos <- function(empenhos_df, contratos_df) {
   empenhos_df %>% 
     dplyr::left_join(contratos_df %>% 
-                       mutate(nr_licitacao = as.character(nr_licitacao),
+                       dplyr::mutate(nr_licitacao = as.character(nr_licitacao),
                               nr_contrato = as.character(nr_contrato)) %>% 
                        dplyr::select(id_contrato, id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade,
                               nr_contrato, ano_contrato, tp_instrumento_contrato),
