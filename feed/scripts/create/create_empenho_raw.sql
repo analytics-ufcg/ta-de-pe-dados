@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS empenho_raw;
+--DROP TABLE IF EXISTS empenho_raw;
 
 CREATE TABLE IF NOT EXISTS "empenho_raw" (    
     "ano_recebimento" INTEGER,
