@@ -1,11 +1,11 @@
 DROP TABLE IF EXISTS novidade;
 
 CREATE TABLE IF NOT EXISTS "novidade" ( 
-    "id_novidade" BIGINT, 
+    "id_novidade" VARCHAR(32),
     "id_tipo" INTEGER,
-    "id_licitacao" INTEGER,
+    "id_licitacao" VARCHAR(32),
     "data" DATE,
-    "id_original" BIGINT,
+    "id_original" VARCHAR(32),
     "nome_municipio" VARCHAR(30),
     "texto_novidade" VARCHAR(20),
     PRIMARY KEY("id_novidade"),

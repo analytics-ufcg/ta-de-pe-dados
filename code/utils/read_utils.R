@@ -160,7 +160,6 @@ read_licitacoes_processadas <- function() {
   licitacoes_processadas <- readr::read_csv(here::here("./data/bd/info_licitacao.csv"), 
                                 col_types = list(
                                   .default = readr::col_character(),
-                                  id_licitacao = readr::col_number(),
                                   id_estado = readr::col_number(),
                                   id_orgao = readr::col_number(),
                                   nr_licitacao = readr::col_number(),
@@ -183,6 +182,7 @@ read_orgaos_processados <- function() {
 read_empenhos_processados <- function() {
   empenhos <- readr::read_csv(here::here("./data/bd/info_empenhos.csv"),
                               col_types = list(
+				id_empenho = readr::col_character(),
                                 dt_operacao = readr::col_datetime(format = "")
                               ))
   return(empenhos)
@@ -192,8 +192,6 @@ read_contratos_processados <- function() {
   contratos <- readr::read_csv(here::here("./data/bd/info_contrato.csv"),
                                col_types = list(
                                  .default = readr::col_character(),
-                                 id_contrato = readr::col_number(),
-                                 id_licitacao = readr::col_integer(),
                                  id_orgao = readr::col_integer(),
                                  nr_contrato = readr::col_number(),
                                  ano_contrato = readr::col_integer(),
