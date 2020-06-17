@@ -38,5 +38,6 @@ CREATE TABLE IF NOT EXISTS "empenho" (
     "tp_instrumento_contrato" VARCHAR(5),
     FOREIGN KEY ("id_licitacao") REFERENCES licitacao("id_licitacao") ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY ("id_orgao") REFERENCES orgao("id_orgao") ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY("id_contrato") REFERENCES contrato("id_contrato") ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY("id_empenho")
 );
