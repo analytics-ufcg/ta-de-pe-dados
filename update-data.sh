@@ -73,19 +73,19 @@ run_update_db_remote() {
     docker-compose -f prod.yml up -d
 
     pprint "2. Dropa tabelas (prod)"
-    docker exec feed python3.6 /feed/manage.py clean-data
+    docker exec feed-prod python3.6 /feed/manage.py clean-data
 
     pprint "3. Cria schema do BD (prod)"
-    docker exec feed python3.6 /feed/manage.py create
+    docker exec feed-prod python3.6 /feed/manage.py create
 
     pprint "4. Importa dados das tabelas gerais para o BD (prod)"
-    docker exec feed python3.6 /feed/manage.py import-data
+    docker exec feed-prod python3.6 /feed/manage.py import-data
 
     pprint "5. Importa dados de empenhos para o BD (prod)"
-    docker exec feed python3.6 /feed/manage.py import-empenho
+    docker exec feed-prod python3.6 /feed/manage.py import-empenho
 
     pprint "6. Importa dados de novidades para o BD (prod)"
-    docker exec feed python3.6 /feed/manage.py import-novidade  
+    docker exec feed-prod python3.6 /feed/manage.py import-novidade
 
 }
 
