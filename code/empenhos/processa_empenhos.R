@@ -1,3 +1,5 @@
+source(here::here("code/utils/utils.R"))
+source(here::here("code/utils/join_utils.R"))
 source(here::here("code/utils/read_utils.R"))
 
 #' Processa dados de empenhos do estado do Rio Grande do Sul para um conjunto de anos
@@ -58,4 +60,66 @@ processa_info_empenhos <- function(empenhos_df) {
     
   
   return(empenhos_df)
+}
+
+#' Recupera informações dos contratos relacionados a empenhos em fases anteriores
+#'
+#' @param empenhos_df Dataframe de empenhos
+#'
+#' @return Dataframe com informações dos ids dos contratos ligados aos empenhos
+#'   
+#' @examples 
+#' empenhos_contratos <- processa_id_contrato_empenhos(empenhos_df)
+#' 
+processa_id_contrato_empenhos <- function(empenhos_df) {
+  chave_empenhos_contratos <- c("ano_recebimento", "mes_recebimento", "id_orgao", "cd_orgao_orcamentario", "nome_orgao_orcamentario", 
+                                "cd_unidade_orcamentaria", "nome_unidade_orcamentaria", "tp_unidade", "dt_empenho", "ano_empenho", 
+                                "ano_operacao", "nr_empenho", "cd_credor", "cnpj_cpf",
+                                "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", "ano_contrato", "nr_contrato", "tp_instrumento_contrato"
+  )
+  
+  chave_empenhos <- c("ano_recebimento", "mes_recebimento", "id_orgao", "cd_orgao_orcamentario", "nome_orgao_orcamentario",
+                      "cd_unidade_orcamentaria", "nome_unidade_orcamentaria", "tp_unidade", 
+                      "dt_empenho", "ano_empenho", "ano_operacao", "nr_empenho", "cd_credor", "cnpj_cpf",
+                      "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade"
+  )
+  
+  ## Recupera empenhos ligados a um único contrato
+  empenhos_com_contratos <-
+    empenhos_df %>% 
+    filter(!is.na(ano_contrato),!is.na(nr_contrato),!is.na(tp_instrumento_contrato)) %>%
+    group_by_at(.vars = vars(all_of(chave_empenhos_contratos))) %>%
+    summarise(n = n()) %>%
+    ungroup() %>%
+    select(-n) %>% 
+    group_by_at(.vars = vars(all_of(chave_empenhos))) %>%
+    mutate(n = n()) %>%
+    ungroup() %>% 
+    filter(n == 1) %>% 
+    select(-n) %>% 
+    mutate(nr_licitacao = as.character(nr_licitacao),
+           nr_contrato = as.character(nr_contrato)) %>% 
+    join_empenhos_e_contratos(contratos_df)
+  
+  ## Recupera o id para os empenhos, liquidações e pagamentos quando a info do contrato tiver acontecido em alguma fase do empenho.
+  empenhos_com_id_contrato <- empenhos_df %>%
+    filter(is.na(id_contrato)) %>%
+    select(-ano_contrato,
+           -nr_contrato,
+           -tp_instrumento_contrato,
+           -id_contrato) %>% 
+    mutate(nr_licitacao = as.character(nr_licitacao)) %>% 
+    left_join(
+      empenhos_com_contratos,
+      by = chave_empenhos
+    )
+  
+  ## Junta empenhos com ids recuperados (antigos e novos)
+  empenhos_df_alt <- empenhos_df %>% 
+    mutate(nr_licitacao = as.character(nr_licitacao),
+           nr_contrato = as.character(nr_contrato)) %>% 
+    filter(!is.na(id_contrato)) %>% 
+    bind_rows(empenhos_com_id_contrato)
+  
+  return(empenhos_df_alt)
 }
