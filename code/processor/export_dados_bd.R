@@ -36,6 +36,8 @@ source(here::here("code/licitacoes/processa_licitacoes.R"))
 source(here::here("code/licitacoes/processa_tipos_licitacoes.R"))
 source(here::here("code/licitacoes/processa_tipos_modalidade_licitacoes.R"))
 
+licitacoes_falsos_positivos <- readr::read_csv(here::here("code/utils/licitacoes_falsos_positivos.csv"))
+
 licitacoes <- import_licitacoes(anos) %>% 
   processa_info_licitacoes()
 
@@ -49,7 +51,8 @@ info_licitacoes <- join_licitacao_e_tipo(licitacoes, tipo_licitacao) %>%
   join_licitacao_e_tipo_modalidade(tipo_modalidade_licitacao) %>% 
   generate_hash_id(c("id_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade"), 
                    L_ID) %>% 
-  dplyr::select(id_licitacao, dplyr::everything())
+  dplyr::select(id_licitacao, dplyr::everything()) %>% 
+  dplyr::filter(!id_licitacao %in% (licitacoes_falsos_positivos %>% pull(id_licitacao)))
 
 ## Licitantes
 message("### licitantes...")
