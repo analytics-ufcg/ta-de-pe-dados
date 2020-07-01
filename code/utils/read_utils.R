@@ -187,6 +187,7 @@ read_empenhos_processados <- function() {
         id_empenho = readr::col_character(),
         cnpj_cpf = readr::col_character(),
         nr_empenho = readr::col_character(),
+        vl_empenho = readr::col_number(),
         dt_operacao = readr::col_datetime(format = "")
       )
     )

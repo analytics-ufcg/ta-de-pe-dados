@@ -1,3 +1,5 @@
+library(tidyverse)
+library(tidyselect)
 source(here::here("code/utils/utils.R"))
 source(here::here("code/utils/join_utils.R"))
 source(here::here("code/utils/read_utils.R"))
@@ -83,20 +85,20 @@ processa_id_contrato_empenhos <- function(empenhos_df) {
                       "dt_empenho", "ano_empenho", "ano_operacao", "nr_empenho", "cd_credor", "cnpj_cpf",
                       "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade"
   )
-  
+
   ## Recupera empenhos ligados a um único contrato
   empenhos_com_contratos <-
     empenhos_df %>% 
-    filter(!is.na(ano_contrato),!is.na(nr_contrato),!is.na(tp_instrumento_contrato)) %>%
-    group_by_at(.vars = vars(all_of(chave_empenhos_contratos))) %>%
-    summarise(n = n()) %>%
-    ungroup() %>%
-    select(-n) %>% 
-    group_by_at(.vars = vars(all_of(chave_empenhos))) %>%
-    mutate(n = n()) %>%
-    ungroup() %>% 
-    filter(n == 1) %>% 
-    select(-n) %>% 
+    dplyr::filter(!is.na(ano_contrato),!is.na(nr_contrato),!is.na(tp_instrumento_contrato)) %>%
+    dplyr::group_by_at(.vars = vars(tidyselect::all_of(chave_empenhos_contratos))) %>%
+    dplyr::summarise(n = n()) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(-n) %>% 
+    dplyr::group_by_at(.vars = vars(tidyselect::all_of(chave_empenhos))) %>%
+    dplyr::mutate(n = n()) %>%
+    dplyr::ungroup() %>% 
+    dplyr::filter(n == 1) %>% 
+    dplyr::select(-n) %>%
     mutate(nr_licitacao = as.character(nr_licitacao),
            nr_contrato = as.character(nr_contrato)) %>% 
     join_empenhos_e_contratos(contratos_df)
