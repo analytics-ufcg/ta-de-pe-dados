@@ -65,7 +65,8 @@ join_contrato_e_orgao <- function(contratos, orgao_municipio) {
 }
 
 join_itens_contratos_e_licitacoes <- function(itens_contratos, itens_licitacoes) {
-  itens_licitacoes %<>% dplyr::select(id_licitacao, id_item_licitacao = id_item, ds_item, nr_lote, nr_item)
+  itens_licitacoes %<>% dplyr::select(id_licitacao, id_item_licitacao = id_item, ds_item, 
+                                      nr_lote, nr_item, sg_unidade_medida)
   itens_contratos %<>% dplyr::left_join(itens_licitacoes) 
 }
 

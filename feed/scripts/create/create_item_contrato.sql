@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS "item_contrato" (
     "vl_total_item_contrato" REAL,
     "dt_inicio_vigencia" DATE,
     "ds_item" VARCHAR(2000),
+    "sg_unidade_medida" VARCHAR(5),
     "categoria" INTEGER,
     "language" VARCHAR(15),
     "ds_1" VARCHAR(50),
