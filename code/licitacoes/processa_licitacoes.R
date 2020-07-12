@@ -51,7 +51,7 @@ filter_licitacoes_merenda <- function(licitacoes_df) {
                                               from="UTF-8", 
                                               to="ASCII//TRANSLIT")) %>% 
     # Filtra descrições relacionadas a alimentação
-    dplyr::mutate(isAlimentacao = grepl("^.*(genero.*aliment|aliment.*esc|genero.*agric.*famil|merenda|pnae).*$",
+    dplyr::mutate(isAlimentacao = grepl("^.*(genero.*aliment|aliment.*escola|genero.*agric.*famil|merenda|pnae).*$",
                                         tolower(DS_OBJETO_PROCESSED))) %>%
     # Remove casos em que o filtro foi muito abrangente (falsos positivos)
     dplyr::mutate(falso_positivo = grepl("^((?!(fontes de|som|bivolt|copiad|magn|trator|impressora|roda|pnaest)).)*$",
