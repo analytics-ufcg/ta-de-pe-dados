@@ -8,5 +8,6 @@ DROP TABLE IF EXISTS "contrato";
 DROP TABLE IF EXISTS "fornecedor";
 DROP TABLE IF EXISTS "licitante";
 DROP TABLE IF EXISTS "item";
+DROP TABLE IF EXISTS "documento_licitacao";
 DROP TABLE IF EXISTS "licitacao";
 DROP TABLE IF EXISTS "orgao";

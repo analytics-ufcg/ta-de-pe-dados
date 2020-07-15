@@ -1,0 +1,64 @@
+tipo_documento,descricao_tipo_documento
+ACL,Ata de julgamento credenciamento/lances
+ADJ,Adjudicação
+AED,Aviso de alteração do Edital/Errata
+AHP,Atas (habilitação/propostas)
+AJL,Ata julgamento de recursos credenciamento/lances
+AJR,Ata de julgamento de recursos
+AND,Anulação por determinação judicial
+ANO,Anulação de ofício
+AOG,Autorização do órgão gerenciador
+APQ,Ata(s) do procedimento de pré-qualificação
+APR,Atas do pregão (propostas/lances/habilitação)
+ARD,Atas do RDC (propostas/lances/habilitação)
+ARP,Ata de registro de preços
+BDI,Detalhamento do BDI da proposta vencedora
+CEX,Comprovação de exclusividade
+CNE,Comprovação de notória especialização
+CRN,Cronograma
+CRO,Cronograma da proposta vencedora
+DBD,Detalhamento BDI
+DEN,Detalhamento dos encargos sociais da proposta vencedora
+DES,Detalhamento encargos sociais
+DOH,Documentos de habilitação
+EDI,Edital e anexos
+ELO,Edital e anexos da licitação realizada por outro órgão
+EPQ,Edital de pré-qualificação
+ESC,Esclarecimento
+EXA,Extrato de adesão a registro de preços
+EXD,Comprovante de publicação do extrato da dispensa
+EXI,Comprovante de publicação do extrato da inexigibilidade
+HOM,Homologação
+HPP,Atas (habilitação/propostas/projetos)
+ICE,Impugnação contra edital
+IME,Ata de julgamento da impugnação
+MAI,Manifestação de interesse
+MON,Modelos de negócio
+OCB,Orçamento-base
+OPC,Orçamento Base
+OUP,Outras propostas (orçamento e preço)
+OUT,Outros documentos
+PBT,Projeto básico/Termo de referência
+PDO,Planilha de detalhamento do objeto
+PET,Projetos e estudos técnicos
+PFC,Proposta do fornecedor contratado (orçamento e preço)
+PFP,Projeto funcional preliminar
+PJB,Projeto básico/Anteprojeto/Termo de Referência
+PLT,Plano de trabalho
+PMV,Pesquisa de mercado demonstrando a vantagem econômica
+PPR,Planilha de proposta
+PRO,Propostas (orçamento e preço)
+PRP,Propostas/Projetos
+PUE,Convocação-Aviso de edital
+RCL,Recursos contra julgamento credenciamento/lances
+REE,Aviso de republicação de edital
+REI,Aviso de reinício
+REO,Revogação de ofício
+RHA,Recursos contra julgamento da habilitação
+RHP,Recursos contra julgamento da habilitação/propostas
+RPR,Recursos contra julgamento das Propostas
+SDJ,Determinação judicial
+SUM,Medida cautelar
+SUO,Aviso de suspensão de licitação
+TFD,Termo de formalização da dispensa de licitação
+TFI,Termo de formalização da inexigibilidade de licitação

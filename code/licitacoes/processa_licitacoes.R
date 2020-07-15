@@ -74,12 +74,12 @@ filter_licitacoes_merenda <- function(licitacoes_df) {
 
 #' Prepara dados para tabela de licitações de merenda
 #'
-#' @param anos Vector de inteiros com anos para captura das licitações
+#' @param licitacoes_df Dataframe de licitações para filtrar
 #'
 #' @return Dataframe com informações das licitações de merenda
 #'   
 #' @examples 
-#' licitacoes_merenda <- processa_info_licitacoes(2019)
+#' licitacoes_merenda <- processa_info_licitacoes(import_licitacoes(c(2019)))
 #' 
 #' Chave primária:
 #' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade)

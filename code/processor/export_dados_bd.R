@@ -82,6 +82,23 @@ info_item_licitacao <- import_itens_licitacao(anos) %>%
                    I_ID) %>% 
   dplyr::select(id_item, id_licitacao, dplyr::everything())
 
+## Documentos de licitações
+message("#### Documentos de licitações...")
+source(here::here("code/licitacoes/processa_documentos_licitacao.R"))
+source(here::here("code/licitacoes/processa_tipos_documentos_licitacoes.R"))
+
+tipos_documento_licitacao <- processa_tipos_documento_licitacoes()
+
+info_documento_licitacao <- import_documentos_licitacoes(anos) %>%
+  processa_info_documentos_licitacoes() %>% 
+  join_licitacoes_e_documentos(info_licitacoes) %>% 
+  join_documento_e_tipo(tipos_documento_licitacao) %>% 
+  generate_hash_id(c("id_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade", 
+                     "cd_tipo_documento", "nome_arquivo_documento", 
+                     "cd_tipo_fase", "id_evento_licitacao", "tp_documento", "nr_documento"), 
+                   DOC_LIC_ID) %>% 
+  dplyr::select(id_documento_licitacao, id_licitacao, dplyr::everything())
+
 ## Contratos
 message("#### contratos...")
 source(here::here("code/contratos/processa_contratos.R"))
@@ -170,6 +187,7 @@ message("#### escrevendo dados...")
 readr::write_csv(info_licitacoes, here("data/bd/info_licitacao.csv"))
 readr::write_csv(info_licitantes, here("data/bd/info_licitante.csv"))
 readr::write_csv(info_item_licitacao, here("data/bd/info_item_licitacao.csv"))
+readr::write_csv(info_documento_licitacao, here("data/bd/info_documento_licitacao.csv"))
 readr::write_csv(info_contratos, here("data/bd/info_contrato.csv"))
 readr::write_csv(info_fornecedores_contratos, here("data/bd/info_fornecedores_contrato.csv"))
 readr::write_csv(info_item_contrato, here("data/bd/info_item_contrato.csv"))
