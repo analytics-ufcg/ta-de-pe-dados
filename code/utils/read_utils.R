@@ -144,6 +144,19 @@ read_fornecedores_contratos <- function(source) {
   
 }
 
+#' Lê arquivo csv de documentos das licitações
+#' @param source Ano correspondente ao arquivo para leitura
+#' @return Dataframe de documentos das licitações
+read_documentos_licitacoes <- function(source) {
+  documentos <- readr::read_csv(here::here(paste0("data/licitacoes/", source, "/documento_lic.csv")),
+                                  col_types = list(.default = readr::col_character(),
+                                                   NR_LICITACAO = readr::col_number(),
+                                                   ANO_LICITACAO = readr::col_integer())
+  )
+  return(documentos)
+  
+}
+
 read_orgaos <- function() {
   orgaos <- readr::read_csv(here::here("data/orgaos/orgaos.csv"),
                             col_types = list(

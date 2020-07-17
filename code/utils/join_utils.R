@@ -87,3 +87,15 @@ join_empenhos_e_contratos <- function(empenhos_df, contratos_df) {
                              "nr_contrato", "ano_contrato", "tp_instrumento_contrato"))
 }
 
+join_licitacoes_e_documentos <- function(documentos_licitacao_df, licitacoes_df) {
+  licitacoes_df %<>% dplyr::select("id_orgao", "ano_licitacao", "cd_tipo_modalidade", "nr_licitacao", "id_licitacao")
+  documentos_licitacao_df %>% 
+    dplyr::inner_join(licitacoes_df,
+                      by = c("id_orgao", "ano_licitacao", "cd_tipo_modalidade", "nr_licitacao"))
+}
+
+join_documento_e_tipo <- function(documentos_licitacao_df, tipos_documentos_licitacao_df) {
+  documentos_licitacao_df %>% 
+    dplyr::left_join(tipos_documentos_licitacao_df, by = c("cd_tipo_documento" = "tipo_documento"))
+}
+

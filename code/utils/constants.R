@@ -6,6 +6,7 @@ TABELA_ALTERACOES_CONTRATO <- 5
 TABELA_ITEM_CONTRATO <- 6
 TABELA_EMPENHO <- 7
 TABELA_NOVIDADE <- 8
+TABELA_DOCUMENTO_LICITACAO <- 9
 
 L_ID <- "id_licitacao"
 LICITANTE_ID <- "id_licitante"
@@ -15,3 +16,4 @@ ALTERACOES_CONTRATO_ID <- "id_alteracoes_contrato"
 ITEM_CONTRATO_ID <- "id_item_contrato"
 E_ID <- "id_empenho"
 NOVIDADE_ID <- "id_novidade"
+DOC_LIC_ID <- "id_documento_licitacao"
