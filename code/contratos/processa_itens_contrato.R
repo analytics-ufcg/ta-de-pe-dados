@@ -34,11 +34,11 @@ import_itens_contrato_por_ano <- function(ano = 2019) {
   return(itens_contrato)
 }
 
-#' Processa dados para a tabela de informações dos itens dos contratos de merenda
+#' Processa dados para a tabela de informações dos itens dos contratos
 #' 
 #' @param itens_contrato_df Dataframe de itens de contrato
 #'
-#' @return Dataframe com informações dos itens dos contratos de merenda
+#' @return Dataframe com informações dos itens dos contratos
 #'   
 #' @examples 
 #' info_item_contrato <- processa_info_item_contrato(itens_contrato_df)
@@ -65,11 +65,11 @@ processa_info_item_contrato <- function(itens_contrato_df) {
   return(info_item_contrato)
 }
 
-#' Gera ids das categorias dos itens dos contratos de merenda de acordo com sua descrição
+#' Gera ids das categorias dos itens dos contratos de acordo com sua descrição
 #' 
 #' @param info_item_contrato Dataframe de itens de contrato
 #'
-#' @return Dataframe com informações dos itens dos contratos de merenda com id da categoria
+#' @return Dataframe com informações dos itens dos contratos com id da categoria
 #'   
 #' @examples 
 #' info_item_contrato <- create_categoria(info_item_contrato)
@@ -102,7 +102,7 @@ create_categoria <- function(info_item_contrato) {
 #' 
 #' @param info_item_contrato Dataframe de itens de contrato
 #'
-#' @return Dataframe com informações dos itens dos contratos de merenda com colunas referentes a partes da descrição
+#' @return Dataframe com informações dos itens dos contratos com colunas referentes a partes da descrição
 #'   
 #' @examples 
 #' info_item_contrato <- split_descricao(info_item_contrato)

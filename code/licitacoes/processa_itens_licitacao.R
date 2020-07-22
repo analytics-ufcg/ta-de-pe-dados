@@ -44,11 +44,11 @@ import_itens_licitacao <- function(anos = c(2017, 2018, 2019)) {
   return(itens_licitacao)
 }
 
-#' Processa dados para a tabela de informações dos itens das licitações de merenda
+#' Processa dados para a tabela de informações dos itens das licitações
 #' 
 #' @param anos Vector de inteiros com anos para captura dos itens das licitações
 #'
-#' @return Dataframe com informações dos itens das licitações de merenda
+#' @return Dataframe com informações dos itens das licitações
 #'   
 #' @examples 
 #' info_item_licitacao <- processa_info_item_licitacao(anos = c(2017, 2018, 2019))

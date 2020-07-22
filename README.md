@@ -20,8 +20,8 @@ O processamento de dados do Tá na Mesa tem os seguintes passos:
 2. Processamento dos dados de licitações e contratos
 3. Importação dos dados de licitações e contratos para o BD.
 4. Importação dos dados de empenhos (vindos diretamento do TCE) para o BD.
-5. Processamento dos dados de empenhos de merenda.
-6. Importação dos dados de empenhos de merenda para o BD.
+5. Processamento dos dados de empenhos processados.
+6. Importação dos dados de empenhos processados para o BD.
 7. Processamento dos dados de novidades.
 8. Importação dos dados de novidades para o BD.
 

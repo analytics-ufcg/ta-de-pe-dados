@@ -36,14 +36,14 @@ import_empenhos_por_ano <- function(ano) {
 }
 
 
-#' Prepara dados para tabela de licitações de merenda
+#' Prepara dados para tabela de licitações
 #'
 #' @param anos Vector de inteiros com anos para captura das licitações
 #'
-#' @return Dataframe com informações das licitações de merenda
+#' @return Dataframe com informações das licitações
 #'   
 #' @examples 
-#' licitacoes_merenda <- processa_info_licitacoes(2019)
+#' licitacoes <- processa_info_licitacoes(2019)
 #' 
 #' Chave primária:
 #' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade)

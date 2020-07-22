@@ -53,7 +53,7 @@ run_data_process_update() {
     pprint "7. Importa dados de empenhos para o BD (tabela completa)"
     docker exec feed python3.6 /feed/manage.py import-empenho-raw
 
-    pprint "8. Processa dados de empenhos para considerar apenas merenda"
+    pprint "8. Processa dados de empenhos para considerar apenas os das licitações filtradas"
     docker exec r-container sh -c "cd /app/code/processor && Rscript export_empenhos_bd.R"
 
     pprint "9. Processa dados de novidades"

@@ -34,7 +34,7 @@ import_contratos_por_ano <- function(ano = 2019) {
   return(contratos)
 }
 
-#' Processa dados para tabela de informações dos contratos de licitações de merenda no RS
+#' Processa dados para tabela de informações dos contratos de licitações no RS
 #' 
 #' @param contratos_df Dataframe de contratos para padronização
 #'

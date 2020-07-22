@@ -72,14 +72,32 @@ filter_licitacoes_merenda <- function(licitacoes_df) {
   return(licitacoes_merenda)
 }
 
-#' Prepara dados para tabela de licitações de merenda
+#' Carrega licitações marcadas pelo TCE-RS como sendo do período da Pandemia do Covid-19
+#'
+#' @param anos Vector de inteiros com anos para captura das licitações
+#'
+#' @return Dataframe com informações das licitações relacionadas ao COVID-19
+#'   
+#' @examples 
+#' licitacoes <- filter_licitacoes_covid(2019)
+#' 
+filter_licitacoes_covid <- function(licitacoes_df) {
+  
+  licitacoes_filtradas <- licitacoes_df %>% 
+    dplyr::filter(BL_COVID19 == "S") %>% 
+    dplyr::mutate(merenda = FALSE)
+  
+  return(licitacoes_filtradas)
+}
+
+#' Prepara dados para tabela de licitações filtradas
 #'
 #' @param licitacoes_df Dataframe de licitações para filtrar
 #'
-#' @return Dataframe com informações das licitações de merenda
+#' @return Dataframe com informações das licitações filtradas
 #'   
 #' @examples 
-#' licitacoes_merenda <- processa_info_licitacoes(import_licitacoes(c(2019)))
+#' licitacoes <- processa_info_licitacoes(import_licitacoes(c(2019)))
 #' 
 #' Chave primária:
 #' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade)
@@ -87,7 +105,7 @@ filter_licitacoes_merenda <- function(licitacoes_df) {
 processa_info_licitacoes <- function(licitacoes_df) {
   
   info_licitacoes <- licitacoes_df %>% 
-    filter_licitacoes_merenda() %>% 
+    filter_licitacoes_covid() %>% 
     janitor::clean_names() %>% 
     dplyr::mutate(id_estado = "43",
            tp_fornecimento = ifelse(tp_fornecimento == "I" , "Integral", 
@@ -96,7 +114,6 @@ processa_info_licitacoes <- function(licitacoes_df) {
            dt_adjudicacao = as.Date(dt_adjudicacao, format="%Y-%m-%d"),
            vl_homologado = as.numeric(vl_homologado),
            vl_licitacao = as.numeric(vl_licitacao)) %>%
-    
     dplyr::select(id_estado, id_orgao = cd_orgao, nm_orgao, nr_licitacao, ano_licitacao, 
            cd_tipo_modalidade, permite_subcontratacao = bl_permite_subcontratacao,
            tp_fornecimento, descricao_objeto = ds_objeto, vl_estimado_licitacao = vl_licitacao, 
