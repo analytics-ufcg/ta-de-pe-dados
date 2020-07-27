@@ -42,7 +42,7 @@ run_data_process_update() {
     docker exec feed python3.6 /feed/manage.py clean-empenho
 
     pprint "4. Processa dados das tabelas gerais"
-    docker exec r-container sh -c "cd /app/code/processor && Rscript export_dados_bd.R 2018,2019,2020"
+    docker exec r-container sh -c "cd /app/code/processor && Rscript export_dados_bd.R 2018,2019,2020 merenda"
 
     pprint "5. Cria schema do BD"
     docker exec feed python3.6 /feed/manage.py create

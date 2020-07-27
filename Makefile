@@ -9,7 +9,7 @@ help:
 	@echo "\thelp \t\t\t\tMostra esta mensagem de ajuda"
 	@echo "\tcrawler-build \t\t\tRealiza o build da imagem com as dependência do crawler do tá na mesa"
 	@echo "\tcrawler-run ano=<ano> \t\tExecuta a cli do crawler para o ano passado como parâmetro. (2019 é o default)"
-	@echo "\tprocess-data anos=<ano1,ano2> \tExecuta o módulo de processamento de dados brutos para o formato usado na aplicação."
+	@echo "\tprocess-data anos=<ano1,ano2> filtro=<merenda> \tExecuta o módulo de processamento de dados brutos para o formato usado na aplicação."
 	@echo "\t\t\t\t\tAssume um ou mais anos separados por vírgula. Assume que os dados foram baixados."	
 	@echo "\tprocess-data-empenhos \t\tExecuta o processamento de dados de empenhos."
 	@echo "\tprocess-data-novidades \t\tExecuta o processamento de dados de novidades."
@@ -30,7 +30,7 @@ crawler-run:
 	docker run --rm -it -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_all_data.py $(ano) ./data
 .PHONY: run
 process-data:	
-	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_dados_bd.R $(anos)"
+	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_dados_bd.R $(anos) $(filtro)"
 .PHONY: process-data
 process-data-empenhos:	
 	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_empenhos_bd.R"	

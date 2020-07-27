@@ -4,21 +4,23 @@ library(magrittr)
 
 help <- "
 Usage:
-Rscript export_dados_bd.R <anos>
+Rscript export_dados_bd.R <anos> <filtro>
 <anos> pode ser um ano (2017) ou múltiplos anos separados por vírgula (2017,2018,2019)
+<filtro> pode ser merenda ou covid
 Exemplos:
-Rscript export_dados_bd.R 2019
-Rscript export_dados_bd.R 2018,2019,2020
+Rscript export_dados_bd.R 2019 merenda
+Rscript export_dados_bd.R 2018,2019,2020 merenda
 "
 
 args <- commandArgs(trailingOnly = TRUE)
-min_num_args <- 1
+min_num_args <- 2
 if (length(args) < min_num_args) {
   stop(paste("Wrong number of arguments!", help, sep = "\n"))
 }
 
 anos <- unlist(strsplit(args[1], split=","))
 # anos = c(2018, 2019, 2020)
+filtro <- args[2]
 
 source(here::here("code/utils/utils.R"))
 source(here::here("code/utils/join_utils.R"))
@@ -39,7 +41,7 @@ source(here::here("code/licitacoes/processa_tipos_modalidade_licitacoes.R"))
 licitacoes_falsos_positivos <- readr::read_csv(here::here("code/utils/licitacoes_falsos_positivos.csv"))
 
 licitacoes <- import_licitacoes(anos) %>% 
-  processa_info_licitacoes()
+  processa_info_licitacoes(tipo_filtro = filtro)
 
 orgaos_licitacao <- licitacoes %>% 
   dplyr::distinct(id_orgao, nm_orgao)
