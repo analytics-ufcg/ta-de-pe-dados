@@ -1,4 +1,6 @@
 source(here::here("code/utils/read_utils.R"))
+source(here::here("code/filters/filter_merenda.R"))
+source(here::here("code/filters/filter_covid.R"))
 
 #' Processa dados de licitações do estado do Rio Grande do Sul para um conjunto de anos
 #' 
@@ -8,7 +10,6 @@ source(here::here("code/utils/read_utils.R"))
 #' 
 #' @examples 
 #' licitacoes <- import_licitacoes(2019)
-#' 
 import_licitacoes <- function(ano) {
   
   licitacoes <- purrr::pmap_dfr(list(ano),
@@ -31,63 +32,33 @@ import_licitacoes_por_ano <- function(ano) {
   return(licitacoes)
 }
 
-#' Carrega licitações de merenda a partir de um filtro aplicado a todas as licitações
-#'
-#' @param anos Vector de inteiros com anos para captura das licitações
-#'
-#' @return Dataframe com informações das licitações de merenda
-#'   
-#' @examples 
-#' licitacoes_merenda <- filter_licitacoes_merenda(2019)
-#' 
-filter_licitacoes_merenda <- function(licitacoes_df) {
-  
-  licitacoes_cpp <- licitacoes_df %>% 
-    dplyr::filter(CD_TIPO_MODALIDADE == "CPP") %>% 
-    dplyr::mutate(merenda = TRUE)
-  
-  licitacoes_palavra_chave <- licitacoes_df %>%
-    dplyr::mutate(DS_OBJETO_PROCESSED = iconv(DS_OBJETO, 
-                                              from="UTF-8", 
-                                              to="ASCII//TRANSLIT")) %>% 
-    # Filtra descrições relacionadas a alimentação
-    dplyr::mutate(isAlimentacao = grepl("^.*(genero.*aliment|aliment.*escola|genero.*agric.*famil|merenda|pnae).*$",
-                                        tolower(DS_OBJETO_PROCESSED))) %>%
-    # Remove casos em que o filtro foi muito abrangente (falsos positivos)
-    dplyr::mutate(falso_positivo = grepl("^((?!(fontes de|som|bivolt|copiad|magn|trator|impressora|roda|pnaest)).)*$",
-                                        tolower(DS_OBJETO_PROCESSED),
-                                        perl = TRUE)) %>%
-    # considera apenas alimentação e filtra fora os falso positivos
-    dplyr::filter(isAlimentacao, falso_positivo) %>% 
-    # Classifica como merenda casos de certeza
-    dplyr::mutate(merenda = grepl("^.*(escol|educ|merenda|pnae).*$",
-                                  tolower(DS_OBJETO_PROCESSED))) %>% 
-    dplyr::select(-DS_OBJETO_PROCESSED, -isAlimentacao, -falso_positivo)
-
-  licitacoes_merenda <- dplyr::bind_rows(licitacoes_cpp, 
-                                         licitacoes_palavra_chave) %>% 
-    dplyr::mutate(merenda = ifelse(CD_TIPO_MODALIDADE == "CPP",  TRUE, merenda)) %>% 
-    dplyr::distinct(CD_ORGAO, ANO_LICITACAO, NR_LICITACAO, CD_TIPO_MODALIDADE, .keep_all = TRUE)
-  
-  return(licitacoes_merenda)
-}
-
-#' Prepara dados para tabela de licitações de merenda
+#' Prepara dados para tabela de licitações filtradas
 #'
 #' @param licitacoes_df Dataframe de licitações para filtrar
 #'
-#' @return Dataframe com informações das licitações de merenda
+#' @return Dataframe com informações das licitações filtradas
 #'   
 #' @examples 
-#' licitacoes_merenda <- processa_info_licitacoes(import_licitacoes(c(2019)))
+#' licitacoes <- processa_info_licitacoes(import_licitacoes(c(2019)))
 #' 
 #' Chave primária:
 #' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade)
 #' 
-processa_info_licitacoes <- function(licitacoes_df) {
+processa_info_licitacoes <- function(licitacoes_df, tipo_filtro) {
   
-  info_licitacoes <- licitacoes_df %>% 
-    filter_licitacoes_merenda() %>% 
+  if (tipo_filtro == "merenda") {
+    info_licitacoes <- licitacoes_df %>% 
+      filter_licitacoes_merenda()
+    
+  } else if (tipo_filtro == "covid") {
+    info_licitacoes <- licitacoes_df %>% 
+      filter_licitacoes_covid()
+    
+  } else {
+    stop("Tipo de filtro não definido. É possível filtrar pelos tipos 'merenda' ou 'covid")
+  }
+  
+  info_licitacoes <- info_licitacoes %>% 
     janitor::clean_names() %>% 
     dplyr::mutate(id_estado = "43",
            tp_fornecimento = ifelse(tp_fornecimento == "I" , "Integral", 
@@ -96,12 +67,11 @@ processa_info_licitacoes <- function(licitacoes_df) {
            dt_adjudicacao = as.Date(dt_adjudicacao, format="%Y-%m-%d"),
            vl_homologado = as.numeric(vl_homologado),
            vl_licitacao = as.numeric(vl_licitacao)) %>%
-    
     dplyr::select(id_estado, id_orgao = cd_orgao, nm_orgao, nr_licitacao, ano_licitacao, 
            cd_tipo_modalidade, permite_subcontratacao = bl_permite_subcontratacao,
            tp_fornecimento, descricao_objeto = ds_objeto, vl_estimado_licitacao = vl_licitacao, 
            data_abertura = dt_abertura, data_homologacao = dt_homologacao,
-           data_adjudicacao = dt_adjudicacao, vl_homologado, tp_licitacao, merenda)
+           data_adjudicacao = dt_adjudicacao, vl_homologado, tp_licitacao, assunto)
   
   return(info_licitacoes)
 }

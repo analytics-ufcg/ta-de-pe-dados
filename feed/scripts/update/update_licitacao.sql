@@ -22,7 +22,7 @@ DO
     data_adjudicacao = EXCLUDED.data_adjudicacao,
     vl_homologado = EXCLUDED.vl_homologado,
     tp_licitacao = EXCLUDED.tp_licitacao,
-    merenda = EXCLUDED.merenda,
+    assunto = EXCLUDED.assunto,
     tipo_licitacao = EXCLUDED.tipo_licitacao,
     tipo_modalidade_licitacao = EXCLUDED.tipo_modalidade_licitacao;
 

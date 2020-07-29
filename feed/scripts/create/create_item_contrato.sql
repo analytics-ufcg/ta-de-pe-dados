@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS "item_contrato" (
     "id_licitacao" VARCHAR(32),
     "id_item_licitacao" VARCHAR(32),
     "nr_lote" INTEGER,
-    "nr_licitacao" BIGINT,
+    "nr_licitacao" VARCHAR(20),
     "ano_licitacao" INTEGER,
     "cd_tipo_modalidade" VARCHAR(3),
     "nr_contrato" BIGINT,
