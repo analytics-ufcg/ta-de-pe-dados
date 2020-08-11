@@ -21,6 +21,7 @@ if (length(args) < min_num_args) {
 anos <- unlist(strsplit(args[1], split=","))
 # anos = c(2018, 2019, 2020)
 filtro <- args[2]
+# filtro <- "merenda"
 
 source(here::here("code/utils/utils.R"))
 source(here::here("code/utils/join_utils.R"))
@@ -131,10 +132,11 @@ message("#### fornecedores (contratos)...")
 source(here("code/contratos/processa_fornecedores.R"))
 
 info_fornecedores_contratos <- import_fornecedores(anos) %>% 
-  processa_info_fornecedores() %>% 
+  processa_info_fornecedores(contratos) %>% 
   join_contratos_e_fornecedores(info_contratos %>% 
                                   dplyr::select(nr_documento_contratado)) %>% 
-  dplyr::distinct(nr_documento, .keep_all = TRUE)
+  dplyr::distinct(nr_documento, .keep_all = TRUE) %>% 
+  dplyr::select(nr_documento, nm_pessoa, tp_pessoa, total_de_contratos, data_primeiro_contrato)
 
 ## Itens de contratos
 message("#### itens de contratos...")
