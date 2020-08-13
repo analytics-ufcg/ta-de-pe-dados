@@ -140,14 +140,32 @@ info_fornecedores_contratos <- import_fornecedores(anos) %>%
 message("#### itens de contratos...")
 source(here("code/contratos/processa_itens_contrato.R"))
 
-info_item_contrato <- import_itens_contrato(anos) %>% 
+itens_contrato <- import_itens_contrato(anos) %>% 
+  dplyr::mutate(ORIGEM_VALOR = "contrato")
+itens_licitacao <- import_itens_licitacao(anos) %>% 
+  dplyr::mutate(NR_CONTRATO = NA, ANO_CONTRATO = NA, TP_INSTRUMENTO = NA, 
+                VL_ITEM = dplyr::if_else(is.na(VL_UNITARIO_HOMOLOGADO), VL_UNITARIO_ESTIMADO, VL_UNITARIO_HOMOLOGADO), 
+                VL_TOTAL_ITEM = dplyr::if_else(is.na(VL_TOTAL_HOMOLOGADO), VL_TOTAL_ESTIMADO, VL_TOTAL_HOMOLOGADO), 
+                ORIGEM_VALOR = dplyr::if_else(is.na(VL_UNITARIO_HOMOLOGADO), "estimado", "homologado")) 
+
+
+colunas_item_contrato <- names(itens_contrato)
+colunas_item_licitacao <- names(itens_licitacao) 
+intersecao <- Reduce(dplyr::intersect, list(colunas_item_contrato, colunas_item_licitacao))
+
+itens_comprados <- itens_licitacao %>% 
+  dplyr::select(all_of(intersecao)) %>% 
+  dplyr::bind_rows(itens_contrato)
+
+info_item_contrato <- itens_comprados %>% 
   processa_info_item_contrato() %>% 
-  join_contratos_e_itens(info_contratos %>% 
-                           dplyr::select(dt_inicio_vigencia, id_orgao, id_contrato, id_licitacao, nr_licitacao, ano_licitacao, 
-                                         cd_tipo_modalidade, nr_contrato, ano_contrato, 
-                                         tp_instrumento_contrato)) %>% 
-  generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", "nr_contrato", "ano_contrato", 
-                     "tp_instrumento_contrato", "nr_lote", "nr_item"), ITEM_CONTRATO_ID) %>% 
+  join_contratos_e_itens(info_contratos %>%
+                           dplyr::select(dt_inicio_vigencia, id_orgao, id_contrato, nr_licitacao, ano_licitacao,
+                                         cd_tipo_modalidade, nr_contrato, ano_contrato,
+                                         tp_instrumento_contrato)) %>%
+  generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", "nr_contrato", "ano_contrato",
+                     "tp_instrumento_contrato", "nr_lote", "nr_item"), ITEM_CONTRATO_ID) %>%
+  join_licitacoes_e_itens(info_licitacoes) %>% 
   join_itens_contratos_e_licitacoes(info_item_licitacao) %>% 
   dplyr::select(id_item_contrato, id_contrato, id_orgao, id_licitacao, id_item_licitacao, dplyr::everything()) %>% 
   create_categoria() %>%
