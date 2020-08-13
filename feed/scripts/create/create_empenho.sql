@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS "empenho" (
     "nm_recurso" VARCHAR(240),
     "cd_credor" VARCHAR(240),
     "nm_credor" VARCHAR(240),
+    "tp_pessoa" VARCHAR(2),
     "cnpj_cpf" VARCHAR(14),
     "vl_empenho" REAL,
     "nr_liquidacao" VARCHAR(40),
