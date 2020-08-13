@@ -54,7 +54,7 @@ processa_info_empenhos <- function(empenhos_df) {
                                  nome_orgao_orcamentario, cd_unidade_orcamentaria, nome_unidade_orcamentaria, tp_unidade, 
                                  tipo_operacao, ano_empenho, ano_operacao, 
                                  dt_empenho, dt_operacao, nr_empenho, historico, cd_funcao, ds_funcao, cd_subfuncao, ds_subfuncao, cd_programa, 
-                                 ds_programa, cd_projeto, nm_projeto, cd_recurso, nm_recurso, cd_credor, nm_credor, tp_pessoa, cnpj_cpf, vl_empenho, 
+                                 ds_programa, cd_projeto, nm_projeto, cd_recurso, nm_recurso, cd_credor, nm_credor, cnpj_cpf, vl_empenho, 
                                  nr_liquidacao, vl_liquidacao, nr_pagamento, vl_pagamento, ano_licitacao, nr_licitacao, 
                                  cd_tipo_modalidade = mod_licitacao, ano_contrato, nr_contrato, 
                                  tp_instrumento_contrato = tp_instrumento_contratual
