@@ -99,3 +99,23 @@ join_documento_e_tipo <- function(documentos_licitacao_df, tipos_documentos_lici
     dplyr::left_join(tipos_documentos_licitacao_df, by = c("cd_tipo_documento" = "tipo_documento"))
 }
 
+join_itens_contratos_e_licitacoes_encerradas <- function(itens_contratos_df, licitacoes_encerradas_df) {
+  itens_contratos_df %>%
+    dplyr::left_join(
+      licitacoes_encerradas_df %>%
+        dplyr::select(
+          cd_orgao,
+          ano_licitacao,
+          cd_tipo_modalidade,
+          nr_licitacao,
+          data_evento
+        ),
+      by = c(
+        "id_orgao" = "cd_orgao",
+        "ano_licitacao",
+        "cd_tipo_modalidade",
+        "nr_licitacao"
+      )
+    )
+}
+

@@ -141,15 +141,16 @@ info_fornecedores_contratos <- import_fornecedores(anos) %>%
 ## Itens de contratos
 message("#### itens de contratos...")
 source(here("code/contratos/processa_itens_contrato.R"))
+source(here("code/licitacoes/processa_eventos_licitacoes.R"))
+
+licitacoes_encerradas <- import_eventos_licitacoes(anos) %>% 
+  filtra_licitacoes_encerradas()
 
 itens_contrato <- import_itens_contrato(anos) %>% 
   dplyr::mutate(ORIGEM_VALOR = "contrato")
-itens_licitacao <- import_itens_licitacao(anos) %>% 
-  dplyr::mutate(NR_CONTRATO = NA, ANO_CONTRATO = NA, TP_INSTRUMENTO = NA, 
-                VL_ITEM = dplyr::if_else(is.na(VL_UNITARIO_HOMOLOGADO), VL_UNITARIO_ESTIMADO, VL_UNITARIO_HOMOLOGADO), 
-                VL_TOTAL_ITEM = dplyr::if_else(is.na(VL_TOTAL_HOMOLOGADO), VL_TOTAL_ESTIMADO, VL_TOTAL_HOMOLOGADO), 
-                ORIGEM_VALOR = dplyr::if_else(is.na(VL_UNITARIO_HOMOLOGADO), "estimado", "homologado")) 
 
+itens_licitacao <- import_itens_licitacao(anos) %>% 
+  processa_item_licitacao_comprado(itens_contrato, licitacoes_encerradas)
 
 colunas_item_contrato <- names(itens_contrato)
 colunas_item_licitacao <- names(itens_licitacao) 
@@ -169,6 +170,10 @@ info_item_contrato <- itens_comprados %>%
                      "tp_instrumento_contrato", "nr_lote", "nr_item"), ITEM_CONTRATO_ID) %>%
   join_licitacoes_e_itens(info_licitacoes) %>% 
   join_itens_contratos_e_licitacoes(info_item_licitacao) %>% 
+  join_itens_contratos_e_licitacoes_encerradas(licitacoes_encerradas) %>% 
+  dplyr::mutate(dt_inicio_vigencia = ifelse(is.na(dt_inicio_vigencia), data_evento, dt_inicio_vigencia)) %>% 
+  dplyr::mutate(dt_inicio_vigencia = as.POSIXct(dt_inicio_vigencia, format="%Y-%m-%d")) %>% 
+  dplyr::select(-data_evento) %>% 
   dplyr::select(id_item_contrato, id_contrato, id_orgao, id_licitacao, id_item_licitacao, dplyr::everything()) %>% 
   create_categoria() %>%
   split_descricao()
