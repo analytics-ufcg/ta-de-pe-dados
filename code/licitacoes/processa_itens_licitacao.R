@@ -89,9 +89,9 @@ processa_item_licitacao_comprado <- function(itens_licitacao_df, itens_contrato,
   
   info_item_licitacao <- itens_licitacao_df %>%
     dplyr::mutate(NR_CONTRATO = NA, ANO_CONTRATO = NA, TP_INSTRUMENTO = NA,
-      VL_ITEM = dplyr::if_else(is.na(VL_UNITARIO_HOMOLOGADO), VL_UNITARIO_ESTIMADO, VL_UNITARIO_HOMOLOGADO),
-      VL_TOTAL_ITEM = dplyr::if_else(is.na(VL_TOTAL_HOMOLOGADO), VL_TOTAL_ESTIMADO, VL_TOTAL_HOMOLOGADO),
-      ORIGEM_VALOR = dplyr::if_else(is.na(VL_UNITARIO_HOMOLOGADO), "estimado", "homologado")
+      VL_ITEM = dplyr::if_else(is.na(VL_UNITARIO_HOMOLOGADO) | VL_UNITARIO_HOMOLOGADO == 0, VL_UNITARIO_ESTIMADO, VL_UNITARIO_HOMOLOGADO),
+      VL_TOTAL_ITEM = dplyr::if_else(is.na(VL_TOTAL_HOMOLOGADO) | VL_UNITARIO_HOMOLOGADO == 0, VL_TOTAL_ESTIMADO, VL_TOTAL_HOMOLOGADO),
+      ORIGEM_VALOR = dplyr::if_else(is.na(VL_UNITARIO_HOMOLOGADO) | VL_UNITARIO_HOMOLOGADO == 0, "estimado", "homologado")
     ) %>%
     ## filtra apenas itens de licitação da modalidade de Dispensa e Inexigibilidade
     dplyr::filter(CD_TIPO_MODALIDADE %in% c("PRD", "PRI")) %>%

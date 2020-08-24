@@ -144,7 +144,8 @@ source(here("code/contratos/processa_itens_contrato.R"))
 source(here("code/licitacoes/processa_eventos_licitacoes.R"))
 
 licitacoes_encerradas <- import_eventos_licitacoes(anos) %>% 
-  filtra_licitacoes_encerradas()
+  filtra_licitacoes_encerradas() %>% 
+  dplyr::mutate(data_evento = as.POSIXct(data_evento, format="%Y-%m-%d"))
 
 itens_contrato <- import_itens_contrato(anos) %>% 
   dplyr::mutate(ORIGEM_VALOR = "contrato")
@@ -170,9 +171,9 @@ info_item_contrato <- itens_comprados %>%
                      "tp_instrumento_contrato", "nr_lote", "nr_item"), ITEM_CONTRATO_ID) %>%
   join_licitacoes_e_itens(info_licitacoes) %>% 
   join_itens_contratos_e_licitacoes(info_item_licitacao) %>% 
-  join_itens_contratos_e_licitacoes_encerradas(licitacoes_encerradas) %>% 
-  dplyr::mutate(dt_inicio_vigencia = ifelse(is.na(dt_inicio_vigencia), data_evento, dt_inicio_vigencia)) %>% 
-  dplyr::mutate(dt_inicio_vigencia = as.POSIXct(dt_inicio_vigencia, format="%Y-%m-%d")) %>% 
+  join_itens_contratos_e_licitacoes_encerradas(licitacoes_encerradas) %>%  
+  dplyr::ungroup() %>% 
+  dplyr::mutate(dt_inicio_vigencia = dplyr::if_else(is.na(dt_inicio_vigencia), data_evento, dt_inicio_vigencia)) %>%
   dplyr::select(-data_evento) %>% 
   dplyr::select(id_item_contrato, id_contrato, id_orgao, id_licitacao, id_item_licitacao, dplyr::everything()) %>% 
   create_categoria() %>%
