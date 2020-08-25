@@ -21,6 +21,7 @@ if (length(args) < min_num_args) {
 anos <- unlist(strsplit(args[1], split=","))
 # anos = c(2018, 2019, 2020)
 filtro <- args[2]
+# filtro <- "merenda"
 
 source(here::here("code/utils/utils.R"))
 source(here::here("code/utils/join_utils.R"))
@@ -131,23 +132,26 @@ message("#### fornecedores (contratos)...")
 source(here("code/contratos/processa_fornecedores.R"))
 
 info_fornecedores_contratos <- import_fornecedores(anos) %>% 
-  processa_info_fornecedores() %>% 
+  processa_info_fornecedores(contratos) %>% 
   join_contratos_e_fornecedores(info_contratos %>% 
                                   dplyr::select(nr_documento_contratado)) %>% 
-  dplyr::distinct(nr_documento, .keep_all = TRUE)
+  dplyr::distinct(nr_documento, .keep_all = TRUE) %>% 
+  dplyr::select(nr_documento, nm_pessoa, tp_pessoa, total_de_contratos, data_primeiro_contrato)
 
 ## Itens de contratos
 message("#### itens de contratos...")
 source(here("code/contratos/processa_itens_contrato.R"))
+source(here("code/licitacoes/processa_eventos_licitacoes.R"))
+
+licitacoes_encerradas <- import_eventos_licitacoes(anos) %>% 
+  filtra_licitacoes_encerradas() %>% 
+  dplyr::mutate(data_evento = as.POSIXct(data_evento, format="%Y-%m-%d"))
 
 itens_contrato <- import_itens_contrato(anos) %>% 
   dplyr::mutate(ORIGEM_VALOR = "contrato")
-itens_licitacao <- import_itens_licitacao(anos) %>% 
-  dplyr::mutate(NR_CONTRATO = NA, ANO_CONTRATO = NA, TP_INSTRUMENTO = NA, 
-                VL_ITEM = dplyr::if_else(is.na(VL_UNITARIO_HOMOLOGADO), VL_UNITARIO_ESTIMADO, VL_UNITARIO_HOMOLOGADO), 
-                VL_TOTAL_ITEM = dplyr::if_else(is.na(VL_TOTAL_HOMOLOGADO), VL_TOTAL_ESTIMADO, VL_TOTAL_HOMOLOGADO), 
-                ORIGEM_VALOR = dplyr::if_else(is.na(VL_UNITARIO_HOMOLOGADO), "estimado", "homologado")) 
 
+itens_licitacao <- import_itens_licitacao(anos) %>% 
+  processa_item_licitacao_comprado(itens_contrato, licitacoes_encerradas)
 
 colunas_item_contrato <- names(itens_contrato)
 colunas_item_licitacao <- names(itens_licitacao) 
@@ -167,6 +171,10 @@ info_item_contrato <- itens_comprados %>%
                      "tp_instrumento_contrato", "nr_lote", "nr_item"), ITEM_CONTRATO_ID) %>%
   join_licitacoes_e_itens(info_licitacoes) %>% 
   join_itens_contratos_e_licitacoes(info_item_licitacao) %>% 
+  join_itens_contratos_e_licitacoes_encerradas(licitacoes_encerradas) %>%  
+  dplyr::ungroup() %>% 
+  dplyr::mutate(dt_inicio_vigencia = dplyr::if_else(is.na(dt_inicio_vigencia), data_evento, dt_inicio_vigencia)) %>%
+  dplyr::select(-data_evento) %>% 
   dplyr::select(id_item_contrato, id_contrato, id_orgao, id_licitacao, id_item_licitacao, dplyr::everything()) %>% 
   create_categoria() %>%
   split_descricao()

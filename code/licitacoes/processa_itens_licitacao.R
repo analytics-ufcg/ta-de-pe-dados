@@ -67,3 +67,46 @@ processa_info_item_licitacao <- function(itens_licitacao) {
     
   return(info_item_licitacao)
 }
+
+#' Filtra os itens de licitação para retornar apenas os itens que foram comprados
+#' em licitações de Dispensa ou Inexigibilidade
+#' 
+#' @param itens_licitacao_df Dataframe com itens de licitação
+#' 
+#' @param itens_contrato Dataframe com itens de contrato
+#' 
+#' @param licitacoes_encerradas Dataframe com as licitações encerradas
+#'
+#' @return Dataframe com informações dos itens das licitações
+#'   
+#' @examples 
+#' info_item_licitacao_comprado <- processa_item_licitacao_comprado(itens_licitacao_df, itens_contrato, licitacoes_encerradas)
+#' 
+#' Chave primária: 
+#' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_lote, nr_item)
+#' 
+processa_item_licitacao_comprado <- function(itens_licitacao_df, itens_contrato, licitacoes_encerradas) {
+  
+  info_item_licitacao <- itens_licitacao_df %>%
+    dplyr::mutate(NR_CONTRATO = NA, ANO_CONTRATO = NA, TP_INSTRUMENTO = NA,
+      VL_ITEM = dplyr::if_else(is.na(VL_UNITARIO_HOMOLOGADO) | VL_UNITARIO_HOMOLOGADO == 0, VL_UNITARIO_ESTIMADO, VL_UNITARIO_HOMOLOGADO),
+      VL_TOTAL_ITEM = dplyr::if_else(is.na(VL_TOTAL_HOMOLOGADO) | VL_UNITARIO_HOMOLOGADO == 0, VL_TOTAL_ESTIMADO, VL_TOTAL_HOMOLOGADO),
+      ORIGEM_VALOR = dplyr::if_else(is.na(VL_UNITARIO_HOMOLOGADO) | VL_UNITARIO_HOMOLOGADO == 0, "estimado", "homologado")
+    ) %>%
+    ## filtra apenas itens de licitação da modalidade de Dispensa e Inexigibilidade
+    dplyr::filter(CD_TIPO_MODALIDADE %in% c("PRD", "PRI")) %>%
+    
+    ## filtra apenas itens de licitação que não possuem itens de contrato associados
+    dplyr::anti_join(itens_contrato, 
+                     by = c("CD_ORGAO", "NR_LICITACAO", "ANO_LICITACAO", "CD_TIPO_MODALIDADE")) %>%
+    
+    ## filtra apenas licitacoes que tiveram o evento de encerramento
+    dplyr::inner_join(licitacoes_encerradas %>%
+                        distinct(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade),
+                      by = c("CD_ORGAO" = "cd_orgao",
+                             "NR_LICITACAO" = "nr_licitacao", 
+                             "ANO_LICITACAO" = "ano_licitacao", 
+                             "CD_TIPO_MODALIDADE" = "cd_tipo_modalidade"))
+  
+  return(info_item_licitacao)
+}
