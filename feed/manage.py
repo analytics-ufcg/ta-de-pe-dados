@@ -44,6 +44,12 @@ def update_data():
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/update/update_novidade.sql'])
 
 @click.command()
+def update_fornecedores():
+    """Atualiza as tabelas do Banco de Dados"""
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/update/update_fornecedor.sql'])
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/update/update_contrato.sql'])
+
+@click.command()
 def import_data():
     """Importa dados para as tabelas do Banco de dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_data.sql'])
@@ -73,7 +79,6 @@ def clean_data():
     """Dropa as tabelas do Banco de Dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/drop/drop_tables.sql'])
 
-
 @click.command()
 def shell():
     """Acessa terminal do banco de dados"""
@@ -82,6 +87,7 @@ def shell():
 
 cli.add_command(create)
 cli.add_command(update_data)
+cli.add_command(update_fornecedores)
 cli.add_command(import_data)
 cli.add_command(import_empenho)
 cli.add_command(import_novidade)

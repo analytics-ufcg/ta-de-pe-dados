@@ -82,3 +82,65 @@ processa_info_fornecedores <- function(fornecedores_df, contratos_df) {
   
   return(info_fornecedores)
 }
+
+#' Associa os fornecedores a compras realizadas em licitações que geraram empenhos mas que dispensaram
+#' o contrato
+#' 
+#' @param empenhos_df Dataframe de empenhos
+#' 
+#' @param compras_df Dataframe de compras (contratos e compras que dispensaram o contrato)
+#'
+#' @return Dataframe dos contratos e os fornecedores preenchidos.
+#'   
+#' @examples 
+#' contratos_com_todos_fornecedores <- processa_fornecedores_compras(empenhos_df, compras_df)
+#' 
+#' Chave primária: 
+#' (nr_documento)
+empenhos_df <- read_empenhos_processados()
+compras_df <- read_contratos_processados() %>% 
+  mutate(bak = nr_documento_contratado)
+
+processa_fornecedores_compras <- function(empenhos_df, compras_df) {
+  
+  fornecedores_empenhos <- empenhos_df %>% 
+    dplyr::mutate(cnpj_cpf = 
+             dplyr::case_when(
+               tp_pessoa == "PF" ~ str_pad(cnpj_cpf, 11, side = "left", pad = "0"),
+               tp_pessoa == "PJ" ~ str_pad(cnpj_cpf, 14, side = "left", pad = "0"),
+               T ~ cnpj_cpf)) %>% 
+    dplyr::group_by(cnpj_cpf, id_licitacao) %>% 
+    dplyr::summarise(n_operacoes = n_distinct(id_empenho)) %>% 
+    dplyr::ungroup()
+  
+  ## remover teste abaixo
+  compras_df <- compras_df %>%
+    rowwise() %>% 
+    mutate(nr_documento_contratado = ifelse(runif(1, 0, 1) > 0.5, nr_documento_contratado, NA))
+  ## remover teste acima
+  
+  compras_fornecedor_definido <- compras_df %>% 
+    dplyr::filter(!is.na(nr_documento_contratado) | !(cd_tipo_modalidade %in% c("PRD", "PRI")))
+  
+  compras_fornecedor_indefinido <- compras_df %>% 
+    dplyr::filter(is.na(nr_documento_contratado),
+                  cd_tipo_modalidade %in% c("PRD", "PRI"))
+  
+  compras_fornecedor_merge <- compras_fornecedor_indefinido %>% 
+    dplyr::left_join(fornecedores_empenhos %>% 
+                       dplyr::select(cnpj_cpf, id_licitacao), 
+                     by = c("id_licitacao")) %>% 
+    dplyr::mutate(nr_documento_contratado = dplyr::if_else(is.na(nr_documento_contratado),
+                                                           cnpj_cpf,
+                                                           nr_documento_contratado))
+  
+  if (nrow(compras_fornecedor_merge) != nrow(compras_fornecedor_indefinido)) {
+    message("Existem compras de licitações (PRD e PRI) associadas a mais de um fornecedor.")
+  }
+
+  compras_fornecedor <- compras_fornecedor_merge %>%
+    dplyr::distinct(id_contrato, .keep_all = T) %>% 
+    dplyr::bind_rows(compras_fornecedor_definido)
+  
+  return(compras_fornecedor)
+}
