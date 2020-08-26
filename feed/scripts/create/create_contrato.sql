@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS "contrato" (
     "vl_contrato" REAL,
     "contrato_possui_garantia" VARCHAR(1),
     "vigencia_original_do_contrato" INTEGER,
-    "descricao_objeto_contrato" VARCHAR(500),
+    "descricao_objeto_contrato" TEXT,
     "justificativa_contratacao" VARCHAR(300),
     "obs_contrato" VARCHAR(500),
     "tipo_instrumento_contrato" VARCHAR(50),

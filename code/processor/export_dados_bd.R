@@ -145,7 +145,23 @@ source(here("code/licitacoes/processa_eventos_licitacoes.R"))
 
 licitacoes_encerradas <- import_eventos_licitacoes(anos) %>% 
   filtra_licitacoes_encerradas() %>% 
-  dplyr::mutate(data_evento = as.POSIXct(data_evento, format="%Y-%m-%d"))
+  dplyr::mutate(data_evento = as.POSIXct(data_evento, format="%Y-%m-%d")) %>% 
+  dplyr::mutate(dt_inicio_vigencia = data_evento)
+
+compras <- licitacoes_encerradas %>% 
+  filter(cd_tipo_modalidade == "PRD" | cd_tipo_modalidade == "PRI") %>% 
+  dplyr::left_join(info_licitacoes %>% dplyr::mutate(cd_orgao = id_orgao)) %>% 
+  dplyr::filter(!is.na(id_licitacao)) %>% 
+  dplyr::mutate(nr_contrato = 1, ano_contrato = ano_licitacao, tp_instrumento_contrato = "Compra",
+                vl_contrato = dplyr::if_else(vl_homologado == 0 | is.na(vl_homologado), vl_estimado_licitacao, vl_homologado),
+                tipo_instrumento_contrato = "Compra") %>% 
+  generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", 
+                     "nr_contrato", "ano_contrato", "tp_instrumento_contrato"), CONTRATO_ID) %>% 
+  dplyr::select(id_contrato, id_licitacao, id_orgao, nr_contrato, ano_contrato, nm_orgao, 
+                nr_licitacao, ano_licitacao, cd_tipo_modalidade, dt_inicio_vigencia, vl_contrato,
+                descricao_objeto_contrato = descricao_objeto, tipo_instrumento_contrato)
+
+info_contratos %<>% dplyr::bind_rows(compras)
 
 itens_contrato <- import_itens_contrato(anos) %>% 
   dplyr::mutate(ORIGEM_VALOR = "contrato")
