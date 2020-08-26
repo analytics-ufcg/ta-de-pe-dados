@@ -13,12 +13,13 @@ help:
 	@echo "\t\t\t\t\tAssume um ou mais anos separados por vírgula. Assume que os dados foram baixados."	
 	@echo "\tprocess-data-empenhos \t\tExecuta o processamento de dados de empenhos."
 	@echo "\tprocess-data-novidades \t\tExecuta o processamento de dados de novidades."
-	@echo "\tprocess-data-fornecedores \t\tExecuta o processamento de dados de fornecedores."
+	@echo "\tprocess-data-fornecedores anos=<ano1,ano2> \t\tExecuta o processamento de dados de fornecedores."
 	@echo "\tfeed-create \t\t\tCria as tabelas usadas no Tá na Mesa no Banco de Dados."
 	@echo "\tfeed-import-data \t\tImporta dados dos CSV's (licitações e contratos) para o Banco de dados."
 	@echo "\tfeed-import-empenho \t\tImporta dados do CSV processado de empenhos para o Banco de dados."
 	@echo "\tfeed-import-empenho-raw \tImporta dados do CSV de dados brutos vindos do TCE."
 	@echo "\tfeed-import-novidade \t\tImporta dados do CSV processado de novidades para o Banco de dados."
+	@echo "\tfeed-update-fornecedores \t\tAtualiza dados do CSV processado de fornecedores para o Banco de dados."
 	@echo "\tfeed-shell \t\t\tAbre terminal psql com o banco cadastrado nas variáveis de ambiente."
 	@echo "\tfeed-clean-data \t\tRemove as tabelas processadas pelo Tá na Mesa (licitações, contratos e novidades)."
 	@echo "\tfeed-clean-empenho \t\tRemove as tabela de empenho (vinda do TCE) carregada no BD do Tá na Mesa."
@@ -40,7 +41,7 @@ process-data-novidades:
 	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_novidades_bd.R"
 .PHONY: process-data-novidades 
 process-data-fornecedores:		
-	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_fornecedores_bd.R"
+	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_fornecedores_bd.R $(anos)"
 .PHONY: process-data-fornecedores
 feed-create:	
 	docker exec -it feed python3.6 /feed/manage.py create

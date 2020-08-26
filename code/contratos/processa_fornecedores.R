@@ -97,10 +97,6 @@ processa_info_fornecedores <- function(fornecedores_df, contratos_df) {
 #' 
 #' Chave primária: 
 #' (nr_documento)
-empenhos_df <- read_empenhos_processados()
-compras_df <- read_contratos_processados() %>% 
-  mutate(bak = nr_documento_contratado)
-
 processa_fornecedores_compras <- function(empenhos_df, compras_df) {
   
   fornecedores_empenhos <- empenhos_df %>% 
@@ -112,12 +108,6 @@ processa_fornecedores_compras <- function(empenhos_df, compras_df) {
     dplyr::group_by(cnpj_cpf, id_licitacao) %>% 
     dplyr::summarise(n_operacoes = n_distinct(id_empenho)) %>% 
     dplyr::ungroup()
-  
-  ## remover teste abaixo
-  compras_df <- compras_df %>%
-    rowwise() %>% 
-    mutate(nr_documento_contratado = ifelse(runif(1, 0, 1) > 0.5, nr_documento_contratado, NA))
-  ## remover teste acima
   
   compras_fornecedor_definido <- compras_df %>% 
     dplyr::filter(!is.na(nr_documento_contratado) | !(cd_tipo_modalidade %in% c("PRD", "PRI")))
@@ -135,12 +125,14 @@ processa_fornecedores_compras <- function(empenhos_df, compras_df) {
                                                            nr_documento_contratado))
   
   if (nrow(compras_fornecedor_merge) != nrow(compras_fornecedor_indefinido)) {
-    message("Existem compras de licitações (PRD e PRI) associadas a mais de um fornecedor.")
+    message("Warning: Existem compras de licitações (PRD e PRI) associadas a mais de um fornecedor.")
+    # TODO: a relação entre compras e fornecedores deve ser 1 para n
   }
 
   compras_fornecedor <- compras_fornecedor_merge %>%
     dplyr::distinct(id_contrato, .keep_all = T) %>% 
-    dplyr::bind_rows(compras_fornecedor_definido)
+    dplyr::bind_rows(compras_fornecedor_definido) %>% 
+    select(-cnpj_cpf)
   
   return(compras_fornecedor)
 }
