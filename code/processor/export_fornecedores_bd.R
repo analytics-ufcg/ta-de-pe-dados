@@ -31,21 +31,12 @@ contratos <- import_contratos(anos) %>%
   processa_info_contratos()
 
 info_fornecedores_contratos <- import_fornecedores(anos) %>% 
-  processa_info_fornecedores(contratos) %>% 
+  processa_info_fornecedores(contratos, compras_atualizadas) %>% 
   join_contratos_e_fornecedores(compras_atualizadas %>% 
                                   dplyr::select(nr_documento_contratado)) %>% 
   dplyr::distinct(nr_documento, .keep_all = TRUE) %>% 
   dplyr::select(nr_documento, nm_pessoa, tp_pessoa, total_de_contratos, data_primeiro_contrato)
 
-fornecedores_extra_sem_contratos <- compras_atualizadas %>% 
-  dplyr::filter(!nr_documento_contratado %in% (info_fornecedores_contratos %>% 
-                                                dplyr::pull(nr_documento))) %>% 
-  dplyr::filter(!is.na(nr_documento_contratado)) %>% 
-  dplyr::distinct(nr_documento_contratado) %>% 
-  dplyr::select(nr_documento = nr_documento_contratado)
-
-info_fornecedores_contratos <- info_fornecedores_contratos %>% 
-  dplyr::bind_rows(fornecedores_extra_sem_contratos)
 
 readr::write_csv(compras_atualizadas, here::here("data/bd/info_contrato.csv"))
 readr::write_csv(info_fornecedores_contratos, here::here("data/bd/info_fornecedores_contrato.csv"))

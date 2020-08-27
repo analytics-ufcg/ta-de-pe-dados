@@ -127,17 +127,6 @@ info_contratos <-
                      "nr_contrato", "ano_contrato", "tp_instrumento_contrato"), CONTRATO_ID) %>% 
   dplyr::select(id_contrato, id_licitacao, id_orgao, dplyr::everything())
 
-## Fornecedores nos contratos
-message("#### fornecedores (contratos)...")
-source(here("code/contratos/processa_fornecedores.R"))
-
-info_fornecedores_contratos <- import_fornecedores(anos) %>% 
-  processa_info_fornecedores(contratos) %>% 
-  join_contratos_e_fornecedores(info_contratos %>% 
-                                  dplyr::select(nr_documento_contratado)) %>% 
-  dplyr::distinct(nr_documento, .keep_all = TRUE) %>% 
-  dplyr::select(nr_documento, nm_pessoa, tp_pessoa, total_de_contratos, data_primeiro_contrato)
-
 ## Itens de contratos
 message("#### itens de contratos...")
 source(here("code/contratos/processa_itens_contrato.R"))
@@ -194,6 +183,17 @@ info_item_contrato <- itens_comprados %>%
   dplyr::select(id_item_contrato, id_contrato, id_orgao, id_licitacao, id_item_licitacao, dplyr::everything()) %>% 
   create_categoria() %>%
   split_descricao()
+
+## Fornecedores nos contratos
+message("#### fornecedores (contratos)...")
+source(here("code/contratos/processa_fornecedores.R"))
+
+info_fornecedores_contratos <- import_fornecedores(anos) %>% 
+  processa_info_fornecedores(contratos, info_contratos) %>% 
+  join_contratos_e_fornecedores(info_contratos %>% 
+                                  dplyr::select(nr_documento_contratado)) %>% 
+  dplyr::distinct(nr_documento, .keep_all = TRUE) %>% 
+  dplyr::select(nr_documento, nm_pessoa, tp_pessoa, total_de_contratos, data_primeiro_contrato)
 
 ## Alterações contratos
 message("#### alterações de contratos...")

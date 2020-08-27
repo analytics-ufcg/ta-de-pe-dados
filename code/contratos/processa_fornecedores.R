@@ -50,9 +50,19 @@ import_fornecedores_por_ano <- function(ano = 2019) {
 #' 
 #' Chave primária: 
 #' (nr_documento)
-processa_info_fornecedores <- function(fornecedores_df, contratos_df) {
+processa_info_fornecedores <- function(fornecedores_df, contratos_df, compras_df) {
   
-  fornecedores_info_geral <- contratos_df %>%
+  compras_df_sem_contratos <- compras_df %>% 
+    dplyr::mutate(id_orgao = as.character(id_orgao)) %>% 
+    dplyr::anti_join(contratos_df, 
+                     by = c("id_orgao", "nr_licitacao", "ano_licitacao",
+                            "cd_tipo_modalidade", "nr_contrato", "ano_contrato",
+                            "tp_instrumento_contrato"))
+  
+  contratos_geral_df <- contratos_df %>% 
+    dplyr::bind_rows(compras_df_sem_contratos)
+  
+  fornecedores_info_geral <- contratos_geral_df %>%
     dplyr::group_by(nr_documento_contratado) %>%
     dplyr::summarise(
       total_de_contratos = dplyr::n_distinct(
@@ -67,7 +77,7 @@ processa_info_fornecedores <- function(fornecedores_df, contratos_df) {
       data_primeiro_contrato = min(dt_inicio_vigencia, na.rm = TRUE)
     ) %>% 
     dplyr::ungroup()
-  
+
   info_fornecedores <- fornecedores_df %>%
     janitor::clean_names() %>% 
     dplyr::arrange(nm_pessoa) %>% 
@@ -76,9 +86,10 @@ processa_info_fornecedores <- function(fornecedores_df, contratos_df) {
                      tp_pessoa = dplyr::first(tp_pessoa)) %>% 
     dplyr::ungroup() %>% 
     ## Cruza com informações do fornecedor
-    dplyr::left_join(fornecedores_info_geral,
+    dplyr::full_join(fornecedores_info_geral,
                      by = c("nr_documento" = "nr_documento_contratado")) %>% 
-    dplyr::mutate(total_de_contratos = ifelse(is.na(total_de_contratos), 0, total_de_contratos))
+    dplyr::mutate(total_de_contratos = ifelse(is.na(total_de_contratos), 0, total_de_contratos)) %>% 
+    dplyr::filter(!is.na(nr_documento))
   
   return(info_fornecedores)
 }
