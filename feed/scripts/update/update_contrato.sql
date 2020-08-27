@@ -7,7 +7,7 @@ CREATE TEMP TABLE temp_contrato AS SELECT * FROM contrato LIMIT 0;
 INSERT INTO contrato 
 SELECT *
 FROM temp_contrato
-ON CONFLICT (id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato)
+ON CONFLICT (id_contrato)
 DO
   UPDATE
   SET  

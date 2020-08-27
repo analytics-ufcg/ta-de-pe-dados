@@ -59,10 +59,16 @@ run_data_process_update() {
     pprint "9. Processa dados de novidades"
     docker exec r-container sh -c "cd /app/code/processor && Rscript export_novidades_bd.R"
 
-    pprint "10. Importa dados de empenhos para o BD"
+    pprint "10. Atualiza dados de fornecedores"
+    docker exec r-container sh -c "cd /app/code/processor && Rscript export_fornecedores_bd.R"
+
+    pprint "11. Importa dados de fornecedores e contratos para o BD"
+    docker exec feed python3.6 /feed/manage.py update-fornecedores
+
+    pprint "12. Importa dados de empenhos para o BD"
     docker exec feed python3.6 /feed/manage.py import-empenho
 
-    pprint "11. Importa dados de novidades para o BD"
+    pprint "13. Importa dados de novidades para o BD"
     docker exec feed python3.6 /feed/manage.py import-novidade
 
 }
