@@ -20,7 +20,6 @@ source(here::here("code/utils/join_utils.R"))
 source(here::here("code/utils/constants.R"))
 source(here::here("code/empenhos/processa_empenhos.R"))
 
-
 con <- DBI::dbConnect(RPostgres::Postgres(),
                       dbname = database, 
                       host = host, 

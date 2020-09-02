@@ -12,7 +12,9 @@ DO
   UPDATE
   SET  
     nm_pessoa = EXCLUDED.nm_pessoa,
-    tp_pessoa = EXCLUDED.tp_pessoa;
+    tp_pessoa = EXCLUDED.tp_pessoa,
+    total_de_contratos = EXCLUDED.total_de_contratos,
+    data_primeiro_contrato = EXCLUDED.data_primeiro_contrato;
 
 DROP TABLE temp_fornecedor;
 COMMIT;
