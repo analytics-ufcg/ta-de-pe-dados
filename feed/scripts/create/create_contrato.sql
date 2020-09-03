@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS "contrato" (
     "justificativa_contratacao" VARCHAR(300),
     "obs_contrato" VARCHAR(500),
     "tipo_instrumento_contrato" VARCHAR(50),
+    "language" VARCHAR(10),
     PRIMARY KEY("id_contrato"),
     CONSTRAINT contrato_key UNIQUE (id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato),
     FOREIGN KEY("id_orgao") REFERENCES orgao("id_orgao") ON DELETE CASCADE ON UPDATE CASCADE,
