@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS "contrato" (
     "nr_licitacao" VARCHAR(20),
     "ano_licitacao" INTEGER,
     "cd_tipo_modalidade" VARCHAR(3),
-    "tp_instrumento_contrato" VARCHAR(5),
+    "tp_instrumento_contrato" VARCHAR(15),
     "nr_processo" VARCHAR(20),
     "ano_processo" INTEGER,
     "tp_documento_contratado" VARCHAR(1),

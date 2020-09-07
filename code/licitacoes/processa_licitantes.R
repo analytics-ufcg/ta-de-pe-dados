@@ -6,7 +6,7 @@ source(here::here("code/utils/read_utils.R"))
 #' 
 #' @return 
 #' 
-rename_duplicate_columns <- function(licitantes) {
+rename_duplicate_columns_licitantes <- function(licitantes) {
   licitantes <- licitantes %>% 
     dplyr::rename(TP_DOCUMENTO_LICITANTE = TP_DOCUMENTO,
            NR_DOCUMENTO_LICITANTE = NR_DOCUMENTO,
@@ -64,7 +64,7 @@ import_licitantes_por_ano <- function(ano = 2019) {
 #' 
 processa_info_licitantes <- function(licitantes_df) {
   licitantes <- licitantes_df %>% 
-    rename_duplicate_columns() %>% 
+    rename_duplicate_columns_licitantes() %>% 
     janitor::clean_names() %>% 
     dplyr::select(id_orgao = cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, tp_documento_licitante,
            nr_documento_licitante, tp_documento_repres, nr_documento_repres, tp_condicao,

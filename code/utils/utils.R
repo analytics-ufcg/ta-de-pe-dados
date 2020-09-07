@@ -25,3 +25,15 @@ generate_hash_id <- function(df, colunas, id_coluna) {
   
   return(df)
 }
+
+#' Remove duplicação no nome das colunas dos documentos de vencedores e fornecedores
+#' @param df Dataframe com duplicação no nome das colunas
+#' @return Dataframe com nome correto para as colunas
+rename_duplicate_columns <- function(df) {
+  names(df)[names(df) == 'TP_DOCUMENTO'] <- 'TP_DOCUMENTO_VENCEDOR'
+  names(df)[names(df) == 'NR_DOCUMENTO'] <- 'NR_DOCUMENTO_VENCEDOR'
+  names(df)[names(df) == 'TP_DOCUMENTO_1'] <- 'TP_DOCUMENTO_FORNECEDOR'
+  names(df)[names(df) == 'NR_DOCUMENTO_1'] <- 'NR_DOCUMENTO_FORNECEDOR'
+  df
+}
+
