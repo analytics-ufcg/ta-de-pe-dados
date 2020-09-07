@@ -150,7 +150,8 @@ compras <- licitacoes_encerradas %>%
                 nr_licitacao, ano_licitacao, cd_tipo_modalidade, dt_inicio_vigencia, vl_contrato,
                 descricao_objeto_contrato = descricao_objeto, tipo_instrumento_contrato)
 
-info_contratos %<>% dplyr::bind_rows(compras)
+info_contratos %<>% dplyr::bind_rows(compras) %>%
+  dplyr::mutate(language = 'portuguese')
 
 itens_contrato <- import_itens_contrato(anos) %>% 
   dplyr::mutate(ORIGEM_VALOR = "contrato")
