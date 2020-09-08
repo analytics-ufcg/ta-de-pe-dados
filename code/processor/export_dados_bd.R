@@ -183,7 +183,8 @@ info_item_contrato <- itens_comprados %>%
   dplyr::select(-data_evento) %>% 
   dplyr::select(id_item_contrato, id_contrato, id_orgao, id_licitacao, id_item_licitacao, dplyr::everything()) %>% 
   create_categoria() %>%
-  split_descricao()
+  split_descricao() %>% 
+  marca_servicos()
 
 ## Fornecedores nos contratos
 message("#### fornecedores (contratos)...")
