@@ -117,3 +117,19 @@ split_descricao <- function(info_item_contrato) {
            ds_3 = paste(ds_2, if_else(is.na(lista[3]), "", lista[3]))) %>% 
     select(-lista)
 }
+
+marca_servicos <- function(info_item_contrato) {
+  servicos <- info_item_contrato %>% 
+    dplyr::mutate(ds_item_pesq_simples = tolower(iconv(ds_item , from="UTF-8", to="ASCII//TRANSLIT"))) %>% 
+    dplyr::filter(stringr::str_detect(ds_item_pesq_simples, 
+                                      "(contratacao de empresa)|(prestacao de servico[s]?)|^servico[s]?|
+                                      (a prestacao de)|(contratacao de prestacao)|(contratacao de servico)|
+                                      (aluguel/loca)|servia|(contratacao contratacao de)| (contratacao da empresa)|
+                                      (contratacao de)"))
+  
+  info_item_contrato %<>% dplyr::anti_join(servicos) %>% 
+    dplyr::mutate(servico = FALSE) %>% 
+    dplyr::bind_rows(servicos %>%  dplyr::mutate(servico = TRUE)) %>% 
+    dplyr::select(-ds_item_pesq_simples)
+    
+}
