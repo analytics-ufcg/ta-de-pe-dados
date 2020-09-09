@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS "item_contrato" (
     "ds_1" VARCHAR(50),
     "ds_2" VARCHAR(100),
     "ds_3" VARCHAR(150),
+    "servico" BOOLEAN,
     PRIMARY KEY ("id_item_contrato"),
     CONSTRAINT item_contrato_key UNIQUE (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, 
     tp_instrumento_contrato, nr_lote, nr_item),
