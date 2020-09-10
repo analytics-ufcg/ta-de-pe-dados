@@ -1,17 +1,7 @@
 library(here)
 library(janitor)
 source(here::here('code/utils/read_utils.R'))
-
-#' Renomeia as colunas repetidas do dataframe de itens
-#' @param itens Dataframe de itens das licitações
-#' @return Dataframe com nome das colunas de acordo Manual do leiaute do e-Validador 
-rename_duplicate_columns <- function(itens) {
-  names(itens)[names(itens) == 'TP_DOCUMENTO'] <- 'TP_DOCUMENTO_VENCEDOR'
-  names(itens)[names(itens) == 'NR_DOCUMENTO'] <- 'NR_DOCUMENTO_VENCEDOR'
-  names(itens)[names(itens) == 'TP_DOCUMENTO_1'] <- 'TP_DOCUMENTO_FORNECEDOR'
-  names(itens)[names(itens) == 'NR_DOCUMENTO_1'] <- 'NR_DOCUMENTO_FORNECEDOR'
-  itens
-}
+source(here::here('code/utils/utils.R'))
 
 #' Importa itens das licitações de um ano específico para o estado do Rio Grande do Sul
 #' @param ano Inteiro com o ano para recuperação dos itens
@@ -73,10 +63,8 @@ processa_info_item_licitacao <- function(itens_licitacao) {
 #' 
 #' @param itens_licitacao_df Dataframe com itens de licitação
 #' 
-#' @param itens_contrato Dataframe com itens de contrato
+#' @param compras_df Dataframe com as compras feitas sem necessidade de contrato
 #' 
-#' @param licitacoes_encerradas Dataframe com as licitações encerradas
-#'
 #' @return Dataframe com informações dos itens das licitações
 #'   
 #' @examples 
@@ -85,28 +73,24 @@ processa_info_item_licitacao <- function(itens_licitacao) {
 #' Chave primária: 
 #' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_lote, nr_item)
 #' 
-processa_item_licitacao_comprado <- function(itens_licitacao_df, itens_contrato, licitacoes_encerradas) {
+processa_item_licitacao_comprado <- function(itens_licitacao_df, compras_df) {
+  
+  compras_alt <- compras_df %>% 
+    janitor::clean_names("all_caps") %>% 
+    dplyr::select(CD_ORGAO, NR_LICITACAO, ANO_LICITACAO, CD_TIPO_MODALIDADE, NR_LOTE, NR_ITEM, 
+                  NR_CONTRATO, ANO_CONTRATO, TP_INSTRUMENTO = TP_INSTRUMENTO_CONTRATO)
   
   info_item_licitacao <- itens_licitacao_df %>%
-    dplyr::mutate(NR_CONTRATO = 1, ANO_CONTRATO = ANO_LICITACAO, TP_INSTRUMENTO = NA,
+    dplyr::mutate(
       VL_ITEM = dplyr::if_else(is.na(VL_UNITARIO_HOMOLOGADO) | VL_UNITARIO_HOMOLOGADO == 0, VL_UNITARIO_ESTIMADO, VL_UNITARIO_HOMOLOGADO),
       VL_TOTAL_ITEM = dplyr::if_else(is.na(VL_TOTAL_HOMOLOGADO) | VL_UNITARIO_HOMOLOGADO == 0, VL_TOTAL_ESTIMADO, VL_TOTAL_HOMOLOGADO),
       ORIGEM_VALOR = dplyr::if_else(is.na(VL_UNITARIO_HOMOLOGADO) | VL_UNITARIO_HOMOLOGADO == 0, "estimado", "homologado")
     ) %>%
     ## filtra apenas itens de licitação da modalidade de Dispensa e Inexigibilidade
     dplyr::filter(CD_TIPO_MODALIDADE %in% c("PRD", "PRI")) %>%
-    
-    ## filtra apenas itens de licitação que não possuem itens de contrato associados
-    dplyr::anti_join(itens_contrato, 
-                     by = c("CD_ORGAO", "NR_LICITACAO", "ANO_LICITACAO", "CD_TIPO_MODALIDADE")) %>%
-    
-    ## filtra apenas licitacoes que tiveram o evento de encerramento
-    dplyr::inner_join(licitacoes_encerradas %>%
-                        distinct(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade),
-                      by = c("CD_ORGAO" = "cd_orgao",
-                             "NR_LICITACAO" = "nr_licitacao", 
-                             "ANO_LICITACAO" = "ano_licitacao", 
-                             "CD_TIPO_MODALIDADE" = "cd_tipo_modalidade"))
+    ## filtra apenas os itens que foram comprados
+    dplyr::inner_join(compras_alt, 
+                      by = c("CD_ORGAO", "NR_LICITACAO", "ANO_LICITACAO", "CD_TIPO_MODALIDADE", "NR_LOTE", "NR_ITEM"))
   
   return(info_item_licitacao)
 }

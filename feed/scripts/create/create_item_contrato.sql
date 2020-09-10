@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS "item_contrato" (
     "cd_tipo_modalidade" VARCHAR(3),
     "nr_contrato" BIGINT,
     "ano_contrato" INTEGER,
-    "tp_instrumento_contrato" VARCHAR(5),
+    "tp_instrumento_contrato" VARCHAR(15),
     "nr_item" INTEGER,
     "qt_itens_contrato" REAL,
     "vl_item_contrato" REAL,
