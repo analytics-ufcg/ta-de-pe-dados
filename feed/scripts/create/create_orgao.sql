@@ -8,5 +8,6 @@ CREATE TABLE IF NOT EXISTS "orgao" (
     "home_page" VARCHAR(50),
     "nome_municipio" VARCHAR(30),
     "cd_municipio_ibge" INTEGER,
+    "nome_entidade" VARCHAR(30),
     PRIMARY KEY("id_orgao")
 );

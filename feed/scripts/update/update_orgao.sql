@@ -15,8 +15,9 @@ DO
     sigla_orgao = EXCLUDED.sigla_orgao,
     esfera = EXCLUDED.esfera,
     home_page = EXCLUDED.home_page,
-    nome_municipio = EXCLUDED.nome_municipio,
-    cd_municipio_ibge = EXCLUDED.cd_municipio_ibge;
+    nome_municipio = EXCLUDED.nome_municipio,,
+    cd_municipio_ibge = EXCLUDED.cd_municipio_ibge,
+    nome_entidade = EXCLUDED.nome_entidade;
 
 DROP TABLE temp_orgao;
 COMMIT;
