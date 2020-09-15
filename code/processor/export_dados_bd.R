@@ -41,7 +41,9 @@ source(here::here("code/licitacoes/processa_tipos_modalidade_licitacoes.R"))
 
 licitacoes_falsos_positivos <- readr::read_csv(here::here("code/utils/licitacoes_falsos_positivos.csv"))
 
-licitacoes <- import_licitacoes(anos) %>% 
+licitacoes_raw <- import_licitacoes(anos)
+
+licitacoes <- licitacoes_raw %>% 
   processa_info_licitacoes(tipo_filtro = filtro)
 
 orgaos_licitacao <- licitacoes %>% 
@@ -77,7 +79,10 @@ info_licitantes <- join_licitante_e_licitacao(
 ## Itens de licitações
 message("#### itens de licitações...")
 source(here::here("code/licitacoes/processa_itens_licitacao.R"))
-info_item_licitacao <- import_itens_licitacao(anos) %>%
+
+itens_licitacao_raw <- import_itens_licitacao(anos)
+
+info_item_licitacao <- itens_licitacao_raw %>%
   processa_info_item_licitacao() %>% 
   join_licitacoes_e_itens(info_licitacoes) %>% 
   generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", 
@@ -127,9 +132,9 @@ info_contratos <-
                      "nr_contrato", "ano_contrato", "tp_instrumento_contrato"), CONTRATO_ID) %>% 
   dplyr::select(id_contrato, id_licitacao, id_orgao, dplyr::everything())
 
-## Itens de contratos
-message("#### itens de contratos...")
-source(here("code/contratos/processa_itens_contrato.R"))
+
+## Compras
+message("#### licitações encerradas...")
 source(here("code/licitacoes/processa_eventos_licitacoes.R"))
 
 licitacoes_encerradas <- import_eventos_licitacoes(anos) %>% 
@@ -137,26 +142,65 @@ licitacoes_encerradas <- import_eventos_licitacoes(anos) %>%
   dplyr::mutate(data_evento = as.POSIXct(data_evento, format="%Y-%m-%d")) %>% 
   dplyr::mutate(dt_inicio_vigencia = data_evento)
 
-compras <- licitacoes_encerradas %>% 
-  filter(cd_tipo_modalidade == "PRD" | cd_tipo_modalidade == "PRI") %>% 
-  dplyr::left_join(info_licitacoes %>% dplyr::mutate(cd_orgao = id_orgao)) %>% 
+
+message("#### lotes de licitação...")
+source(here("code/licitacoes/processa_lotes_licitacao.R"))
+
+lotes_licitacoes <- import_lotes_licitacao(anos) %>% 
+  processa_info_lote_licitacao()
+
+### Itens de contratos e licitação
+message("#### preparando dados de itens de licitação e contratos...")
+source(here("code/contratos/processa_itens_contrato.R"))
+source(here("code/licitacoes/processa_itens_licitacao.R"))
+
+itens_contrato <- import_itens_contrato(anos)
+
+itens_licitacao <- itens_licitacao_raw %>% 
+  rename_duplicate_columns()
+
+message("#### processando compras e itens...")
+source(here("code/contratos/processa_compras.R"))
+compras <- processa_compras_itens(licitacoes_raw, licitacoes_encerradas,
+                                  lotes_licitacoes, itens_licitacao, 
+                                  itens_contrato)
+
+
+message("#### processando dataframe de compras...")
+info_compras <- compras %>% 
+  dplyr::left_join(info_licitacoes %>% 
+                     dplyr::mutate(cd_orgao = id_orgao) %>% 
+                     dplyr::select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade,
+                                   id_licitacao, nm_orgao),
+                   by = c("cd_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade")) %>%
   dplyr::filter(!is.na(id_licitacao)) %>% 
-  dplyr::mutate(nr_contrato = 1, ano_contrato = ano_licitacao, tp_instrumento_contrato = "Compra",
-                vl_contrato = dplyr::if_else(vl_homologado == 0 | is.na(vl_homologado), vl_estimado_licitacao, vl_homologado),
-                tipo_instrumento_contrato = "Compra") %>% 
+  dplyr::rename(id_orgao = cd_orgao) %>% 
   generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", 
                      "nr_contrato", "ano_contrato", "tp_instrumento_contrato"), CONTRATO_ID) %>% 
+  dplyr::distinct(id_licitacao, id_contrato, .keep_all = TRUE) %>% 
   dplyr::select(id_contrato, id_licitacao, id_orgao, nr_contrato, ano_contrato, nm_orgao, 
-                nr_licitacao, ano_licitacao, cd_tipo_modalidade, dt_inicio_vigencia, vl_contrato,
-                descricao_objeto_contrato = descricao_objeto, tipo_instrumento_contrato)
+                nr_licitacao, ano_licitacao, cd_tipo_modalidade, 
+                dt_inicio_vigencia, vl_contrato,
+                descricao_objeto_contrato = ds_objeto,
+                tp_instrumento_contrato,
+                dt_inicio_vigencia,
+                tipo_instrumento_contrato,
+                tp_documento_contratado = tp_fornecedor,
+                nr_documento_contratado = nr_fornecedor)
 
-info_contratos %<>% dplyr::bind_rows(compras)
+info_contratos %<>% dplyr::bind_rows(info_compras) %>%
+  dplyr::mutate(language = 'portuguese')
 
-itens_contrato <- import_itens_contrato(anos) %>% 
+### Itens Comprados
+message("#### processando itens comprados...")
+
+message("#### itens com contratos...")
+itens_contrato <- itens_contrato %>% 
   dplyr::mutate(ORIGEM_VALOR = "contrato")
 
-itens_licitacao <- import_itens_licitacao(anos) %>% 
-  processa_item_licitacao_comprado(itens_contrato, licitacoes_encerradas)
+message("#### itens sem contratos...")
+itens_licitacao <- itens_licitacao_raw %>% 
+  processa_item_licitacao_comprado(compras)
 
 colunas_item_contrato <- names(itens_contrato)
 colunas_item_licitacao <- names(itens_licitacao) 
@@ -166,6 +210,7 @@ itens_comprados <- itens_licitacao %>%
   dplyr::select(all_of(intersecao)) %>% 
   dplyr::bind_rows(itens_contrato)
 
+message("#### processando todos os itens comprados...")
 info_item_contrato <- itens_comprados %>% 
   processa_info_item_contrato() %>% 
   join_contratos_e_itens(info_contratos %>%
@@ -175,14 +220,13 @@ info_item_contrato <- itens_comprados %>%
   generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", "nr_contrato", "ano_contrato",
                      "tp_instrumento_contrato", "nr_lote", "nr_item"), ITEM_CONTRATO_ID) %>%
   join_licitacoes_e_itens(info_licitacoes) %>% 
-  join_itens_contratos_e_licitacoes(info_item_licitacao) %>% 
-  join_itens_contratos_e_licitacoes_encerradas(licitacoes_encerradas) %>%  
+  join_itens_contratos_e_licitacoes(info_item_licitacao) %>%
   dplyr::ungroup() %>% 
-  dplyr::mutate(dt_inicio_vigencia = dplyr::if_else(is.na(dt_inicio_vigencia), data_evento, dt_inicio_vigencia)) %>%
-  dplyr::select(-data_evento) %>% 
   dplyr::select(id_item_contrato, id_contrato, id_orgao, id_licitacao, id_item_licitacao, dplyr::everything()) %>% 
   create_categoria() %>%
-  split_descricao()
+  split_descricao() %>% 
+  dplyr::ungroup() %>%
+  marca_servicos()
 
 ## Fornecedores nos contratos
 message("#### fornecedores (contratos)...")

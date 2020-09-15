@@ -47,7 +47,6 @@ def update_data():
 def update_fornecedores():
     """Atualiza as tabelas do Banco de Dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/update/update_fornecedor.sql'])
-    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/update/update_contrato.sql'])
 
 @click.command()
 def import_data():
