@@ -100,7 +100,8 @@ processa_compras_itens <- function(licitacoes_df, licitacoes_encerradas_df, lote
                                                      FALSE)) %>% 
     dplyr::select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_lote, nr_item, ds_item,
                   tp_documento_fornecedor_item = tp_documento_fornecedor, 
-                  nr_documento_fornecedor_item = nr_documento_fornecedor, tem_item_contrato)
+                  nr_documento_fornecedor_item = nr_documento_fornecedor, tem_item_contrato,
+                  vl_total_homologado, vl_unitario_homologado, vl_total_estimado)
   
   return(itens_df)
 }
@@ -112,7 +113,7 @@ processa_compras_itens <- function(licitacoes_df, licitacoes_encerradas_df, lote
 #' compras <- processa_dataframe_compras(licitacoes_itens)
 #' 
 .processa_dataframe_compras <- function(licitacoes_itens) {
-
+  
   compras <- licitacoes_itens %>% 
     dplyr::mutate(tp_fornecedor = dplyr::case_when(
       tp_nivel_julgamento == "G" ~ tp_documento_fornecedor,
@@ -128,11 +129,16 @@ processa_compras_itens <- function(licitacoes_df, licitacoes_encerradas_df, lote
     )) %>% 
     dplyr::mutate(ano_contrato = ano_licitacao,
                   tp_instrumento_contrato = "Compra",
-                  vl_contrato = dplyr::if_else(vl_homologado == 0 | is.na(vl_homologado), vl_estimado_licitacao, vl_homologado),
                   tipo_instrumento_contrato = "Compra") %>%
     dplyr::mutate(nr_contrato = dplyr::if_else(is.na(nr_fornecedor),
                                                "1",
                                                nr_fornecedor))
   
-  return(compras)
+  compras_vl_contrato <- compras %>% 
+    dplyr::mutate(vl_total_item = dplyr::if_else(is.na(vl_total_homologado) | vl_unitario_homologado == 0, vl_total_estimado, vl_total_homologado)) %>% 
+    dplyr::group_by(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato) %>% 
+    dplyr::mutate(vl_contrato = sum(vl_total_item)) %>% 
+    dplyr::ungroup()
+  
+  return(compras_vl_contrato)
 }
