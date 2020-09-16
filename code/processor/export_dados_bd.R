@@ -268,9 +268,10 @@ info_orgaos <- info_orgaos_municipios %>%
   dplyr::bind_rows(orgaos_licitacao %>% 
                      dplyr::mutate(esfera = "ESTADUAL")) %>%
   dplyr::distinct(id_orgao, .keep_all = TRUE) %>% 
-  dplyr::mutate(nome_entidade = dplyr::if_else(esfera == "ESTADUAL",
-                                               "ESTADO DO RIO GRANDE DO SUL",
-                                               nome_municipio))
+  dplyr::mutate(nome_entidade = nome_municipio) %>% 
+  dplyr::mutate(nome_municipio = dplyr::if_else(esfera == "ESTADUAL",
+                                                "ESTADO DO RIO GRANDE DO SUL",
+                                                nome_municipio))
 # Escrita dos dados
 
 message("#### escrevendo dados...")
