@@ -15,6 +15,13 @@ services:
       - POSTGRES_PORT=${POSTGRES_PORT:-5432}
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
+      - RECEITA_HOST=${RECEITA_HOST:-postgres}
+      - RECEITA_DB=${RECEITA_DB:-rf_fb}
+      - RECEITA_PORT=${RECEITA_PORT:-32024}
+      - RECEITA_USER=${RECEITA_USER:-postgres}
+      - RECEITA_PASSWORD=${RECEITA_PASSWORD:-secret}
+
+
     volumes:
       - ./code:/app/code
       - ./data:/app/data
