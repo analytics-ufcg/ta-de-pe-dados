@@ -6,7 +6,7 @@ WORKDIR /app
 RUN touch .here
 
 ## Instala dependências
-RUN R -e "install.packages(c('here', 'janitor'), repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages(c('here', 'janitor', 'purrr'), repos='http://cran.rstudio.com/')"
 RUN R -e "install.packages('RPostgres', repos='http://cran.rstudio.com/')"
 
 EXPOSE 8787

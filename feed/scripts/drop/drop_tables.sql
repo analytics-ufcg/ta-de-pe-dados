@@ -5,6 +5,8 @@ DROP TABLE IF EXISTS "alteracoes_contrato";
 DROP MATERIALIZED VIEW IF EXISTS item_search;
 DROP TABLE IF EXISTS "item_contrato";
 DROP TABLE IF EXISTS "contrato";
+DROP TABLE IF EXISTS "socios";
+DROP TABLE IF EXISTS "dados_cadastrais";
 DROP TABLE IF EXISTS "fornecedor";
 DROP TABLE IF EXISTS "licitante";
 DROP TABLE IF EXISTS "item";
