@@ -14,6 +14,7 @@ help:
 	@echo "\tprocess-data-empenhos \t\tExecuta o processamento de dados de empenhos."
 	@echo "\tprocess-data-novidades \t\tExecuta o processamento de dados de novidades."
 	@echo "\tprocess-data-fornecedores anos=<ano1,ano2> \t\tExecuta o processamento de dados de fornecedores."
+	@echo "\tprocess-data-receita \t\tExecuta o processamento de dados da Receita Federal."
 	@echo "\tfeed-create \t\t\tCria as tabelas usadas no Tá na Mesa no Banco de Dados."
 	@echo "\tfeed-import-data \t\tImporta dados dos CSV's (licitações e contratos) para o Banco de dados."
 	@echo "\tfeed-import-empenho \t\tImporta dados do CSV processado de empenhos para o Banco de dados."
@@ -43,6 +44,9 @@ process-data-novidades:
 process-data-fornecedores:		
 	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_fornecedores_bd.R $(anos)"
 .PHONY: process-data-fornecedores
+process-data-receita:		
+	docker exec -it r-container sh -c "cd /app/code/fetcher/scripts &&  Rscript fetch_dados_receita.R"
+.PHONY: process-data-receita
 feed-create:	
 	docker exec -it feed python3.6 /feed/manage.py create
 .PHONY: feed-create
