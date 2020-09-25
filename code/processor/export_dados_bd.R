@@ -256,8 +256,8 @@ info_alteracoes_contrato <- alteracoes %>%
                      "tp_instrumento_contrato", "id_evento_contrato", "cd_tipo_operacao"), ALTERACOES_CONTRATO_ID) %>% 
   dplyr::select(id_alteracoes_contrato, id_contrato, dplyr::everything())
 
-## Municípios
-message("#### municípios...")
+## Órgãos
+message("#### órgãos")
 source(here::here("code/orgaos/processa_orgaos.R"))
 info_orgaos_municipios <- import_orgaos() %>% 
   processa_info_orgaos()
@@ -265,9 +265,13 @@ info_orgaos_municipios <- import_orgaos() %>%
 ## Completa CSV de órgãos com os órgãos presentes na tabela de licitação
 info_orgaos <- info_orgaos_municipios %>% 
   dplyr::mutate(id_orgao = as.character(id_orgao)) %>% 
-  dplyr::bind_rows(orgaos_licitacao) %>% 
-  dplyr::distinct(id_orgao, .keep_all = TRUE)
-
+  dplyr::bind_rows(orgaos_licitacao %>% 
+                     dplyr::mutate(esfera = "ESTADUAL")) %>%
+  dplyr::distinct(id_orgao, .keep_all = TRUE) %>% 
+  dplyr::mutate(nome_entidade = nome_municipio) %>% 
+  dplyr::mutate(nome_municipio = dplyr::if_else(esfera == "ESTADUAL",
+                                                "ESTADO DO RIO GRANDE DO SUL",
+                                                nome_municipio))
 # Escrita dos dados
 
 message("#### escrevendo dados...")
