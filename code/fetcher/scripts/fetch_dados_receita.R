@@ -21,7 +21,14 @@ cnpjs_rs <- readr::read_csv(here::here("data/bd/info_fornecedores_contrato.csv")
 dados_cnpjs_rs <- fetch_dados_cadastrais(receita, cnpjs_rs) 
 socios_rs <- fetch_socios(receita, cnpjs_rs)
 
+cnaes_info <- fetch_cnaes_info(receita) %>% 
+  dplyr::rename(id_cnae = cod_cnae)
+
+cnaes_secundarios_rs <- fetch_cnaes_secundarios(receita, cnpjs_rs) %>% 
+  dplyr::rename(id_cnae = cnae_secundario) %>% 
+  dplyr::filter(id_cnae %in% (cnaes_info %>% dplyr::pull(id_cnae)))
 
 readr::write_csv(dados_cnpjs_rs, here::here("data/bd/dados_cadastrais.csv"))
 readr::write_csv(socios_rs, here::here("data/bd/socios.csv"))
-
+readr::write_csv(cnaes_info, here::here("data/bd/info_cnaes.csv"))
+readr::write_csv(cnaes_secundarios_rs, here::here("data/bd/cnaes_secundarios.csv"))

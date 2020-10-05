@@ -42,5 +42,6 @@ CREATE TABLE IF NOT EXISTS "dados_cadastrais" (
   "filler" TEXT,
   "fim_registro" TEXT,
   PRIMARY KEY("cnpj"),
-  FOREIGN KEY("cnpj") REFERENCES fornecedor("nr_documento") ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY("cnpj") REFERENCES fornecedor("nr_documento") ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY("cnae_fiscal") REFERENCES cnae("id_cnae") ON DELETE CASCADE ON UPDATE CASCADE
 );
