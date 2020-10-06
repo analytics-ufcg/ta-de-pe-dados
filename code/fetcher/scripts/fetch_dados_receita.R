@@ -2,7 +2,8 @@ library(magrittr)
 
 source(here::here("code/fetcher/setup/constants.R"))
 source(here::here("code/fetcher/DAO_Receita.R"))
-
+source(here::here("code/utils/utils.R"))
+source(here::here("code/utils/constants.R"))
 
 .HELP <- "Rscript fetch_dados_receita.R"
 
@@ -26,7 +27,10 @@ cnaes_info <- fetch_cnaes_info(receita) %>%
 
 cnaes_secundarios_rs <- fetch_cnaes_secundarios(receita, cnpjs_rs) %>% 
   dplyr::rename(id_cnae = cnae_secundario) %>% 
-  dplyr::filter(id_cnae %in% (cnaes_info %>% dplyr::pull(id_cnae)))
+  dplyr::filter(id_cnae %in% (cnaes_info %>% dplyr::pull(id_cnae))) %>% 
+  generate_hash_id(c("cnpj", "id_cnae"), 
+                   CNAE_ID) %>% 
+  dplyr::select(id_cnae_secundario, dplyr::everything())
 
 readr::write_csv(dados_cnpjs_rs, here::here("data/bd/dados_cadastrais.csv"))
 readr::write_csv(socios_rs, here::here("data/bd/socios.csv"))
