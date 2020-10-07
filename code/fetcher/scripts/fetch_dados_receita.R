@@ -20,7 +20,10 @@ tryCatch({receita <- DBI::dbConnect(RPostgres::Postgres(),
 cnpjs_rs <- readr::read_csv(here::here("data/bd/info_fornecedores_contrato.csv"))$nr_documento
 
 dados_cnpjs_rs <- fetch_dados_cadastrais(receita, cnpjs_rs) 
-socios_rs <- fetch_socios(receita, cnpjs_rs)
+socios_rs <- fetch_socios(receita, cnpjs_rs) %>% 
+  generate_hash_id(c("cnpj", "cnpj_cpf_socio", "nome_socio"),
+                   SOCIOS_ID) %>% 
+  dplyr::select(id_socio, dplyr::everything())
 
 cnaes_info <- fetch_cnaes_info(receita) %>% 
   dplyr::rename(id_cnae = cod_cnae)
