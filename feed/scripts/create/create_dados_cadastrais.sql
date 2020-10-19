@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS "dados_cadastrais" (
   "nm_cidade_exterior" TEXT,
   "cod_pais" TEXT,
   "nm_pais" TEXT,
-  "codigo_natureza_juridica" TEXT,
+  "codigo_natureza_juridica" VARCHAR(4),
   "data_inicio_atividade" TEXT,
   "cnae_fiscal" TEXT,
   "descricao_tipo_logradouro" TEXT,
@@ -43,5 +43,6 @@ CREATE TABLE IF NOT EXISTS "dados_cadastrais" (
   "fim_registro" TEXT,
   PRIMARY KEY("cnpj"),
   FOREIGN KEY("cnpj") REFERENCES fornecedor("nr_documento") ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY("cnae_fiscal") REFERENCES cnae("id_cnae") ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY("cnae_fiscal") REFERENCES cnae("id_cnae") ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY("codigo_natureza_juridica") REFERENCES natureza_juridica("codigo_natureza_juridica") ON DELETE CASCADE ON UPDATE CASCADE
 );

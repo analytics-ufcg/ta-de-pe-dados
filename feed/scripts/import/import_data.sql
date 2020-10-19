@@ -5,6 +5,7 @@ SET datestyle = ymd;
 \copy item FROM '/data/bd/info_item_licitacao.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
 \copy fornecedor FROM '/data/bd/info_fornecedores_contrato.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
 \copy cnae FROM '/data/bd/info_cnaes.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
+\copy natureza_juridica FROM '/data/bd/natureza_juridica.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
 \copy dados_cadastrais FROM '/data/bd/dados_cadastrais.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
 \copy socios FROM '/data/bd/socios.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
 \copy cnae_secundario FROM '/data/bd/cnaes_secundarios.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;

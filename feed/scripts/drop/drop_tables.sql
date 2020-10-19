@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS "socios";
 DROP TABLE IF EXISTS "cnae_secundario";
 DROP TABLE IF EXISTS "dados_cadastrais";
 DROP TABLE IF EXISTS "cnae";
+DROP TABLE IF EXISTS "natureza_juridica";
 DROP TABLE IF EXISTS "fornecedor";
 DROP TABLE IF EXISTS "licitante";
 DROP TABLE IF EXISTS "item";
