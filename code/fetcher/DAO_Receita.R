@@ -95,3 +95,33 @@ fetch_cnaes_info <- function(receita_con) {
   
   return(cnaes)
 }
+
+#' @title Busca informações sobre as Naturezas jurídicas no Banco da Receita Federal
+#' @param receita_con Conexão com o Banco de Dados
+#' @return Dataframe contendo informações sobre as Naturezas jurídicas
+#' @rdname fetch_natureza_juridica_info
+#' @examples
+#' natureza_juridica <- fetch_natureza_juridica_info(receita_con)
+fetch_natureza_juridica_info <- function(receita_con) {
+  natureza_juridica <- tibble::tibble()
+  tryCatch({
+    cat("\nRecuperando informações sobre as naturezas jurídicas")
+    natureza_juridica <- DBI::dbGetQuery(receita_con, "SELECT * FROM tab_natureza_juridica")
+  }, 
+  error = function(e) print(paste0("Erro ao buscar dados sobre as naturezas jurídicas no Banco Receita (Postgres): ", e))
+  )
+  
+  return(natureza_juridica)
+}
+
+#' @title Recupera dataframe com informações da descrição do porte das empresas
+#' @return Dataframe contendo informações sobre as descrições do porte das empresas
+#' @rdname fetch_porte_empresa_info
+#' @examples
+#' porte_descricao <- fetch_porte_empresa_info()
+fetch_porte_empresa_info <- function() {
+  porte_empresa <- tibble::tibble(codigo_porte_empresa = c("00", "01", "03", "05"),
+                                  descricao_porte = c("Não informado", "Microempresa", "Empresa de pequeno porte", "Demais"))
+  
+  return(porte_empresa)
+}

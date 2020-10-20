@@ -22,6 +22,7 @@ def create():
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_item.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_fornecedor.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_cnae.sql'])
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_natureza_juridica.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_dados_cadastrais.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_socios.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_cnae_secundario.sql'])
