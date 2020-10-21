@@ -88,7 +88,7 @@ fornecedores_alt %>%
   datatable(class = 'cell-border stripe',
             filter = 'top',
             rownames = FALSE, 
-            options = list(pageLength = 10,
+            options = list(pageLength = 5,
                            scrollX = '400px',
                            autoWidth = TRUE,
                            columnDefs = list(list(width = '500px', targets = c(11))),
