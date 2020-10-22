@@ -33,6 +33,8 @@ def create():
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_licitante.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_tipo_novidade.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_novidade.sql'])
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_tipo_alerta.sql'])
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_alerta.sql'])
 
 @click.command()
 def update_data():
@@ -74,6 +76,11 @@ def import_novidade():
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_novidade.sql'])
 
 @click.command()
+def import_alerta():
+    """Importa alertas para as tabelas do Banco de dados"""
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_alerta.sql'])
+
+@click.command()
 def clean_empenho():
     """Dropa a tabela de empenhos do Banco de Dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/drop/drop_empenho.sql'])
@@ -99,6 +106,7 @@ cli.add_command(clean_empenho)
 cli.add_command(clean_data)
 cli.add_command(shell)
 cli.add_command(import_empenho_raw)
+cli.add_command(import_alerta)
 
 if __name__ == '__main__':
     cli()
