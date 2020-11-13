@@ -1,0 +1,418 @@
+---
+title: "Red Flags"
+output: 
+  html_document:
+    css: styles.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.cap = '',
+  fig.align = 'center',
+  fig.width = 10,
+  fig.height = 6
+)
+options(scipen=999)
+set.seed(1)
+
+```
+
+```{r}
+library(tidyverse)
+library(here)
+library(hrbrthemes)
+library(ggbeeswarm)
+library(readr)
+library(scales)
+library(solitude)
+library(viridis)
+library(kableExtra)
+theme_set(theme_minimal())
+```
+
+
+
+```{r}
+
+filtro <- "" #merenda
+#filtro <- "-covid-22-10-2020" #covid
+
+#Dados da Receita Federal
+cnaes_info <- read_csv(here(paste0("data/bd", filtro, "/info_cnaes.csv")))
+cnaes_secundarios_rs <- read_csv(here(paste0("data/bd",filtro,"/cnaes_secundarios.csv")))
+dados_cnpjs_rs <- read_csv(here(paste0("data/bd", filtro, "/dados_cadastrais.csv")))
+natureza_juridica <- read_csv(here(paste0("data/bd", filtro, "/natureza_juridica.csv")))
+socios_rs <- read_csv(here(paste0("data/bd", filtro, "/socios.csv")))
+
+#Dados do TCE RS
+compras <- read_csv(here(paste0("data/bd", filtro, "/info_contrato.csv")))
+empenhos <- read_csv(here(paste0("data/bd", filtro, "/info_empenhos.csv")), 
+                          col_types = list(cnpj_cpf = col_character()))
+fornecedores <- read_csv(here(paste0("data/bd", filtro, "/info_fornecedores_contrato.csv")))
+orgaos <- read_csv(here(paste0("data/bd", filtro, "/info_orgaos.csv")))
+```
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+
+orgaos_estaduais <- orgaos %>% filter(esfera == "MUNICIPAL") %>% select(id_orgao)
+
+compras_municipios <- compras %>% inner_join(orgaos_estaduais)
+
+recebido_total <- compras_municipios %>% 
+  filter(!is.na(vl_contrato)) %>% 
+  group_by(cnpj_cpf = nr_documento_contratado) %>% 
+  summarise(recebido_total = sum(vl_contrato), 
+            n_compras_total = n(), 
+            mediana_por_compra = median(vl_contrato),
+            max_compra = max(vl_contrato),
+            maior_desvio_compras = max_compra - mediana_por_compra)
+
+
+recebido_por_empresa <- compras_municipios %>% 
+  filter(!is.na(vl_contrato)) %>% 
+  group_by(cnpj_cpf = nr_documento_contratado, ano = ano_contrato) %>% 
+  summarise(recebido = sum(vl_contrato), n_compras = n())
+
+ultimo_contrato <- compras %>% 
+  select(cnpj = nr_documento_contratado, dt_inicio_vigencia) %>% 
+  group_by(cnpj) %>% 
+  summarise(data_ultimo_contrato = max(dt_inicio_vigencia))
+
+
+library(lubridate)
+
+experiencia <- fornecedores %>% 
+  select(cnpj = nr_documento, data_primeiro_contrato) %>% 
+  left_join(dados_cnpjs_rs) %>% 
+  select(cnpj, data_primeiro_contrato, data_inicio_atividade) %>% 
+  left_join(ultimo_contrato) %>% 
+  mutate(experiencia = interval(ymd(data_primeiro_contrato),
+                                ymd(data_ultimo_contrato)) %/% days(1),
+         tempo_primeiro_contrato = interval(ymd(data_inicio_atividade),
+                                ymd(data_primeiro_contrato)) %/% days(1),
+         cnpj_cpf = cnpj)
+
+
+
+# compras_por_empresa <- compras %>% 
+#   left_join(empenhos %>% 
+#               select(id_contrato, cnpj_cpf) %>% 
+#               distinct()) %>% 
+#   group_by(cnpj_cpf, ano = ano_contrato) %>% 
+#   summarise(n_compras = n()) %>% 
+#   na.omit() %>% 
+#   left_join(recebido_por_empresa)
+
+empresas_por_porte <- recebido_por_empresa %>% 
+  left_join(dados_cnpjs_rs %>% 
+              select(cnpj_cpf = cnpj, porte_empresa)) %>% 
+  na.omit() %>% 
+  mutate(porte_empresa = if_else(porte_empresa == "Empresa de pequeno porte", 
+                                 "Pequeno porte", 
+                                 porte_empresa))
+
+municipios_por_empresa_total <- compras_municipios %>% 
+  left_join(orgaos %>%
+              select(id_orgao, cd_municipio_ibge)) %>% 
+  group_by(cnpj_cpf= nr_documento_contratado) %>% 
+  summarise(total_municipios = n_distinct(cd_municipio_ibge)) 
+
+municipios_por_empresa <- compras_municipios %>% 
+  left_join(orgaos %>%
+              select(id_orgao, cd_municipio_ibge)) %>% 
+  distinct(nr_documento_contratado, cd_municipio_ibge, ano_contrato) %>% 
+  group_by(cnpj_cpf= nr_documento_contratado, ano = ano_contrato) %>% 
+  summarise(municipios_fornecidos = n()) %>% 
+  left_join(empresas_por_porte) %>% 
+  na.omit() %>% 
+  group_by(cnpj_cpf, porte_empresa) %>% 
+  summarise(mediana_municipios_fornecidos = median(municipios_fornecidos),
+            n_recompras = sum(n_compras) - sum(municipios_fornecidos),
+            # recebido_max = max(recebido) / mean(recebido), 
+            # n_compras_max = max(n_compras) / mean(n_compras),
+            mediana_recebido = median(recebido),
+            maior_desvio_recebido = max(recebido) - mediana_recebido) %>% 
+  ungroup() %>% 
+  left_join(recebido_total) %>% 
+  left_join(municipios_por_empresa_total) %>% 
+  left_join(experiencia)
+
+
+```
+
+
+```{r message=FALSE, warning=FALSE, fig.width=10, fig.height=10}
+# Quick display of two cabapilities of GGally, to assess the distribution and correlation of variables 
+library(GGally)
+ 
+ 
+# Check correlations (as scatterplots), distribution and print corrleation coefficient 
+ggpairs(municipios_por_empresa %>% select(mediana_municipios_fornecidos,
+                                          maior_desvio_compras,
+                                          n_recompras,
+                                          tempo_primeiro_contrato,
+                                          experiencia), title="Correlograma com ggpairs()") +
+                            hrbrthemes::theme_ipsum_rc()
+
+```
+
+
+```{r}
+
+
+detect_outliers <- municipios_por_empresa  %>% select(cnpj_cpf, 
+                                                      porte_empresa,
+                                                      mediana_municipios_fornecidos, 
+                                                      maior_desvio_compras,
+                                                      n_recompras,
+                                                      tempo_primeiro_contrato,
+                                                      experiencia) %>% na.omit()
+
+iforest <- isolationForest$new(nrow(detect_outliers))
+
+iforest$fit(detect_outliers %>% select(-cnpj_cpf))
+
+detect_outliers$pred <- iforest$predict(detect_outliers %>% select(-cnpj_cpf))
+
+detect_outliers$outlier <- as.factor(ifelse(detect_outliers$pred$anomaly_score >=0.75, "outlier", "normal"))
+
+```
+
+
+
+
+
+```{r, fig.width=9}
+# ggplot(compras_por_empresa, aes(x=n_compras)) +
+# geom_histogram(color="steelblue", fill="lightblue",
+#                  linetype="dashed", position="identity", alpha=0.5)+
+# labs(title="Dispersão da quantidade de compras por fornecedor",x="N° de compras", y = "Quantidade de fornecedores") +
+# hrbrthemes::theme_ipsum_rc() 
+```
+
+```{r, fig.width=9}
+
+# p <- municipios_por_empresa  %>% 
+#     ggplot(aes(x = n_recompras,
+#                y = recebido)) +
+#     geom_point(colour = "#CBA135", alpha = .5) +
+#     scale_y_continuous(breaks = c(2e6, 4e6, 6e6), 
+#                        labels = c("2mi", "4mi", "6mi")) +
+#     labs(title = "Relação entre valor recebido e número de compras",
+#          x = "N° de compras",
+#          y = "Valor total recebido") +
+#    hrbrthemes::theme_ipsum_rc() 
+# 
+# p
+```
+
+```{r, fig.width=10}
+
+# municipios_por_empresa$porte_empresa_f = factor(municipios_por_empresa$porte_empresa, 
+#                                             levels=c('Microempresa','Pequeno porte','Demais'))
+# p <- municipios_por_empresa  %>% 
+#     ggplot(aes(x = municipios,
+#                y = media_recebido)) +
+#     geom_point(colour = "#CBA135", alpha = .5) +
+#     # scale_y_continuous(breaks = c(1e6, 3e6, 5e6, 7e6), 
+#     #                    labels = c("1mi", "3mi", "5mi", "7mi")) +
+#     facet_wrap(~porte_empresa_f) +
+#     labs(title = "Relação entre valor recebido e número de re-compras",
+#          x = "N° de re-compras",
+#          y = "Valor total recebido") +
+#    hrbrthemes::theme_ipsum_rc() 
+# 
+# p
+```
+
+```{r, fig.width=9}
+# p <- municipios_por_empresa %>% ggplot(aes(porte_empresa_f, recebido, label = "")) +
+#              theme_ipsum_rc() +
+#              theme(legend.position = "top") +
+#              geom_quasirandom(width = 0.2, color = "#CBA135") +
+#               scale_y_continuous(trans = log_trans(), 
+#                                breaks = c(100, 1e3, 1e4, 1e5, 1e6, 5e6), 
+#                                labels = c("100", "1mil", "10mil",  "100mil",  "1mi", "5mi")) +
+#              labs(
+#               x = NULL, y = "Valor recebido", fill = NULL,
+#               title = "Valor total recebido pela empresa"
+#              )
+# p
+```
+
+### Municípios fornecidos x Valor recebido
+
+```{r, fig.width=9}
+# ggplot(municipios_por_empresa, aes(x=municipios)) +
+# geom_histogram(color="steelblue", fill="lightblue",
+#                  linetype="dashed", position="identity", alpha=0.5)+
+# labs(title="Dispersão da quantidade de municípios por fornecedor",x="N° de municípios", y = "Quantidade de fornecedores") +
+# hrbrthemes::theme_ipsum_rc() 
+```
+
+```{r, fig.width=9}
+
+# p <- municipios_por_empresa %>% ggplot(aes(porte_empresa_f, municipios, color = , label = "")) +
+#              theme_ipsum_rc() +
+#              theme(legend.position = "top") +
+#              geom_quasirandom(width = 0.4, color = "#CBA135") +
+#              labs(
+#               x = NULL, y = "Municípios fornecidos", fill = NULL,
+#               title = "Média anual de municípios
+# fornecidos por porte de empresa"
+#              )
+# p
+```
+
+
+
+
+
+```{r, fig.width=10}
+# detect_outliers$porte_empresa_f = factor(detect_outliers$porte_empresa, 
+#                                             levels=c('Microempresa','Pequeno porte','Demais'))
+# p <- detect_outliers  %>% 
+#     ggplot(aes(x = mediana_municipios_fornecidos,
+#                y = maior_desvio_compras,
+#                color = detect_outliers$pred$anomaly_score
+#               )) +
+#     geom_point() +
+#     scale_color_fermenter(n.breaks = 5, palette = "PuOr")+
+#     scale_y_continuous(breaks = c(1e6, 3e6, 5e6, 7e6, 9e6, 11e6),
+#                        labels = c("1mi", "3mi", "5mi", "7mi", "9mi", "11mi")) +
+#     facet_wrap(~porte_empresa_f) +
+#     labs(title = "Relação entre valor recebido e número de compras",
+#          x = "Municípios fornecidos",
+#          y = "Valor médio recebido",
+#          color = "Score") +
+#    hrbrthemes::theme_ipsum_rc() +
+#    theme(legend.position = "right")
+# 
+# p
+```
+
+
+
+```{r, fig.width=10}
+
+# detect_outliers$porte_empresa_f = factor(detect_outliers$porte_empresa, 
+#                                             levels=c('Microempresa','Pequeno porte','Demais'))
+# 
+# p <- detect_outliers %>% ggplot(aes(porte_empresa_f, 
+#                                     municipios, 
+#                                     color = detect_outliers$pred$anomaly_score, 
+#                                     label = "")) +
+#              theme_ipsum_rc() +
+#              scale_color_viridis_c(option="plasma") +
+#              theme(legend.position = "top") +
+#              geom_quasirandom(width = 0.4, alpha = .6) +
+#              labs(
+#               x = NULL, y = "Municípios fornecidos", fill = NULL,
+#               title = "Quantidade de municípios
+# fornecidos por porte de empresa"
+#              )
+# p
+```
+
+### Definindo outliers
+
+```{r, fig.width=9}
+p <- detect_outliers %>% ggplot(aes("Fornecedores", pred$anomaly_score, label = "")) +
+             theme_ipsum_rc() +
+             theme(legend.position = "top") +
+             geom_quasirandom(width = 0.4, color = "#CBA135") +
+             labs(
+              x = NULL, y = "Score", fill = NULL,
+              title = "Score de anormalidade"
+             ) +   ggplot2::geom_blank(aes(color = Species), data = iris) +
+  ggplot2::geom_point(aes(x = Sepal.Length, y = Petal.Length, color = Species))
+p
+```
+
+
+```{r}
+library(kableExtra)
+difs.pca <- prcomp(detect_outliers %>% select(maior_desvio_compras, 
+                                              mediana_municipios_fornecidos, 
+                                              n_recompras,
+                                              tempo_primeiro_contrato,
+                                              experiencia), scale. = T,  center = T)
+difs.pca.df <- data.frame(difs.pca$rotation)
+kable(difs.pca.df, format = 'html') %>%
+  kable_styling(bootstrap_options = c('hover', 'striped'))
+
+```
+
+```{r, fig.width=10}
+library(ggfortify)
+
+
+detect_outliers$porte_empresa_f = factor(detect_outliers$porte_empresa,
+                                            levels=c('Microempresa','Pequeno porte','Demais'))
+
+pca <- detect_outliers %>% mutate(score = pred$anomaly_score)
+
+autoplot(difs.pca,
+         data = pca,
+         colour='score',
+         loadings = TRUE,
+         loadings.colour = 'grey',
+         loadings.label.colour = 'grey50',
+  loadings.label = TRUE,
+  loadings.label.size = 3) +
+  theme_ipsum_rc(grid=FALSE) +
+  labs(title = "Distribuição nos componentes principais") +
+  facet_wrap(~porte_empresa_f) +
+  theme(legend.position = "right") +
+  scale_color_fermenter(n.breaks = 5, palette = "PuOr")
+```
+
+### Detalhes dos outliers
+
+```{r}
+outliers <- detect_outliers %>% 
+  group_by(porte_empresa) %>% 
+  mutate(rank_municipios = n() + 1 - rank(mediana_municipios_fornecidos),
+         rank_desvio_compras =  n() + 1 -  rank(maior_desvio_compras),
+         mediana_municipios = quantile(media_municipios_fornecidos, .90),
+         mediana_desvio_compras = quantile(maior_desvio_compras, .90)) %>% 
+  ungroup() %>% 
+  left_join(dados_cnpjs_rs %>% select(cnpj_cpf = cnpj, razao_social)) %>% 
+  distinct() %>% 
+  mutate(link = paste0("https://tadepemerenda.transparencia.org.br/fornecedores/", cnpj_cpf)) %>% 
+  filter(outlier == "outlier")
+
+tabela <- outliers %>% select(`Fornecedor` = razao_social, Porte = porte_empresa,  
+                              media_recebido, mediana_recebido,  rank_municipios,
+                              municipios, mediana_municipios, link) %>% 
+  mutate(`Ranking de faturamento anual (por porte)` = paste0(rank_recebido, '°'),
+         `Média de faturamento anual (em reais)` = paste0(round(media_recebido/1e6,2 ), "mi"),
+         `90% do mesmo porte recebe menos que (em reais)` = paste0(round(mediana_recebido/1e6,2 ), "mi"),
+         `Ranking de fornecimento anual (por porte)` = paste0(round(rank_municipios), '°'),
+         `Média de fornecimento anual (municípios)` = paste0(round(municipios)),
+         `90% do mesmo porte fornece para menos que (municípios)` = paste0(round(mediana_municipios)),
+         Link = link) %>% 
+  select(-rank_recebido, -media_recebido, -mediana_recebido, - rank_municipios, -municipios,
+         -mediana_municipios, -link)
+
+kable(tabela, format = 'html') %>%
+  kable_styling(bootstrap_options = c('hover', 'striped'))
+
+```
+
+
+```{r}
+library(ggplot2)
+blank <- ggplot2::geom_blank(aes(color = Species), data = iris)
+
+
+
+ggplot(iris[iris$Species == "setosa", ]) +
+  ggplot2::geom_blank(aes(color = Species), data = iris) +
+  ggplot2::geom_point(aes(x = Sepal.Length, y = Petal.Length, color = Species))
+```
+
