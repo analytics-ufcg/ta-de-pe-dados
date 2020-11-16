@@ -250,3 +250,19 @@ read_contratos_processados <- function() {
                                  vigencia_original_do_contrato = readr::col_integer()
                                ))
 }
+
+read_fornecedores_processados <- function() {
+  fornecedores <- readr::read_csv(here::here("data/bd/info_fornecedores_contrato.csv"),
+                                  col_types = list(
+                                    nr_documento = readr::col_character()
+                                  ))
+}
+
+read_dados_cadastrais_processados <- function() {
+  dados_cadastrais <- readr::read_csv(here::here("data/bd/dados_cadastrais.csv"),
+                                      col_types = list(
+                                        cnpj = col_character(),
+                                        data_situacao_especial = col_character(),
+                                        situacao_especial = col_character()
+                                        ))
+}

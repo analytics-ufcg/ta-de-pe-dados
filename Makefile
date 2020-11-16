@@ -15,11 +15,13 @@ help:
 	@echo "\tprocess-data-novidades \t\tExecuta o processamento de dados de novidades."
 	@echo "\tprocess-data-fornecedores anos=<ano1,ano2> \t\tExecuta o processamento de dados de fornecedores."
 	@echo "\tprocess-data-receita \t\tExecuta o processamento de dados da Receita Federal."
+	@echo "\tprocess-data-alertas anos=<ano1,ano2> \t\tExecuta o processamento de dados dos Alertas."
 	@echo "\tfeed-create \t\t\tCria as tabelas usadas no Tá na Mesa no Banco de Dados."
 	@echo "\tfeed-import-data \t\tImporta dados dos CSV's (licitações e contratos) para o Banco de dados."
 	@echo "\tfeed-import-empenho \t\tImporta dados do CSV processado de empenhos para o Banco de dados."
 	@echo "\tfeed-import-empenho-raw \tImporta dados do CSV de dados brutos vindos do TCE."
 	@echo "\tfeed-import-novidade \t\tImporta dados do CSV processado de novidades para o Banco de dados."
+	@echo "\tfeed-import-alerta \t\tImporta dados do CSV processado de alertas para o Banco de dados."
 	@echo "\tfeed-update-fornecedores \t\tAtualiza dados do CSV processado de fornecedores para o Banco de dados."
 	@echo "\tfeed-shell \t\t\tAbre terminal psql com o banco cadastrado nas variáveis de ambiente."
 	@echo "\tfeed-clean-data \t\tRemove as tabelas processadas pelo Tá na Mesa (licitações, contratos e novidades)."
@@ -47,6 +49,9 @@ process-data-fornecedores:
 process-data-receita:		
 	docker exec -it r-container sh -c "cd /app/code/fetcher/scripts &&  Rscript fetch_dados_receita.R"
 .PHONY: process-data-receita
+process-data-alertas:		
+	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_alertas_bd.R $(anos)"
+.PHONY: process-data-alertas
 feed-create:	
 	docker exec -it feed python3.6 /feed/manage.py create
 .PHONY: feed-create
@@ -62,6 +67,9 @@ feed-import-empenho-raw:
 feed-import-novidade:	
 	docker exec -it feed python3.6 /feed/manage.py import-novidade
 .PHONY: feed-import-novidade
+feed-import-alerta:	
+	docker exec -it feed python3.6 /feed/manage.py import-alerta
+.PHONY: feed-import-alerta
 feed-shell:	
 	docker exec -it feed python3.6 /feed/manage.py shell
 .PHONY: feed-shell

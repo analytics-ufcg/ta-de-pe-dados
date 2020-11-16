@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS "alerta";
+DROP TABLE IF EXISTS "tipo_alerta";
 DROP TABLE IF EXISTS "novidade";
 DROP TABLE IF EXISTS "tipo_novidade";
 DROP TABLE IF EXISTS "empenho";
