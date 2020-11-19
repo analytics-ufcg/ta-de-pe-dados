@@ -95,6 +95,10 @@ def shell():
     """Acessa terminal do banco de dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db])
 
+@click.command()
+def group_items_similarity():
+    """Cria tabela com itens similares"""
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_group_items_similarity.sql'])
 
 cli.add_command(create)
 cli.add_command(update_data)
@@ -107,6 +111,8 @@ cli.add_command(clean_data)
 cli.add_command(shell)
 cli.add_command(import_empenho_raw)
 cli.add_command(import_alerta)
+
+cli.add_command(group_items_similarity)
 
 if __name__ == '__main__':
     cli()

@@ -50,6 +50,7 @@ process-data-receita:
 	docker exec -it r-container sh -c "cd /app/code/fetcher/scripts &&  Rscript fetch_dados_receita.R"
 .PHONY: process-data-receita
 process-data-alertas:		
+	docker exec -it feed python3.6 /feed/manage.py group-items-similarity
 	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_alertas_bd.R $(anos)"
 .PHONY: process-data-alertas
 feed-create:	
