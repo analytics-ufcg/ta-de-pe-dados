@@ -27,7 +27,7 @@ tipos_alerta <- create_tipo_alertas()
 alertas_data <- processa_alertas_data_abertura_contrato(anos)
 alertas_cnae_atipico_item <- processa_alertas_cnaes_atipicos_itens(anos)
 
-alertas <- bind_rows(alertas_data)
+alertas <- bind_rows(alertas_data, alertas_cnae_atipico_item)
 
 alertas_bd <- alertas %>% 
   generate_hash_id(c("id_tipo", "nr_documento", "id_contrato"), ALERTA_ID) %>% 
