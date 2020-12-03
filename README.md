@@ -1,22 +1,30 @@
-# Ta na mesa
+# Tá na mesa - Camada de Dados
 
-Repositório de acesso a dados de licitações, empenhos e contratos do Tribunal de Contas do Estado do Rio Grande do Sul.
+O Tá na mesa é um sistema desenvolvido através da parceria entre a Transparência Brasil e o laboratório Analytics, da Universidade Federal de Campina Grande-PB, com finalidade de permitir o acompanhamento de licitações e de contratos de alimentação das escolas públicas.
 
-Este README é dividido em três partes principais.
+# Camada de Dados
 
-- Explicação sobre o serviço que baixa os dados do TSE (**Crawler Tá na Mesa**)
-- Explicação sobre o serviço que processa os dados do TSE para o formato usado no tá na mesa (**Processa dados Tá na Mesa**).
-- Explicação sobre o serviço que gerencia o carregamento dos dados processados no banco de dados (**Feed Tá na Mesa**).
+A Camada de Dados, ilustrada na imagem abaixo, fornece meios para extração, processamento, e armazenamento de dados do TCE de dois estados brasileiros, Rio Grande do Sul e Pernambuco, e da Receita Federal.
 
-## Antes de tudo
+![Fluxo de dados](https://github.com/analytics-ufcg/ta-na-mesa-dados/blob/553-documenta-fluxo-dados/img/data-pipeline.png)
+
+A Camada de Dados possui três componentes principais:
+
+* **Crawler** : responsável por buscar os dados de suas fontes;
+* **Processor** : responsável por processar os dados para o formato usado no Tá na mesa e encontrar alertas nos dados;
+* **Feed** : responsável por carregar os dados para o banco de dados Tá na mesa.
+
+# Setup
 
 Todos os serviços utilizados pelo Tá na Mesa utilizam docker para configuração do ambiente e execução do script.
 
 Instale o [docker](https://docs.docker.com/install/) e o [docker-compose](https://docs.docker.com/compose/install/). Tenha certeza que você também tem o [Make](https://www.gnu.org/software/make/) instalado.
 
-O processamento de dados do Tá na Mesa tem os seguintes passos:
+# Tutorial
 
-1. Download dos dados brutos no TCE-RS
+Mais detalhadamente, o processamento de dados do Tá na Mesa tem os seguintes passos:
+
+1. Download dos dados brutos no TCE-RS e TCE-PE
 2. Processamento dos dados de licitações e contratos
 3. Processamento dos dados de fornecedores
 4. Processamentos dos dados da Receita Federal
@@ -29,11 +37,11 @@ O processamento de dados do Tá na Mesa tem os seguintes passos:
 11. Processamento dos dados de alertas.
 12. Importação dos dados de alertas para o BD.
 
-Para realizar estes passos siga o tutorial:
+Para realizar estes passos, siga o tutorial:
 
 ## Crawler Tá na Mesa
 
-A primeira etapa para o setup do repositório é baixar os dados brutos de licitações, contratos e empenhos disponibilizados pelo [TCE-RS](http://dados.tce.rs.gov.br/) na forma de dados abertos.
+A primeira etapa consiste em baixar os dados brutos de licitações, contratos e empenhos disponibilizados pelo [TCE-RS](http://dados.tce.rs.gov.br/) e pelo [TCE-PE](https://www.tce.pe.gov.br/internet/index.php/dados-abertos/bases-de-dados-completas) na forma de dados abertos.
 
 Para isto usaremos o **Crawler Tá na Mesa**
 
@@ -111,7 +119,7 @@ make process-data-receita
 ```
 
 Obs: é necessário que as variáveis de acesso ao BD estejam definidas no .env na raiz do repositório.
-As variáveis necessárias para conexão são: 
+As variáveis necessárias para conexão são:
 ```shell
 RECEITA_HOST
 RECEITA_USER
