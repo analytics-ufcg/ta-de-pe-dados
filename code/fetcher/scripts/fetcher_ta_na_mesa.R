@@ -8,13 +8,6 @@ source(here::here("code/utils/constants.R"))
 
 ta_na_mesa_db <- NULL
 
-POSTGRES_HOST="localhost"
-POSTGRES_DB="tanamesa"
-POSTGRES_USER="postgres"
-POSTGRES_PASSWORD="secret"
-POSTGRES_PORT=7655
-
-
 tryCatch({ta_na_mesa_db <- DBI::dbConnect(RPostgres::Postgres(),
                                     dbname = POSTGRES_DB,
                                     host = POSTGRES_HOST,
@@ -23,9 +16,12 @@ tryCatch({ta_na_mesa_db <- DBI::dbConnect(RPostgres::Postgres(),
                                     password = POSTGRES_PASSWORD)
 }, error = function(e) print(paste0("Erro ao tentar se conectar ao banco do Ta-na-Mesa (Postgres): ", e)))
 
-itens_unicos_similaridade_rs <- fetch_itens_similares(ta_na_mesa_db) %>% 
+itens_unicos_similaridade_rs <- fetch_itens_similares(ta_na_mesa_db)
+
+readr::write_csv(itens_unicos_similaridade_rs, here::here("data/bd/itens_similares.csv"))
+
+itens_unicos_similaridade_rs <- itens_unicos_similaridade_rs %>% 
   dplyr::select (-c(id_item_contrato))
 
 
-readr::write_csv(itens_unicos_similaridade_rs, here::here("data/bd/itens_similares.csv"))
 

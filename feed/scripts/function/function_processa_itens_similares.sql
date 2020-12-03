@@ -1,7 +1,4 @@
-
-CREATE EXTENSION pg_trgm;
-
-CREATE TABLE IF NOT EXISTS itens_unicos_similaridade(id_item_contrato serial primary key, ds_item text, sg_unidade_medida text, ds_1 text, ds_2 text, ds_3 text, ids_itens_contratos varchar[]);
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 do $$
 declare

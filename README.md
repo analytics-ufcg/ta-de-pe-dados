@@ -182,6 +182,12 @@ make feed-import-novidade
 Processe os dados de alertas:
 
 ```shell
+# primeiramente, é necessário executar o processamento para agrupar itens similares.
+# caso você já tenha os itens similares processados, utilize:
+# make feed-import-itens-similares-data
+# caso contrário:
+make process-data-itens-similares
+
 make process-data-alertas anos=2018,2019,2020
 ```
 
