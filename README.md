@@ -10,9 +10,9 @@ A Camada de Dados, ilustrada na imagem abaixo, fornece meios para extração, pr
 
 A Camada de Dados possui três componentes principais:
 
-* **Crawler** : responsável por buscar os dados de suas fontes;
-* **Processor** : responsável por processar os dados para o formato usado no Tá na mesa e encontrar alertas nos dados;
-* **Feed** : responsável por carregar os dados para o banco de dados Tá na mesa.
+* **Crawler**: responsável por buscar os dados de suas fontes;
+* **Processor**: responsável por processar os dados para o formato usado no Tá na mesa e encontrar alertas nos dados;
+* **Feed**: responsável por carregar os dados para o banco de dados Tá na mesa.
 
 # Setup
 
