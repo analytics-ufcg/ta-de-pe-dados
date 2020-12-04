@@ -45,6 +45,7 @@ processa_alertas_cnaes_atipicos_itens <- function() {
   contratos_itens_atipicos <- cnaes_atipicos_data %>%
     group_by(id_contrato, nr_documento, id_tipo) %>% 
     summarise(total_itens_atipicos=n(), .groups = 'drop') %>% 
+    arrange(desc(total_itens_atipicos)) %>% 
     mutate(info=ifelse(total_itens_atipicos != 1, 
                        paste0("A empresa forneceu ", total_itens_atipicos, 
                               " produtos que não são comuns com base em suas atividades econômicas declaradas na Receita Federal"),
@@ -129,6 +130,8 @@ processa_alertas_data_abertura_contrato <- function(anos) {
 #' @examples 
 #' cnaes_itens_forcenedor <- .processa_itens_cnaes_fornecedores(c(2018, 2019, 2020))
 .processa_itens_cnaes_fornecedores <- function() {
+  LIMITE_MIN_ITENS <- 250
+
   contratos_processados <- read_contratos_processados() %>% 
     filter(nchar(nr_documento_contratado) == 14) %>% 
     select (id_contrato, nr_documento_contratado, nr_contrato, nr_documento_contratado, ano_contrato, nm_orgao) 
@@ -204,7 +207,7 @@ processa_alertas_data_abertura_contrato <- function(anos) {
            "nm_grupo","nm_divisao", "item_class","qt_total_item", 
            "qt_total_item_grupo", "prop_grupo_total_item") %>%
     mutate_all(funs(ifelse(is.na(.), 0, .))) %>% 
-    filter(qt_total_item>=500)
+    filter(qt_total_item>=LIMITE_MIN_ITENS)
   
   return(cnaes_itens_forcenedor)  
 }
