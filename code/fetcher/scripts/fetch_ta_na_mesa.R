@@ -19,9 +19,3 @@ tryCatch({ta_na_mesa_db <- DBI::dbConnect(RPostgres::Postgres(),
 itens_unicos_similaridade_rs <- fetch_itens_similares(ta_na_mesa_db)
 
 readr::write_csv(itens_unicos_similaridade_rs, here::here("data/bd/itens_similares.csv"))
-
-itens_unicos_similaridade_rs <- itens_unicos_similaridade_rs %>% 
-  dplyr::select (-c(id_item_contrato))
-
-
-
