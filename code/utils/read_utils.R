@@ -266,3 +266,26 @@ read_dados_cadastrais_processados <- function() {
                                         situacao_especial = col_character()
                                         ))
 }
+
+read_orgaos_estaduais_pe <- function() {
+  orgaos_estaduais <- readr::read_csv(here::here("data/tce_pe/ugs_estaduais.csv"),
+                                      col_types = list(
+                                        CODIGO_TCE = col_character()
+                                      ))
+}
+
+read_orgaos_municipais_pe <- function() {
+  orgaos_municipais <- readr::read_csv(here::here("data/tce_pe/ugs_municipais.csv"),
+                                       col_types = list(
+                                         ID_UNIDADE_GESTORA = col_character(),
+                                         NATUREZA_ORGAO  = col_character()
+                                       ))
+}
+
+read_municipios_pe <- function() {
+  municipios <- readr::read_csv(here::here("data/tce_pe/municipios.csv"),
+                                col_types = list(
+                                  CodigoSagres = col_character(),
+                                  CodigoIBGE  = col_character()
+                                ))
+}
