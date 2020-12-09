@@ -15,7 +15,7 @@ get_args <- function() {
   option_list = list(
     optparse::make_option(c("--data_inicio"),
                           type="integer",
-                          default=2017,
+                          default=2018,
                           help="Data inicial da seleção (para licitações e contratos).",
                           metavar="integer"),
     optparse::make_option(c("--data_fim"),
@@ -71,4 +71,3 @@ readr::write_csv(aditivos, "data/tce_pe/aditivos.csv")
 readr::write_csv(ugs_estaduais, "data/tce_pe/ugs_estaduais.csv")
 readr::write_csv(ugs_municipais, "data/tce_pe/ugs_municipais.csv")
 readr::write_csv(fornecedores, "data/tce_pe/fornecedores.csv")
-
