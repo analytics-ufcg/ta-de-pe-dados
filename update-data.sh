@@ -16,16 +16,16 @@ pprint() {
 # Baixa os dados brutos direto do TSE
 download_data_tse() {
 
-    pprint "1. Faz o Build do Crawler"
-    docker build -t crawler-ta-na-mesa scripts/	
+    pprint "1. Faz o Build do fetcher"
+    docker build -t fetcher-ta-na-mesa scripts/
 
     pprint "2. Faz o Download dos Órgãos"
-    docker run --rm -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_orgaos.py ./data
+    docker run --rm -v `pwd`/data/:/code/scripts/data/ fetcher-ta-na-mesa python3.6 fetch_orgaos.py ./data
 
     pprint "3. Faz o Download dos dados brutos"
-    docker run --rm -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_all_data.py 2018 ./data 4
-    docker run --rm -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_all_data.py 2019 ./data 4
-    docker run --rm -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_all_data.py 2020 ./data 4
+    docker run --rm -v `pwd`/data/:/code/scripts/data/ fetcher-ta-na-mesa python3.6 fetch_all_data.py 2018 ./data 4
+    docker run --rm -v `pwd`/data/:/code/scripts/data/ fetcher-ta-na-mesa python3.6 fetch_all_data.py 2019 ./data 4
+    docker run --rm -v `pwd`/data/:/code/scripts/data/ fetcher-ta-na-mesa python3.6 fetch_all_data.py 2020 ./data 4
 
 }
 
@@ -112,8 +112,8 @@ print_usage() {
     printf "\t-run-full-update: Executa atualização completa (todos os passos)\n"
     printf "\t-run-data-process-update: Executa o processamento e atualização dos dados localmente \
             (assume que os dados brutos já foram baixados)\n"
-    printf "\t-run-update-db-remote: Executa a atualização do Banco de Dados remoto\n"    
-    printf "\t-download-data-tse: Faz o Download dos dados do TSE-RS\n"    
+    printf "\t-run-update-db-remote: Executa a atualização do Banco de Dados remoto\n"
+    printf "\t-download-data-tse: Faz o Download dos dados do TSE-RS\n"
 }
 
 if [ "$#" -lt 1 ]; then
