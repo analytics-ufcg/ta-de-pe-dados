@@ -27,21 +27,21 @@ Obs: todos comandos citados nesse README utilizam o make como facilitador para e
 Mais detalhadamente, cada componente da camada de dados do *Tá de Pé?* realiza as seguintes tarefas:
 
 1. **Fetcher**
-  1.1 Download dos dados brutos do TCE-RS
-  1.2 Download dos dados brutos do TCE-PE
-  1.3 Download dos dados da Receita Federal
+    1.1 Download dos dados brutos do TCE-RS
+    1.2 Download dos dados brutos do TCE-PE
+    1.3 Download dos dados da Receita Federal
 2. **Processor**
-  2.1 Processamento dos dados de licitações e contratos
-  2.2 Processamento dos dados de fornecedores
-  2.3 Processamento dos dados da Receita Federal
-  2.4 Processamento dos dados de empenhos processados
-  2.5 Processamento dos dados de novidades
-  2.6 Processamento dos dados de alertas
+    2.1 Processamento dos dados de licitações e contratos
+    2.2 Processamento dos dados de fornecedores
+    2.3 Processamento dos dados da Receita Federal
+    2.4 Processamento dos dados de empenhos processados
+    2.5 Processamento dos dados de novidades
+    2.6 Processamento dos dados de alertas
 3. **Feed**
-  3.1 Importação dos dados de licitações e contratos (processados), e empenhos (brutos) para o BD
-  3.2 Importação dos dados de empenhos processados para o BD
-  3.3 Importação dos dados de novidades para o BD
-  3.4 Importação dos dados de alertas para o BD
+    3.1 Importação dos dados de licitações e contratos (processados), e empenhos (brutos) para o BD
+    3.2 Importação dos dados de empenhos processados para o BD
+    3.3 Importação dos dados de novidades para o BD
+    3.4 Importação dos dados de alertas para o BD
 
 Para realizar estas tarefas, siga o tutorial:
 
@@ -162,6 +162,8 @@ make process-data-alertas anos=2018,2019,2020
 ```
 
 Os dados processados de alertas estarão disponíveis no diretório `data/bd`.
+
+## 3. Feed 
 
 ### Passo 3.1
 
