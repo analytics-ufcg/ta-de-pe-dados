@@ -259,8 +259,16 @@ info_alteracoes_contrato <- alteracoes %>%
 ## Órgãos
 message("#### órgãos")
 source(here::here("code/orgaos/processa_orgaos.R"))
+source(here::here("code/orgaos/processa_orgaos_pe.R"))
+
 info_orgaos_municipios <- import_orgaos() %>%
   processa_info_orgaos()
+
+
+municipios_pe <- import_municipios_pe()
+orgaos_estaduais_pe <- import_orgaos_estaduais_pe()
+info_orgaos_pe <- import_orgaos_municipais_pe() %>% 
+  processa_info_orgaos_pe(orgaos_estaduais_pe, municipios_pe)
 
 ## Completa CSV de órgãos com os órgãos presentes na tabela de licitação
 info_orgaos <- info_orgaos_municipios %>%
@@ -272,8 +280,13 @@ info_orgaos <- info_orgaos_municipios %>%
   dplyr::mutate(nome_municipio = dplyr::if_else(esfera == "ESTADUAL",
                                                 "ESTADO DO RIO GRANDE DO SUL",
                                                 nome_municipio)) %>%
-  dplyr::mutate(sigla_estado = "RS")
+  dplyr::mutate(sigla_estado = "RS") %>% 
+  dplyr::bind_rows(info_orgaos_pe %>% 
+                     dplyr::mutate(cd_municipio_ibge = as.numeric(cd_municipio_ibge)))
   
+
+
+
 # Escrita dos dados
 
 message("#### escrevendo dados...")
