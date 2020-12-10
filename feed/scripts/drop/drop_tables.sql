@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS "itens_unicos_similaridade";
+DROP TABLE IF EXISTS "item_atipico";
 DROP TABLE IF EXISTS "alerta";
 DROP TABLE IF EXISTS "tipo_alerta";
 DROP TABLE IF EXISTS "novidade";

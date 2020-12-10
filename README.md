@@ -155,7 +155,13 @@ Os dados processados de novidades estarão disponíveis no diretório `data/bd`.
 
 ### Passo 2.6
 
-Processe os dados de alertas:
+Processe os dados de alertas referentes a produtos atípicos:
+
+```shell
+make process-data-itens-similares
+```
+
+Processe os dados de alertas referentes a fornecedores contratados logo após a abertura da empresa:
 
 ```shell
 make process-data-alertas anos=2018,2019,2020
@@ -207,7 +213,13 @@ make feed-import-novidade
 
 ### Passo 3.4
 
-Importe os dados de alertas para o BD:
+Importe para o BD os dados de alertas sobre produtos atípicos:
+
+```shell
+make feed-import-itens-similares-data
+```
+
+Importe para o BD os dados de alertas sobre fornecedores contratados logo após a abertura da empresa:
 
 ```shell
 make feed-import-alerta
