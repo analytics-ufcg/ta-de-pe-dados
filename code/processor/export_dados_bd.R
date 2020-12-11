@@ -33,11 +33,26 @@ source(here::here("code/utils/constants.R"))
 # Processamento dos dados
 message("#### Iniciando processamento...")
 
+## Órgãos
+message("#### órgãos")
+source(here::here("code/orgaos/processa_orgaos.R"))
+source(here::here("code/orgaos/processa_orgaos_pe.R"))
+
+info_orgaos_municipios <- import_orgaos() %>%
+  processa_info_orgaos()
+
+
+municipios_pe <- import_municipios_pe()
+orgaos_estaduais_pe <- import_orgaos_estaduais_pe()
+info_orgaos_pe <- import_orgaos_municipais_pe() %>% 
+  processa_info_orgaos_pe(orgaos_estaduais_pe, municipios_pe)
+
 ## Licitações
 message("#### licitações...")
 source(here::here("code/licitacoes/processa_licitacoes.R"))
 source(here::here("code/licitacoes/processa_tipos_licitacoes.R"))
 source(here::here("code/licitacoes/processa_tipos_modalidade_licitacoes.R"))
+source(here::here("code/licitacoes/processa_licitacoes_pe.R"))
 
 licitacoes_falsos_positivos <- readr::read_csv(here::here("code/utils/licitacoes_falsos_positivos.csv"))
 
@@ -49,15 +64,42 @@ licitacoes <- licitacoes_raw %>%
 orgaos_licitacao <- licitacoes %>%
   dplyr::distinct(id_orgao, nm_orgao)
 
+## Completa CSV de órgãos com os órgãos presentes na tabela de licitação --- REFATORAR
+info_orgaos <- info_orgaos_municipios %>%
+  dplyr::mutate(id_orgao = as.character(id_orgao)) %>%
+  dplyr::bind_rows(orgaos_licitacao %>%
+                     dplyr::mutate(esfera = "ESTADUAL")) %>%
+  dplyr::distinct(id_orgao, .keep_all = TRUE) %>%
+  dplyr::mutate(nome_entidade = nome_municipio) %>%
+  dplyr::mutate(nome_municipio = dplyr::if_else(esfera == "ESTADUAL",
+                                                "ESTADO DO RIO GRANDE DO SUL",
+                                                nome_municipio)) %>%
+  dplyr::mutate(sigla_estado = "RS", id_estado = "43") %>% 
+  dplyr::bind_rows(info_orgaos_pe %>% 
+                     dplyr::mutate(cd_municipio_ibge = as.numeric(cd_municipio_ibge))) %>% 
+  generate_hash_id(c("id_orgao", "sigla_estado"),
+                   O_ID) %>%
+  dplyr::select(id_orgao, dplyr::everything())
+
+
 tipo_licitacao <- processa_tipos_licitacoes()
 tipo_modalidade_licitacao <- processa_tipos_modalidade_licitacoes()
 
-info_licitacoes <- join_licitacao_e_tipo(licitacoes, tipo_licitacao) %>%
-  join_licitacao_e_tipo_modalidade(tipo_modalidade_licitacao) %>%
+licitacoes_pe <- import_licitacoes_pe() %>% 
+  processa_info_licitacoes_pe(tipo_filtro = filtro)
+  
+licitacoes_rs <- join_licitacao_e_tipo(licitacoes, tipo_licitacao) %>%
+  join_licitacao_e_tipo_modalidade(tipo_modalidade_licitacao) 
+
+info_licitacoes <- licitacoes_rs %>%
+  dplyr::bind_rows(licitacoes_pe) %>% 
+  dplyr::select(-id_orgao) %>% 
+  dplyr::left_join(info_orgaos %>% 
+                     dplyr::select(id_orgao, nm_orgao, id_estado)) %>% 
   generate_hash_id(c("id_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade"),
                    L_ID) %>%
-  dplyr::select(id_licitacao, dplyr::everything()) %>%
-  dplyr::filter(!id_licitacao %in% (licitacoes_falsos_positivos %>% pull(id_licitacao)))
+  dplyr::select(id_licitacao, id_estado, id_orgao, dplyr::everything()) %>%
+  dplyr::filter(!id_licitacao %in% (licitacoes_falsos_positivos %>% pull(id_licitacao))) 
 
 ## Licitantes
 message("### licitantes...")
@@ -255,37 +297,6 @@ info_alteracoes_contrato <- alteracoes %>%
   generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", "nr_contrato", "ano_contrato",
                      "tp_instrumento_contrato", "id_evento_contrato", "cd_tipo_operacao"), ALTERACOES_CONTRATO_ID) %>%
   dplyr::select(id_alteracoes_contrato, id_contrato, dplyr::everything())
-
-## Órgãos
-message("#### órgãos")
-source(here::here("code/orgaos/processa_orgaos.R"))
-source(here::here("code/orgaos/processa_orgaos_pe.R"))
-
-info_orgaos_municipios <- import_orgaos() %>%
-  processa_info_orgaos()
-
-
-municipios_pe <- import_municipios_pe()
-orgaos_estaduais_pe <- import_orgaos_estaduais_pe()
-info_orgaos_pe <- import_orgaos_municipais_pe() %>% 
-  processa_info_orgaos_pe(orgaos_estaduais_pe, municipios_pe)
-
-## Completa CSV de órgãos com os órgãos presentes na tabela de licitação
-info_orgaos <- info_orgaos_municipios %>%
-  dplyr::mutate(id_orgao = as.character(id_orgao)) %>%
-  dplyr::bind_rows(orgaos_licitacao %>%
-                     dplyr::mutate(esfera = "ESTADUAL")) %>%
-  dplyr::distinct(id_orgao, .keep_all = TRUE) %>%
-  dplyr::mutate(nome_entidade = nome_municipio) %>%
-  dplyr::mutate(nome_municipio = dplyr::if_else(esfera == "ESTADUAL",
-                                                "ESTADO DO RIO GRANDE DO SUL",
-                                                nome_municipio)) %>%
-  dplyr::mutate(sigla_estado = "RS") %>% 
-  dplyr::bind_rows(info_orgaos_pe %>% 
-                     dplyr::mutate(cd_municipio_ibge = as.numeric(cd_municipio_ibge)))
-  
-
-
 
 # Escrita dos dados
 

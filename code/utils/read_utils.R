@@ -267,6 +267,28 @@ read_dados_cadastrais_processados <- function() {
                                         ))
 }
 
+#------------------------------------ TCE-PE A PARTIR DAQUI ---------------------------------------------------#
+
+#' Lê arquivo csv de licitações do estado de Pernambuco
+
+#' @return Dataframe de licitações
+read_licitacoes_pe <- function() {
+  licitacoes <- readr::read_csv(here::here("data/tce_pe/licitacoes.csv"), 
+                                col_types = list(
+                                  codigoPL = readr::col_character(),
+                                  codigoUG = readr::col_character(),
+                                  CodigoModalidade = readr::col_character(),
+                                  DataPublicacaoJulgamento = readr::col_datetime(format = ""),
+                                  CodigoNatureza = readr::col_character(),
+                                  CodigoDescricaoObjeto = readr::col_character(),
+                                  CodigoSituacaoLicitacao = readr::col_character(),
+                                  CodigoEstagioLicitacao = readr::col_character(),
+                                  CodigoObjeto = readr::col_character()
+                                ))
+  return(licitacoes)
+}
+
+
 read_orgaos_estaduais_pe <- function() {
   orgaos_estaduais <- readr::read_csv(here::here("data/tce_pe/ugs_estaduais.csv"),
                                       col_types = list(

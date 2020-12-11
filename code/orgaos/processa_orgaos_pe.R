@@ -69,6 +69,7 @@ processa_info_orgaos_pe <- function(orgaos_municipais, orgaos_estaduais, municip
   
   info_orgaos <- info_orgaos_municipais %>% 
     dplyr::bind_rows(info_orgaos_estaduais) %>% 
+    dplyr::mutate(id_estado = "26") %>% 
     dplyr::select(-codigo)
   
   return(info_orgaos)

@@ -41,3 +41,25 @@ filter_licitacoes_merenda <- function(licitacoes_df) {
   
   return(licitacoes_merenda)
 }
+
+
+filter_licitacoes_merenda_pe <- function(licitacoes_df) {
+  
+  licitacoes_merenda <- licitacoes_df %>%
+    dplyr::mutate(DS_OBJETO_PROCESSED = iconv(ObjetoConformeEdital, 
+                                              from="UTF-8", 
+                                              to="ASCII//TRANSLIT")) %>% 
+    # Filtra descrições relacionadas a alimentação
+    dplyr::mutate(merenda = grepl("^.*(merenda|pnae|aliment.*fnde|aliment.*escolar).*$",
+                                  tolower(DS_OBJETO_PROCESSED))) %>% 
+    dplyr::mutate(isAlimentacao = DescricaoObjeto == "GÊNEROS ALIMENTÍCIOS") %>%
+    # Remove casos em que o filtro foi muito abrangente (falsos positivos)
+    # dplyr::mutate(falso_positivo = grepl("^.*(pnaest).*$",
+    #                                      tolower(DS_OBJETO_PROCESSED),
+    #                                      perl = TRUE)) %>%
+    # considera apenas alimentação e merenda
+    dplyr::filter(isAlimentacao, merenda) %>% 
+    dplyr::select(-DS_OBJETO_PROCESSED)
+  
+  return(licitacoes_merenda)
+}
