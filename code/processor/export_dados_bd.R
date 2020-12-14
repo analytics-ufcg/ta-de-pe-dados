@@ -44,7 +44,7 @@ info_orgaos_municipios <- import_orgaos() %>%
 
 municipios_pe <- import_municipios_pe()
 orgaos_estaduais_pe <- import_orgaos_estaduais_pe()
-info_orgaos_pe <- import_orgaos_municipais_pe() %>% 
+info_orgaos_pe <- import_orgaos_municipais_pe() %>%
   processa_info_orgaos_pe(orgaos_estaduais_pe, municipios_pe)
 
 ## Licitações
@@ -74,9 +74,9 @@ info_orgaos <- info_orgaos_municipios %>%
   dplyr::mutate(nome_municipio = dplyr::if_else(esfera == "ESTADUAL",
                                                 "ESTADO DO RIO GRANDE DO SUL",
                                                 nome_municipio)) %>%
-  dplyr::mutate(sigla_estado = "RS", id_estado = "43") %>% 
-  dplyr::bind_rows(info_orgaos_pe %>% 
-                     dplyr::mutate(cd_municipio_ibge = as.numeric(cd_municipio_ibge))) %>% 
+  dplyr::mutate(sigla_estado = "RS", id_estado = "43") %>%
+  dplyr::bind_rows(info_orgaos_pe %>%
+                     dplyr::mutate(cd_municipio_ibge = as.numeric(cd_municipio_ibge))) %>%
   generate_hash_id(c("id_orgao", "sigla_estado"),
                    O_ID) %>%
   dplyr::select(id_orgao, dplyr::everything())
@@ -85,21 +85,21 @@ info_orgaos <- info_orgaos_municipios %>%
 tipo_licitacao <- processa_tipos_licitacoes()
 tipo_modalidade_licitacao <- processa_tipos_modalidade_licitacoes()
 
-licitacoes_pe <- import_licitacoes_pe() %>% 
+licitacoes_pe <- import_licitacoes_pe() %>%
   processa_info_licitacoes_pe(tipo_filtro = filtro)
-  
+
 licitacoes_rs <- join_licitacao_e_tipo(licitacoes, tipo_licitacao) %>%
-  join_licitacao_e_tipo_modalidade(tipo_modalidade_licitacao) 
+  join_licitacao_e_tipo_modalidade(tipo_modalidade_licitacao)
 
 info_licitacoes <- licitacoes_rs %>%
-  dplyr::bind_rows(licitacoes_pe) %>% 
-  dplyr::select(-id_orgao) %>% 
-  dplyr::left_join(info_orgaos %>% 
-                     dplyr::select(id_orgao, nm_orgao, id_estado)) %>% 
+  dplyr::bind_rows(licitacoes_pe) %>%
+  dplyr::select(-id_orgao) %>%
+  dplyr::left_join(info_orgaos %>%
+                     dplyr::select(id_orgao, nm_orgao, id_estado)) %>%
   generate_hash_id(c("id_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade"),
                    L_ID) %>%
   dplyr::select(id_licitacao, id_estado, id_orgao, dplyr::everything()) %>%
-  dplyr::filter(!id_licitacao %in% (licitacoes_falsos_positivos %>% pull(id_licitacao))) 
+  dplyr::filter(!id_licitacao %in% (licitacoes_falsos_positivos %>% pull(id_licitacao)))
 
 ## Licitantes
 message("### licitantes...")
@@ -153,6 +153,7 @@ info_documento_licitacao <- import_documentos_licitacoes(anos) %>%
 message("#### contratos...")
 source(here::here("code/contratos/processa_contratos.R"))
 source(here::here("code/contratos/processa_tipos_instrumento_contrato.R"))
+source(here::here("code/contratos/processa_contratos_pe.R"))
 
 contratos <- import_contratos(anos) %>%
   processa_info_contratos()
@@ -173,6 +174,11 @@ info_contratos <-
   generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade",
                      "nr_contrato", "ano_contrato", "tp_instrumento_contrato"), CONTRATO_ID) %>%
   dplyr::select(id_contrato, id_licitacao, id_orgao, dplyr::everything())
+
+contratos_pe <- import_contratos_pe()
+
+info_contratos_pe <- processa_info_contratos_pe(contratos_pe) %>%
+  separate(vigencia, c("dt_inicio_vigencia", "dt_final_vigencia"), " a ")
 
 
 ## Compras
