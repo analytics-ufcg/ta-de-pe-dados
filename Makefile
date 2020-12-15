@@ -52,6 +52,9 @@ process-data-receita:
 process-data-alertas:		
 	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_alertas_bd.R $(anos)"
 .PHONY: process-data-alertas
+fetch-data-pe:		
+	docker exec -it r-container sh -c "cd /app/code/fetcher/scripts/ && Rscript fetch_dados_tce_pe.R --data_inicio $(ano_inicial) --data_fim $(ano_final)"
+.PHONY: fetch-data-pe
 feed-create:	
 	docker exec -it feed python3.6 /feed/manage.py create
 .PHONY: feed-create
