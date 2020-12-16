@@ -279,6 +279,7 @@ info_item_contrato <- itens_comprados %>%
 ## Fornecedores nos contratos
 message("#### fornecedores (contratos)...")
 source(here("code/contratos/processa_fornecedores.R"))
+source(here("code/contratos/processa_fornecedores_pe.R"))
 
 info_fornecedores_contratos <- import_fornecedores(anos) %>%
   processa_info_fornecedores(contratos, info_contratos) %>%
@@ -286,6 +287,8 @@ info_fornecedores_contratos <- import_fornecedores(anos) %>%
                                   dplyr::select(nr_documento_contratado)) %>%
   dplyr::distinct(nr_documento, .keep_all = TRUE) %>%
   dplyr::select(nr_documento, nm_pessoa, tp_pessoa, total_de_contratos, data_primeiro_contrato)
+
+info_fornecedores_contratos_pe <- import_fornecedores_pe()
 
 ## Alterações contratos
 message("#### alterações de contratos...")

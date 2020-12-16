@@ -332,3 +332,15 @@ read_contratos_pe <- function() {
   return(contratos)
 
 }
+
+#' Lê arquivo csv de fornecedores de contratos de Pernambuco
+
+#' @return Dataframe de fornecedores de contratos
+read_fornecedores_contratos_pe <- function() {
+  forencedores <- readr::read_csv(here::here("data/tce_pe/fornecedores.csv"),
+                                  col_types = list(
+                                    .default = readr::col_character())
+  )
+  return(forencedores)
+  
+}
