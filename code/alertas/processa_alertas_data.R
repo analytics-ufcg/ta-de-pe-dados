@@ -40,7 +40,9 @@ processa_alertas_cnaes_atipicos_itens <- function() {
     filter(atipico) %>% 
     generate_hash_id(c("id_contrato", "id_item_contrato", "id_tipo"), ITEM_ATIPICO) %>% 
     generate_hash_id(c("id_tipo", "nr_documento", "id_contrato"), ALERTA_ID) %>% 
-    dplyr::select(id_item_atipico, id_alerta, id_item_contrato, id_contrato, nr_documento, id_tipo, ds_item) 
+    dplyr::select(id_item_atipico, id_alerta, id_item_contrato, id_contrato, 
+                  nr_documento, id_tipo, ds_item, total_vendas_item = qt_total_item, 
+                  n_vendas_semelhantes = qt_total_item_grupo, perc_vendas_semelhantes = prop_grupo_total_item) 
     
   contratos_itens_atipicos <- cnaes_atipicos_data %>%
     group_by(id_contrato, nr_documento, id_tipo) %>% 
