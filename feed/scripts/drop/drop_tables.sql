@@ -1,3 +1,7 @@
+DROP TABLE IF EXISTS "itens_unicos_similaridade";
+DROP TABLE IF EXISTS "item_atipico";
+DROP TABLE IF EXISTS "alerta";
+DROP TABLE IF EXISTS "tipo_alerta";
 DROP TABLE IF EXISTS "novidade";
 DROP TABLE IF EXISTS "tipo_novidade";
 DROP TABLE IF EXISTS "empenho";
@@ -9,6 +13,7 @@ DROP TABLE IF EXISTS "socios";
 DROP TABLE IF EXISTS "cnae_secundario";
 DROP TABLE IF EXISTS "dados_cadastrais";
 DROP TABLE IF EXISTS "cnae";
+DROP TABLE IF EXISTS "natureza_juridica";
 DROP TABLE IF EXISTS "fornecedor";
 DROP TABLE IF EXISTS "licitante";
 DROP TABLE IF EXISTS "item";

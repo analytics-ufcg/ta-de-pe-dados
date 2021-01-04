@@ -18,12 +18,16 @@ O processamento de dados do Tá na Mesa tem os seguintes passos:
 
 1. Download dos dados brutos no TCE-RS
 2. Processamento dos dados de licitações e contratos
-3. Importação dos dados de licitações e contratos para o BD.
-4. Importação dos dados de empenhos (vindos diretamento do TCE) para o BD.
-5. Processamento dos dados de empenhos processados.
-6. Importação dos dados de empenhos processados para o BD.
-7. Processamento dos dados de novidades.
-8. Importação dos dados de novidades para o BD.
+3. Processamento dos dados de fornecedores
+4. Processamentos dos dados da Receita Federal
+5. Importação dos dados de licitações e contratos para o BD.
+6. Importação dos dados de empenhos (vindos diretamento do TCE) para o BD.
+7. Processamento dos dados de empenhos processados.
+8. Importação dos dados de empenhos processados para o BD.
+9. Processamento dos dados de novidades.
+10. Importação dos dados de novidades para o BD.
+11. Processamento dos dados de alertas.
+12. Importação dos dados de alertas para o BD.
 
 Para realizar estes passos siga o tutorial:
 
@@ -86,12 +90,36 @@ Conforme explicado na seção anterior é preciso fazer o download dos dados par
 Execute o script de processamento dos dados gerais vindos do TSE:
 
 ```shell
-make process-data anos=2018,2019,2020
+make process-data anos=2018,2019,2020 filtro=covid
 ```
 
-Obs: o parâmetro anos pode conter um ou mais anos (estes separados por vírgula).
+Obs: o parâmetro anos pode conter um ou mais anos (estes separados por vírgula). O paraâmetro filtro pode ser 'merenda' ou 'covid'.
 
 Os dados processados estarão disponíveis no diretório `data/bd`.
+
+#### Passo 2.3.1
+
+Para processar as informações de fornecedores (como data do primeiro contrato e total de contratos) execute:
+```shell
+make process-data-fornecedores anos=2018,2019,2020
+```
+
+#### Passo 2.3.2
+Para processar as informações da Receita Federal para os fornecedores execute:
+```shell
+make process-data-receita
+```
+
+Obs: é necessário que as variáveis de acesso ao BD estejam definidas no .env na raiz do repositório.
+As variáveis necessárias para conexão são: 
+```shell
+RECEITA_HOST
+RECEITA_USER
+RECEITA_DB
+RECEITA_PASSWORD
+RECEITA_PORT
+```
+Entre em contato com a equipe de desenvolvimento para ter acesso as variáveis do BD disponível para acesso.
 
 ### Passo 2.4
 
@@ -141,12 +169,34 @@ Processe os dados de novidades:
 make process-data-novidades
 ```
 
-Os dados processados de empenhos estarão disponíveis no diretório `data/bd`.
+Os dados processados de novidades estarão disponíveis no diretório `data/bd`.
 
 Importe os dados de novidades para o BD:
 
 ```shell
 make feed-import-novidade
+```
+
+### Passo 2.7
+
+Processe os dados de alertas:
+
+```shell
+# primeiramente, é necessário executar o processamento para agrupar itens similares.
+# caso você já tenha os itens similares processados, utilize:
+# make feed-import-itens-similares-data
+# caso contrário:
+make process-data-itens-similares
+
+make process-data-alertas anos=2018,2019,2020
+```
+
+Os dados processados de alertas estarão disponíveis no diretório `data/bd`.
+
+Importe os dados de alertas para o BD:
+
+```shell
+make feed-import-alerta
 ```
 
 Pronto! Todo o processamento de dados e carregamento para o banco de dados foi realizado.

@@ -1,0 +1,100 @@
+---
+title: "Fornecedores: diferença entre a data de início das atividades e a data do primeiro contrato"
+output: 
+  html_document:
+    css: styles.css
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.cap = '',
+  fig.align = 'center',
+  fig.width = 10,
+  fig.height = 8
+)
+```
+
+```{r}
+options(scipen = 999)
+library(tidyverse)
+library(here)
+library(hrbrthemes)
+library(ggridges)
+library(DT)
+source(here("reports/fornecedores/functions/fetch_dados_report.R"))
+```
+
+<br>
+
+### *Resumo*
+
+Este relatório irá comparar a  diferença entre as datas de início das atividades (Receita Federal) e a data do primeiro contrato (TCE-RS) para os fornecedores das licitações de compras emergenciais.
+
+```{r}
+fornecedores <- fetch_diferenca_abertura_contrato()
+```
+
+
+### Distribuição da diferença de dias entre a data de início das atividades e a data do primeiro contrato
+
+A data de início das atividades foi obtida no cadastro da empresa na Receita Federal. Já a data do primeiro contrato foi obtida através dos dados de contratos disponibilizados pelo TCE-RS e considerando apenas os arquivos dos anos de 2018, 2019 e 2020. Portanto, podem existir casos de fornecedores com data do primeiro contrato inferior a atual mas que ainda não foi capturada devido ao filtro nos dados.
+
+```{r fig.height=5}
+fornecedores_alt <- fornecedores %>% 
+  distinct(nr_documento, .keep_all = T) %>%
+  filter(diferenca_abertura_contrato >= 0) %>% 
+  mutate(diferenca = as.numeric(diferenca_abertura_contrato) + 1)
+
+fornecedores_alt %>% 
+  group_by("nr_documento") %>%
+  mutate(median = median(diferenca)) %>%
+  ungroup() %>%
+  ggplot(aes(x = diferenca, y = "")) +
+  geom_density_ridges(
+    aes(height = ..density..),
+    stat = "density", trim = TRUE,
+    scale = 0.9
+  ) +
+  geom_count(alpha = 0.2) +
+  scale_shape_identity() +
+  geom_point(aes(x = median), size = 7.5, color = "#dc267f", shape = 124) +
+  
+  geom_point(aes(x = 13.5, y = 1.5), size = 3.5, color = "#dc267f", shape = 124) +
+  annotate("text", label = "é a mediana", x = 30, y = 1.5, color = "#4b4545") +
+  
+  scale_x_log10(breaks = c(1, 10, 100, 1000, 10000), limits = c(1, 120000)) +
+  guides(size = FALSE) +
+  labs(title = "Distribuição da diferença ",
+       subtitle = "entre a data de início das atividades e a do primeiro contrato",
+       x = "Log da diferença em dias",
+       y = "Densidade") + 
+  theme_ipsum_rc()
+```
+
+O valor da mediana é de **`r fornecedores_alt %>% pull(diferenca) %>% median()` dias**.
+
+### Dados dos fornecedores e seus primeiros contratos
+
+Na tabela a seguir é possível encontrar os fornecedores e os primeiros contratos firmados entre eles e algum órgão do RS no período entre 2018 e 2020.
+
+```{r}
+fornecedores_alt %>% 
+  arrange(diferenca) %>% 
+  mutate(vl_contrato = format_currency(vl_contrato)) %>%
+  select(nr_documento, nm_pessoa, total_de_contratos, data_primeiro_contrato, data_inicio_atividade,
+         diferenca_abertura_contrato, vl_contrato, id_contrato, nr_contrato, ano_contrato, nm_orgao, descricao_objeto_contrato) %>% 
+  datatable(class = 'cell-border stripe',
+            filter = 'top',
+            rownames = FALSE, 
+            options = list(pageLength = 5,
+                           scrollX = '400px',
+                           autoWidth = TRUE,
+                           columnDefs = list(list(width = '500px', targets = c(11))),
+                           dom = 'ftp'),
+            colnames = c("CNPJ/CPF", "Nome", "Total de contratos", "Data do primeiro contrato", "Data de início das atividades", 
+                         "Diferença em dias", "Valor do contrato" ,"Id do contrato", "Nº do contrato", "Ano do contrato", "Nome do órgão", 
+                         "Descrição do contrato"))
+```
+

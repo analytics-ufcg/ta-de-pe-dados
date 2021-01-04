@@ -250,3 +250,47 @@ read_contratos_processados <- function() {
                                  vigencia_original_do_contrato = readr::col_integer()
                                ))
 }
+
+read_fornecedores_processados <- function() {
+  fornecedores <- readr::read_csv(here::here("data/bd/info_fornecedores_contrato.csv"),
+                                  col_types = list(
+                                    nr_documento = readr::col_character()
+                                  ))
+}
+
+read_dados_cadastrais_processados <- function() {
+  dados_cadastrais <- readr::read_csv(here::here("data/bd/dados_cadastrais.csv"),
+                                      col_types = list(
+                                        cnpj = col_character(),
+                                        data_situacao_especial = col_character(),
+                                        situacao_especial = col_character()
+                                        ))
+}
+
+read_cnaes_processados <- function() {
+  cnaes <- readr::read_csv(here::here("data/bd/info_cnaes.csv"),
+                                      col_types = list(
+                                        .default = readr::col_character()
+                                      ))
+}
+
+read_cnaes_secundarios_processados <- function() {
+  cnaes <- readr::read_csv(here::here("data/bd/cnaes_secundarios.csv"),
+                           col_types = list(
+                             .default = readr::col_character()
+                           ))
+}
+
+read_itens_contrato_processados <- function() {
+  cnaes <- readr::read_csv(here::here("data/bd/info_item_contrato.csv"),
+                           col_types = list(
+                             .default = readr::col_character()
+                           ))
+}
+
+read_itens_similares_processados <- function() {
+  itens <- readr::read_csv(here::here("data/bd/itens_similares.csv"),
+                           col_types = list(
+                             .default = readr::col_character()
+                           ))
+}

@@ -22,6 +22,7 @@ def create():
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_item.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_fornecedor.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_cnae.sql'])
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_natureza_juridica.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_dados_cadastrais.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_socios.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_cnae_secundario.sql'])
@@ -32,6 +33,10 @@ def create():
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_licitante.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_tipo_novidade.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_novidade.sql'])
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_itens_unicos_similaridade.sql'])
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_tipo_alerta.sql'])
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_alerta.sql'])
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_item_atipico.sql'])
 
 @click.command()
 def update_data():
@@ -73,6 +78,16 @@ def import_novidade():
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_novidade.sql'])
 
 @click.command()
+def import_alerta():
+    """Importa alertas para as tabelas do Banco de dados"""
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_alerta.sql'])
+
+@click.command()
+def import_itens_similares_data():
+    """Importa itens similares para as tabelas do Banco de dados"""
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_itens_unicos_similaridade.sql'])
+
+@click.command()
 def clean_empenho():
     """Dropa a tabela de empenhos do Banco de Dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/drop/drop_empenho.sql'])
@@ -87,6 +102,10 @@ def shell():
     """Acessa terminal do banco de dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db])
 
+@click.command()
+def process_itens_similares():
+    """Cria tabela com itens similares"""
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/function/function_processa_itens_similares.sql'])
 
 cli.add_command(create)
 cli.add_command(update_data)
@@ -98,6 +117,9 @@ cli.add_command(clean_empenho)
 cli.add_command(clean_data)
 cli.add_command(shell)
 cli.add_command(import_empenho_raw)
+cli.add_command(import_alerta)
+cli.add_command(import_itens_similares_data)
+cli.add_command(process_itens_similares)
 
 if __name__ == '__main__':
     cli()
