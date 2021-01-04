@@ -13,8 +13,9 @@ pprint() {
     printf "\n===============================\n$1\n===============================\n"
 }
 
-# Baixa os dados brutos direto do TSE
-download_data_tse() {
+# Baixa os dados brutos direto do TCE
+download_data_tce_rs() {
+    anosP=$1
 
     pprint "1. Faz o Build do fetcher"
     docker build -t fetcher-ta-na-mesa scripts/
@@ -23,10 +24,13 @@ download_data_tse() {
     docker run --rm -v `pwd`/data/:/code/scripts/data/ fetcher-ta-na-mesa python3.6 fetch_orgaos.py ./data
 
     pprint "3. Faz o Download dos dados brutos"
-    docker run --rm -v `pwd`/data/:/code/scripts/data/ fetcher-ta-na-mesa python3.6 fetch_all_data.py 2018 ./data 4
-    docker run --rm -v `pwd`/data/:/code/scripts/data/ fetcher-ta-na-mesa python3.6 fetch_all_data.py 2019 ./data 4
-    docker run --rm -v `pwd`/data/:/code/scripts/data/ fetcher-ta-na-mesa python3.6 fetch_all_data.py 2020 ./data 4
 
+    IFS=',' read -r -a anos <<< "$anosP"
+    for ano in "${anos[@]}"
+    do
+        pprint "Baixando $ano"
+        docker run --rm -v `pwd`/data/:/code/scripts/data/ fetcher-ta-na-mesa python3.6 fetch_all_data.py "$ano" ./data 4
+    done
 }
 
 # Executa a atualização completa
@@ -98,7 +102,7 @@ run_update_db_remote() {
 # Executa toda a atualização
 run_full_update() {
     # Baixa dados
-    download_data_tse
+    download_data_tce_rs "2018,2019,2020"
 
     # Processa dados
     run_data_process_update
@@ -106,17 +110,18 @@ run_full_update() {
 
 # Help
 print_usage() {
-    printf "Uso Correto: ./update-data.sh <OPERATION_LABEL>\n"
-    printf "Operation Labels:\n"
+    printf "Uso Correto: ./update-data.sh <OPERAÇÃO> <ANOS>\n"
+    printf "Operações:\n"
     printf "\t-help: Imprime ajuda para a execução do script\n"
     printf "\t-run-full-update: Executa atualização completa (todos os passos)\n"
-    printf "\t-run-data-process-update: Executa o processamento e atualização dos dados localmente \
-            (assume que os dados brutos já foram baixados)\n"
+    printf "\t-run-data-process-update: Executa o processamento e atualização dos dados localmente\n \
+            \t(assume que os dados brutos já foram baixados)\n"
     printf "\t-run-update-db-remote: Executa a atualização do Banco de Dados remoto\n"
-    printf "\t-download-data-tse: Faz o Download dos dados do TSE-RS\n"
+    printf "\t-download-data-tce-rs <anos>: Faz o Download dos dados do TCE-RS.\n \
+            \tAnos é uma string com os anos para download separados. Exemplo: '2019,2020'.\n"
 }
 
-if [ "$#" -lt 1 ]; then
+if [ "$#" -lt 2 ]; then
   echo "Número errado de parâmetros!"
   print_usage
   exit 1
@@ -138,7 +143,7 @@ fi
 if [[ $@ == *'-run-data-process-update'* ]]; then run_data_process_update
 fi
 
-if [[ $@ == *'-download-data-tse'* ]]; then download_data_tse
+if [[ $@ == *'-download-data-tce-rs'* ]]; then download_data_tce_rs "$2"
 fi
 
 pprint "Início da execução: $inicio"
