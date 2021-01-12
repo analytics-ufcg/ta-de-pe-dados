@@ -18,6 +18,7 @@ help:
 	@echo "\tprocess-data-itens-similares \t\tExecuta o processamento para agrupar itens similares."
 	@echo "\tprocess-data-alertas anos=<ano1,ano2> \t\tExecuta o processamento de dados dos Alertas."
 	@echo "\tfeed-create \t\t\tCria as tabelas usadas no Tá na Mesa no Banco de Dados."
+	@echo "\tfeed-create-empenho-raw \t\t\tCria a tabela de empenho raw usada para processamento de empenhos."
 	@echo "\tfeed-import-data \t\tImporta dados dos CSV's (licitações e contratos) para o Banco de dados."
 	@echo "\tfeed-import-empenho \t\tImporta dados do CSV processado de empenhos para o Banco de dados."
 	@echo "\tfeed-import-empenho-raw \tImporta dados do CSV de dados brutos vindos do TCE."
@@ -61,6 +62,9 @@ process-data-alertas:
 feed-create:
 	docker exec -it feed python3.6 /feed/manage.py create
 .PHONY: feed-create
+feed-create-empenho-raw:
+	docker exec -it feed python3.6 /feed/manage.py create-empenho-raw
+.PHONY: feed-create-empenho-raw
 feed-import-itens-similares-data:
 	docker exec -it feed python3.6 /feed/manage.py import-itens-similares-data
 .PHONY: feed-import-itens-similares-data
