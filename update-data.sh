@@ -6,70 +6,102 @@ PATH=$PATH:/usr/local/bin
 source .env.update
 
 # Escreve em arquivo de log
-exec > >(tee -a $LOG_FILEPATH) 2>&1
+mkdir -p $LOG_FOLDERPATH
+timestamp=$(date '+%d_%m_%Y_%H_%M_%S');
+log_filepath="${LOG_FOLDERPATH}${timestamp}.txt"
+exec > >(tee -a $log_filepath) 2>&1
 
 # Pretty Print
 pprint() {
     printf "\n===============================\n$1\n===============================\n"
 }
 
-# Baixa os dados brutos direto do TSE
-download_data_tse() {
+# Baixa os dados brutos direto do TCE
+download_data_tce_rs() {
+    anosP=$1
 
-    pprint "1. Faz o Build do Crawler"
-    docker build -t crawler-ta-na-mesa scripts/	
+    pprint "1. Faz o Build do fetcher"
+    docker build -t fetcher-ta-na-mesa scripts/
 
     pprint "2. Faz o Download dos Órgãos"
-    docker run --rm -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_orgaos.py ./data
+    docker run --rm -v `pwd`/data/:/code/scripts/data/ fetcher-ta-na-mesa python3.6 fetch_orgaos.py ./data
 
     pprint "3. Faz o Download dos dados brutos"
-    docker run --rm -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_all_data.py 2018 ./data 4
-    docker run --rm -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_all_data.py 2019 ./data 4
-    docker run --rm -v `pwd`/data/:/code/scripts/data/ crawler-ta-na-mesa python3.6 fetch_all_data.py 2020 ./data 4
 
+    IFS=',' read -r -a anos <<< "$anosP"
+    for ano in "${anos[@]}"
+    do
+        pprint "Baixando $ano"
+        docker run --rm -v `pwd`/data/:/code/scripts/data/ fetcher-ta-na-mesa python3.6 fetch_all_data.py "$ano" ./data 4
+    done
 }
 
 # Executa a atualização completa
 run_data_process_update() {
+    anosDownload=$1
+    anosFiltro=$2
+    filtro=$3
+    atualiza_empenhos_raw=$4
 
-    pprint "1. Levanta serviços"
+    pprint "Processando para $anosFiltro com o filtro $filtro"
+
+    pprint "Levanta serviços"
     docker-compose up -d
 
-    pprint "2. Dropa tabelas"
+    pprint "Dropa tabelas"
     docker exec feed python3.6 /feed/manage.py clean-data
 
-    pprint "3. Dropa tabela de empenho"
-    docker exec feed python3.6 /feed/manage.py clean-empenho
+    pprint "Processa dados das tabelas gerais"
+    docker exec r-container sh -c "cd /app/code/processor && Rscript export_dados_bd.R $anosFiltro $filtro"
 
-    pprint "4. Processa dados das tabelas gerais"
-    docker exec r-container sh -c "cd /app/code/processor && Rscript export_dados_bd.R 2018,2019,2020 merenda"
+    pprint "Atualiza dados de fornecedores"
+    docker exec r-container sh -c "cd /app/code/processor && Rscript export_fornecedores_bd.R $anosDownload"
 
-    pprint "5. Cria schema do BD"
+    pprint "Processa dados da Receita"
+    docker exec -it r-container sh -c "cd /app/code/fetcher/scripts &&  Rscript fetch_dados_receita.R"
+
+    pprint "Cria schema do BD"
     docker exec feed python3.6 /feed/manage.py create
 
-    pprint "6. Importa dados das tabelas gerais para o BD"
+    pprint "Importa dados das tabelas gerais para o BD"
     docker exec feed python3.6 /feed/manage.py import-data
 
-    pprint "7. Importa dados de empenhos para o BD (tabela completa)"
-    docker exec feed python3.6 /feed/manage.py import-empenho-raw
+    if [[ $atualiza_empenhos_raw == 1 ]]; 
+	then 
+        pprint "Dropa tabela de empenho raw"
+        docker exec feed python3.6 /feed/manage.py clean-empenho
 
-    pprint "8. Processa dados de empenhos para considerar apenas os das licitações filtradas"
+        pprint "Cria tabela de empenho raw"
+        docker exec -it feed python3.6 /feed/manage.py create-empenho-raw
+
+        pprint "Importa dados de empenhos para o BD (tabela completa)"
+        docker exec feed python3.6 /feed/manage.py import-empenho-raw
+    fi
+
+    pprint "Processa dados de empenhos para considerar apenas os das licitações filtradas"
     docker exec r-container sh -c "cd /app/code/processor && Rscript export_empenhos_bd.R"
 
-    pprint "9. Processa dados de novidades"
+    pprint "Processa dados de novidades"
     docker exec r-container sh -c "cd /app/code/processor && Rscript export_novidades_bd.R"
 
-    pprint "10. Atualiza dados de fornecedores"
-    docker exec r-container sh -c "cd /app/code/processor && Rscript export_fornecedores_bd.R"
+    pprint "Processa dados de itens similares"
+    docker exec -it feed python3.6 /feed/manage.py process-itens-similares
+	docker exec -it r-container sh -c "cd /app/code/fetcher/scripts && Rscript fetch_ta_na_mesa.R"
 
-    pprint "11. Importa dados de fornecedores e contratos para o BD"
-    docker exec feed python3.6 /feed/manage.py update-fornecedores
+    pprint "Processa dados de alertas"
+    docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_alertas_bd.R $anosDownload"
 
-    pprint "12. Importa dados de empenhos para o BD"
+    pprint "Importa dados de empenhos para o BD"
     docker exec feed python3.6 /feed/manage.py import-empenho
 
-    pprint "13. Importa dados de novidades para o BD"
+    pprint "Importa dados de novidades para o BD"
     docker exec feed python3.6 /feed/manage.py import-novidade
+
+    pprint "Importa dados de itens similares"
+    docker exec -it feed python3.6 /feed/manage.py import-itens-similares-data
+
+    pprint "Importa dados de alertas"
+    docker exec -it feed python3.6 /feed/manage.py import-alerta
 
 }
 
@@ -98,31 +130,36 @@ run_update_db_remote() {
 # Executa toda a atualização
 run_full_update() {
     # Baixa dados
-    download_data_tse
+    download_data_tce_rs "2018,2019,2020"
 
     # Processa dados
-    run_data_process_update
+    run_data_process_update "2018,2019,2020" "2018,2019,2020" "merenda" 1
 }
 
 # Help
 print_usage() {
-    printf "Uso Correto: ./update-data.sh <OPERATION_LABEL>\n"
-    printf "Operation Labels:\n"
+    printf "Uso Correto: ./update-data.sh <OPERAÇÃO> <ANOS> <FILTRO> <EMPENHOS_RAW>\n"
+    printf "Operações:\n"
     printf "\t-help: Imprime ajuda para a execução do script\n"
     printf "\t-run-full-update: Executa atualização completa (todos os passos)\n"
-    printf "\t-run-data-process-update: Executa o processamento e atualização dos dados localmente \
-            (assume que os dados brutos já foram baixados)\n"
-    printf "\t-run-update-db-remote: Executa a atualização do Banco de Dados remoto\n"    
-    printf "\t-download-data-tse: Faz o Download dos dados do TSE-RS\n"    
+    printf "\t-process-update <anosDownload> <anosFiltro> <filtro>: Executa o processamento e atualização dos dados localmente\n \
+            \t(assume que os dados brutos já foram baixados)\n \
+            \tAnos para Download é uma string com os anos de download separados por vírgula. Exemplo: '2019,2020'.\n \
+            \tAnos para filtro é uma string com os anos par filtro das licitações. Exemplo: '2019,2020'.\n \
+            \tFiltro é o assunto para processamento das licitações. Pode ser 'merenda' ou 'covid'.\n \
+            \Empenhos Raw é uma flag para atualizar ou não os empenhos brutos (1 para atualizar, 0 para usar versão atual).\n"
+    printf "\t-run-update-db-remote: Executa a atualização do Banco de Dados remoto\n"
+    printf "\t-download-data-tce-rs <anos>: Faz o Download dos dados do TCE-RS.\n \
+            \tAnos é uma string com os anos para download separados por vírgula. Exemplo: '2019,2020'.\n"
 }
 
-if [ "$#" -lt 1 ]; then
+if [[ $@ == *'-help'* ]]; then print_usage; exit 0
+fi
+
+if [ "$#" -lt 4 ]; then
   echo "Número errado de parâmetros!"
   print_usage
   exit 1
-fi
-
-if [[ $@ == *'-help'* ]]; then print_usage; exit 0
 fi
 
 pprint "Iniciando atualização"
@@ -135,10 +172,10 @@ fi
 if [[ $@ == *'-run-update-db-remote'* ]]; then run_update_db_remote
 fi
 
-if [[ $@ == *'-run-data-process-update'* ]]; then run_data_process_update
+if [[ $@ == *'-process-update'* ]]; then run_data_process_update "$2" "$3" "$4" "$5"
 fi
 
-if [[ $@ == *'-download-data-tse'* ]]; then download_data_tse
+if [[ $@ == *'-download-data-tce-rs'* ]]; then download_data_tce_rs "$2"
 fi
 
 pprint "Início da execução: $inicio"
