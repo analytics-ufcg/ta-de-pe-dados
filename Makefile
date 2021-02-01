@@ -16,6 +16,7 @@ help:
 	@echo "\tprocess-data-fornecedores anos=<ano1,ano2> \t\tExecuta o processamento de dados de fornecedores."
 	@echo "\tprocess-data-receita \t\tExecuta o processamento de dados da Receita Federal."
 	@echo "\tprocess-data-alertas anos=<ano1,ano2> \t\tExecuta o processamento de dados dos Alertas."
+	@echo "\tfetch-data-pe \t\t\tRecupera dados do TCE-PE."
 	@echo "\tfeed-create \t\t\tCria as tabelas usadas no Tá na Mesa no Banco de Dados."
 	@echo "\tfeed-import-data \t\tImporta dados dos CSV's (licitações e contratos) para o Banco de dados."
 	@echo "\tfeed-import-empenho \t\tImporta dados do CSV processado de empenhos para o Banco de dados."
