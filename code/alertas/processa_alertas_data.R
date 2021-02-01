@@ -1,5 +1,7 @@
 library(tidyverse)
 source(here::here("code/utils/read_utils.R"))
+source(here::here("code/utils/utils.R"))
+source(here::here("code/utils/constants.R"))
 source(here::here("code/contratos/processa_contratos.R"))
 source(here::here("code/alertas/processa_itens_fornecedores.R"))
 
@@ -23,11 +25,15 @@ create_tipo_alertas <- function() {
 #' 
 #' @examples 
 #' alertas <- processa_alertas_cnaes_atipicos_itens()
-processa_alertas_cnaes_atipicos_itens <- function() {
+processa_alertas_cnaes_atipicos_itens <- function(filtro) {
   print("Processando alertas de itens atípicos por atividade econômica...")
   LIMITE_MIN_PROP_CNAE = .01
 
   cnaes_itens_forcenedor <- processa_itens_cnaes_fornecedores()
+  
+  cnaes_falsos_positivos <- read_csv(here::here("code/alertas/cnaes_desconsiderados_produtos.csv")) %>% 
+    filter(assunto %in% c(filtro, "geral")) %>% 
+    pull(id_cnae)
   
   cnaes_atipicos_data <- cnaes_itens_forcenedor %>% 
     group_by(id_contrato, razao_social, nr_documento_contratado, item_class) %>% 
@@ -38,6 +44,7 @@ processa_alertas_cnaes_atipicos_itens <- function() {
     mutate(nr_documento = nr_documento_contratado) %>% 
     mutate(atipico = max_prop_total_item <= LIMITE_MIN_PROP_CNAE) %>% 
     filter(atipico) %>% 
+    filter(!id_cnae %in% cnaes_falsos_positivos) %>% 
     generate_hash_id(c("id_contrato", "id_item_contrato", "id_tipo"), ITEM_ATIPICO) %>% 
     generate_hash_id(c("id_tipo", "nr_documento", "id_contrato"), ALERTA_ID) %>% 
     dplyr::select(id_item_atipico, id_alerta, id_item_contrato, id_contrato, 
