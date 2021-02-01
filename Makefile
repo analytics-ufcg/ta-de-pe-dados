@@ -17,6 +17,7 @@ help:
 	@echo "\tprocess-data-receita \t\tExecuta o processamento de dados da Receita Federal."
 	@echo "\tprocess-data-itens-similares \t\tExecuta o processamento para agrupar itens similares."
 	@echo "\tprocess-data-alertas anos=<ano1,ano2> \t\tExecuta o processamento de dados dos Alertas."
+	@echo "\tfetch-data-pe \t\t\tRecupera dados do TCE-PE."
 	@echo "\tfeed-create \t\t\tCria as tabelas usadas no Tá na Mesa no Banco de Dados."
 	@echo "\tfeed-create-empenho-raw \t\t\tCria a tabela de empenho raw usada para processamento de empenhos."
 	@echo "\tfeed-import-data \t\tImporta dados dos CSV's (licitações e contratos) para o Banco de dados."
@@ -59,6 +60,9 @@ process-data-itens-similares:
 process-data-alertas:
 	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_alertas_bd.R $(anos)"
 .PHONY: process-data-alertas
+fetch-data-pe:		
+	docker exec -it r-container sh -c "cd /app/code/fetcher/scripts/ && Rscript fetch_dados_tce_pe.R --data_inicio $(ano_inicial) --data_fim $(ano_final)"
+.PHONY: fetch-data-pe
 feed-create:
 	docker exec -it feed python3.6 /feed/manage.py create
 .PHONY: feed-create
