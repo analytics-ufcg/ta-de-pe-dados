@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS "orgao" (
     "nome_municipio" VARCHAR(30),
     "cd_municipio_ibge" INTEGER,
     "nome_entidade" VARCHAR(30),
+    "nome_administracao" VARCHAR(30),
     "sigla_estado" VARCHAR(2),
     PRIMARY KEY("id_orgao")
 );
+

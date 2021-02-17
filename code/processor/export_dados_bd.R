@@ -269,7 +269,7 @@ info_orgaos <- info_orgaos_municipios %>%
                      dplyr::mutate(esfera = "ESTADUAL")) %>%
   dplyr::distinct(id_orgao, .keep_all = TRUE) %>%
   dplyr::mutate(nome_entidade = nome_municipio) %>%
-  dplyr::mutate(nome_municipio = dplyr::if_else(esfera == "ESTADUAL",
+  dplyr::mutate(nome_administracao = dplyr::if_else(esfera == "ESTADUAL",
                                                 "ESTADO DO RIO GRANDE DO SUL",
                                                 nome_municipio)) %>%
   dplyr::mutate(sigla_estado = "RS")
