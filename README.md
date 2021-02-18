@@ -164,7 +164,7 @@ make process-data-itens-similares
 Processe os dados de alertas referentes a fornecedores contratados logo após a abertura da empresa:
 
 ```shell
-make process-data-alertas anos=2018,2019,2020
+make process-data-alertas anos=2018,2019,2020 filtro=merenda
 ```
 
 Os dados processados de alertas estarão disponíveis no diretório `data/bd`.

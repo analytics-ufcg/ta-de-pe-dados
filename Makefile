@@ -16,7 +16,7 @@ help:
 	@echo "\tprocess-data-fornecedores anos=<ano1,ano2> \t\tExecuta o processamento de dados de fornecedores."
 	@echo "\tprocess-data-receita \t\tExecuta o processamento de dados da Receita Federal."
 	@echo "\tprocess-data-itens-similares \t\tExecuta o processamento para agrupar itens similares."
-	@echo "\tprocess-data-alertas anos=<ano1,ano2> \t\tExecuta o processamento de dados dos Alertas."
+	@echo "\tprocess-data-alertas anos=<ano1,ano2> filtro=<merenda> \t\tExecuta o processamento de dados dos Alertas."
 	@echo "\tfetch-data-pe \t\t\tRecupera dados do TCE-PE."
 	@echo "\tfeed-create \t\t\tCria as tabelas usadas no Tá na Mesa no Banco de Dados."
 	@echo "\tfeed-create-empenho-raw \t\t\tCria a tabela de empenho raw usada para processamento de empenhos."
@@ -58,7 +58,7 @@ process-data-itens-similares:
 	docker exec -it r-container sh -c "cd /app/code/fetcher/scripts && Rscript fetch_ta_na_mesa.R"
 .PHONY: process-data-itens-similares
 process-data-alertas:
-	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_alertas_bd.R $(anos)"
+	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_alertas_bd.R $(anos) $(filtro)"
 .PHONY: process-data-alertas
 fetch-data-pe:		
 	docker exec -it r-container sh -c "cd /app/code/fetcher/scripts/ && Rscript fetch_dados_tce_pe.R --data_inicio $(ano_inicial) --data_fim $(ano_final)"

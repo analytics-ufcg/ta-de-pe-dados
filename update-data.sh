@@ -89,7 +89,7 @@ run_data_process_update() {
 	docker exec -it r-container sh -c "cd /app/code/fetcher/scripts && Rscript fetch_ta_na_mesa.R"
 
     pprint "Processa dados de alertas"
-    docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_alertas_bd.R $anosDownload"
+    docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_alertas_bd.R $anosDownload $filtro"
 
     pprint "Importa dados de empenhos para o BD"
     docker exec feed python3.6 /feed/manage.py import-empenho
