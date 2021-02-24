@@ -54,7 +54,7 @@ A primeira etapa consiste em baixar os dados brutos, disponíveis na forma de da
 Faça o build da imagem docker com as dependências do fetcher
 
 ```shell
-make fetcher-build
+make build-fetcher-data-rs
 ```
 
 ### Passo 1.1
@@ -62,7 +62,7 @@ make fetcher-build
 Execute o seguinte comando para baixar os dados do TCE-RS.
 
 ```shell
-make fetcher-run ano=<ano_para_baixar>
+make fetch-data-rs ano=<ano_para_baixar>
 ```
 
 Substitua <ano_para_baixar> com um ano de sua escolha para download (2018, 2019 e 2020 foram os anos já testados para download).
@@ -117,7 +117,7 @@ make process-data-fornecedores anos=2018,2019,2020
 Para processar as informações da Receita Federal para os fornecedores, execute:
 
 ```shell
-make process-data-receita
+make fetch-process-receita
 ```
 
 Obs: é necessário que as variáveis de acesso ao BD estejam definidas no .env na raiz do repositório.
