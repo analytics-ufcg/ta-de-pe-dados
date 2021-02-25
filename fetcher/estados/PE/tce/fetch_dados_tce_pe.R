@@ -65,6 +65,8 @@ ugs_municipais <- fetch_unidades_gestoras_municipais_pe(tce_pe_con)
 
 fornecedores <- fetch_fornecedores_pe(tce_pe_con)
 
+itens <- fetch_itens_pe(tce_pe_con)
+
 readr::write_csv(municipios, here::here("data/tce_pe/municipios.csv"))
 readr::write_csv(licitacoes, here::here("data/tce_pe/licitacoes.csv"))
 readr::write_csv(contratos, here::here("data/tce_pe/contratos.csv"))
@@ -72,3 +74,4 @@ readr::write_csv(aditivos, here::here("data/tce_pe/aditivos.csv"))
 readr::write_csv(ugs_estaduais, here::here("data/tce_pe/ugs_estaduais.csv"))
 readr::write_csv(ugs_municipais, here::here("data/tce_pe/ugs_municipais.csv"))
 readr::write_csv(fornecedores, here::here("data/tce_pe/fornecedores.csv"))
+readr::write_csv(itens, here::here("data/tce_pe/itens.csv"))
