@@ -53,9 +53,9 @@ import_fornecedores_por_ano <- function(ano = 2019) {
 processa_info_fornecedores <- function(fornecedores_df, contratos_df, compras_df) {
   
   compras_df_sem_contratos <- compras_df %>% 
-    dplyr::mutate(id_orgao = as.character(id_orgao)) %>% 
+    dplyr::mutate(cd_orgao = as.character(cd_orgao)) %>% 
     dplyr::anti_join(contratos_df, 
-                     by = c("id_orgao", "nr_licitacao", "ano_licitacao",
+                     by = c("cd_orgao", "nr_licitacao", "ano_licitacao",
                             "cd_tipo_modalidade", "nr_contrato", "ano_contrato",
                             "tp_instrumento_contrato"))
   
@@ -68,7 +68,7 @@ processa_info_fornecedores <- function(fornecedores_df, contratos_df, compras_df
       total_de_contratos = dplyr::n_distinct(
         nr_contrato,
         ano_contrato,
-        id_orgao,
+        cd_orgao,
         nr_licitacao,
         ano_licitacao,
         cd_tipo_modalidade,

@@ -49,7 +49,7 @@ processa_info_contratos <- function(contratos_df) {
 
   info_contratos <- contratos_df %>%
     janitor::clean_names() %>% 
-    select(nr_contrato, ano_contrato, id_orgao = cd_orgao, nm_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade,
+    select(nr_contrato, ano_contrato, cd_orgao, nm_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade,
            tp_instrumento_contrato = tp_instrumento, nr_processo, ano_processo, tp_documento_contratado = tp_documento,
            nr_documento_contratado = nr_documento, dt_inicio_vigencia, dt_final_vigencia, vl_contrato, 
            contrato_possui_garantia = bl_garantia, vigencia_original_do_contrato = nr_dias_prazo,

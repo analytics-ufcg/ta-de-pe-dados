@@ -51,7 +51,7 @@ processa_info_item_licitacao <- function(itens_licitacao) {
   info_item_licitacao <- itens_licitacao %>% 
     rename_duplicate_columns() %>% 
     janitor::clean_names() %>%
-    dplyr::select(id_orgao = cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_lote,  nr_item, 
+    dplyr::select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_lote,  nr_item, 
            ds_item, qt_itens_licitacao = qt_itens, sg_unidade_medida, vl_unitario_estimado, 
            vl_total_estimado)
     

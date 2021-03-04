@@ -53,23 +53,22 @@ processa_info_orgaos_pe <- function(orgaos_municipais, orgaos_estaduais, municip
   
   info_orgaos_municipais <- orgaos_municipais %>%
     janitor::clean_names() %>% 
-    dplyr::mutate(id_orgao = id_unidade_gestora, nm_orgao = nome_unidade_gestora,
+    dplyr::mutate(cd_orgao = id_unidade_gestora, nm_orgao = nome_unidade_gestora,
                   sigla_orgao = NA, esfera = "MUNICIPAL", home_page = NA) %>% 
-    dplyr::select(id_orgao, nm_orgao, sigla_orgao, esfera, home_page, 
+    dplyr::select(cd_orgao, nm_orgao, sigla_orgao, esfera, home_page, 
                   codigo = codigo_municipio_unidade_gestora) %>% 
     dplyr::left_join(info_municipios)
   
   info_orgaos_estaduais <- orgaos_estaduais %>%
     janitor::clean_names() %>% 
-    dplyr::mutate(id_orgao = id_unidadegestora, nm_orgao = nome_unidade_gestora,
+    dplyr::mutate(cd_orgao = id_unidadegestora, nm_orgao = nome_unidade_gestora,
                   sigla_orgao = NA, esfera = "ESTADUAL", home_page = NA,
                   nome_municipio = "ESTADO DE PERNAMBUCO", nome_entidade = NA) %>% 
-    dplyr::select(id_orgao, nm_orgao, sigla_orgao, esfera, home_page, nome_municipio,
+    dplyr::select(cd_orgao, nm_orgao, sigla_orgao, esfera, home_page, nome_municipio,
                   nome_entidade)
   
   info_orgaos <- info_orgaos_municipais %>% 
-    dplyr::bind_rows(info_orgaos_estaduais) %>% 
-    dplyr::mutate(id_estado = "26") %>% 
+    dplyr::bind_rows(info_orgaos_estaduais) %>%
     dplyr::select(-codigo)
   
   return(info_orgaos)

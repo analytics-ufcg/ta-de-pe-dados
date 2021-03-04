@@ -319,6 +319,7 @@ read_contratos_pe <- function() {
   contratos <- readr::read_csv(here::here("data/tce_pe/contratos.csv"),
                                col_types = list(
                                  .default = readr::col_character(),
+                                 CodigoContrato = readr::col_character(),
                                  NumeroContrato = readr::col_character(),
                                  AnoContrato = readr::col_integer(),
                                  NumeroProcesso = readr::col_character(),

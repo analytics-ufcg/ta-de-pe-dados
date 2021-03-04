@@ -55,7 +55,7 @@ processa_info_item_contrato <- function(itens_contrato_df) {
            VL_ITEM_CONTRATO = VL_ITEM,
            VL_TOTAL_ITEM_CONTRATO = VL_TOTAL_ITEM) %>%
     clean_names() %>%
-    select(id_orgao = cd_orgao, nr_lote, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, 
+    select(cd_orgao, nr_lote, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, 
            ano_contrato, tp_instrumento_contrato = tp_instrumento, nr_item, qt_itens_contrato, 
            vl_item_contrato, vl_total_item_contrato, origem_valor)
   

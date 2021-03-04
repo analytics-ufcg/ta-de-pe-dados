@@ -52,7 +52,7 @@ processa_info_alteracoes_contratos <- function(alteracoes_df) {
   info_alteracoes_contrato <- alteracoes_df %>%
     janitor::clean_names() %>%
     dplyr::select(
-      id_orgao = cd_orgao,
+      cd_orgao,
       ano_licitacao,
       nr_licitacao,
       cd_tipo_modalidade,
