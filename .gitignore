@@ -4,6 +4,8 @@ scripts/__pycache__
 .Rproj.user
 .Rhistory
 log_file.txt
+logs/
 
 # macOS files
 .DS_Store
+

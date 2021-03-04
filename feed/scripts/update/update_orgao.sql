@@ -18,7 +18,8 @@ DO
     nome_municipio = EXCLUDED.nome_municipio,,
     cd_municipio_ibge = EXCLUDED.cd_municipio_ibge,
     nome_entidade = EXCLUDED.nome_entidade,
-    sigla_estado = EXCLUDED.sigla_estado;
+    sigla_estado = EXCLUDED.sigla_estado,
+    nome_administracao = EXCLUDED.nome_administracao;
 
 DROP TABLE temp_orgao;
 COMMIT;

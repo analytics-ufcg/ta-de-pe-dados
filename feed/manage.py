@@ -33,8 +33,15 @@ def create():
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_licitante.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_tipo_novidade.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_novidade.sql'])
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_itens_unicos_similaridade.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_tipo_alerta.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_alerta.sql'])
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_item_atipico.sql'])
+
+@click.command()
+def create_empenho_raw():
+    """Cria as tabelas de empenhos raw do Banco de dados"""
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_empenho_raw.sql'])
 
 @click.command()
 def update_data():
@@ -81,6 +88,11 @@ def import_alerta():
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_alerta.sql'])
 
 @click.command()
+def import_itens_similares_data():
+    """Importa itens similares para as tabelas do Banco de dados"""
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_itens_unicos_similaridade.sql'])
+
+@click.command()
 def clean_empenho():
     """Dropa a tabela de empenhos do Banco de Dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/drop/drop_empenho.sql'])
@@ -95,8 +107,13 @@ def shell():
     """Acessa terminal do banco de dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db])
 
+@click.command()
+def process_itens_similares():
+    """Cria tabela com itens similares"""
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/function/function_processa_itens_similares.sql'])
 
 cli.add_command(create)
+cli.add_command(create_empenho_raw)
 cli.add_command(update_data)
 cli.add_command(update_fornecedores)
 cli.add_command(import_data)
@@ -107,6 +124,8 @@ cli.add_command(clean_data)
 cli.add_command(shell)
 cli.add_command(import_empenho_raw)
 cli.add_command(import_alerta)
+cli.add_command(import_itens_similares_data)
+cli.add_command(process_itens_similares)
 
 if __name__ == '__main__':
     cli()

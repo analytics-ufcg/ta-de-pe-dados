@@ -115,7 +115,7 @@ fetch_unidades_gestoras_municipais_pe <- function(tce_bd_con) {
   return(unidades_gestoras)
 }
 
-#' @title Busca dados das fornecedores do TCE-PE
+#' @title Busca dados dos fornecedores do TCE-PE
 #' @param tce_bd_con Conexão com o banco do TCE-PE
 #' @return Dataframe contendo informações dos fornecedores
 #' @rdname fetch_fornecedores_pe
@@ -131,6 +131,24 @@ fetch_fornecedores_pe <- function(tce_bd_con) {
   )
   
   return(fornecedores)
+}
+
+#' @title Busca dados dos itens do TCE-PE
+#' @param tce_bd_con Conexão com o banco do TCE-PE
+#' @return Dataframe contendo informações dos itens
+#' @rdname fetch_itens_pe
+#' @examples
+#' itens <- fetch_itens_pe(tce_bd_con)
+fetch_itens_pe <- function(tce_bd_con) {
+  
+  itens <- tibble::tibble()
+  tryCatch({
+    itens <- DBI::dbGetQuery(tce_bd_con, "SELECT * FROM SCA_ContratoItemObjeto")
+  }, 
+  error = function(e) print(paste0("Erro ao buscar dados dos itens do Banco do TCE-PE: ", e))
+  )
+  
+  return(itens)
 }
 
 #' @title Busca dados das tabelas do banco TCE-PE SQLServer

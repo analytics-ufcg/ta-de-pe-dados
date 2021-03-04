@@ -1,7 +1,8 @@
 library(magrittr)
+library(here)
 
-source(here::here("code/fetcher/setup/constants.R"))
-source(here::here("code/fetcher/DAO_TCE_PE.R"))
+source(here::here("fetcher/config/constants.R"))
+source(here::here("fetcher/estados/PE/tce/DAO_TCE_PE.R"))
 
 tce_pe_con <- NULL
 
@@ -15,7 +16,7 @@ get_args <- function() {
   option_list = list(
     optparse::make_option(c("--data_inicio"),
                           type="integer",
-                          default=2017,
+                          default=2018,
                           help="Data inicial da seleção (para licitações e contratos).",
                           metavar="integer"),
     optparse::make_option(c("--data_fim"),
@@ -64,11 +65,13 @@ ugs_municipais <- fetch_unidades_gestoras_municipais_pe(tce_pe_con)
 
 fornecedores <- fetch_fornecedores_pe(tce_pe_con)
 
-readr::write_csv(municipios, "data/tce_pe/municipios.csv")
-readr::write_csv(licitacoes, "data/tce_pe/licitacoes.csv")
-readr::write_csv(contratos, "data/tce_pe/contratos.csv")
-readr::write_csv(aditivos, "data/tce_pe/aditivos.csv")
-readr::write_csv(ugs_estaduais, "data/tce_pe/ugs_estaduais.csv")
-readr::write_csv(ugs_municipais, "data/tce_pe/ugs_municipais.csv")
-readr::write_csv(fornecedores, "data/tce_pe/fornecedores.csv")
+itens <- fetch_itens_pe(tce_pe_con)
 
+readr::write_csv(municipios, here::here("data/tce_pe/municipios.csv"))
+readr::write_csv(licitacoes, here::here("data/tce_pe/licitacoes.csv"))
+readr::write_csv(contratos, here::here("data/tce_pe/contratos.csv"))
+readr::write_csv(aditivos, here::here("data/tce_pe/aditivos.csv"))
+readr::write_csv(ugs_estaduais, here::here("data/tce_pe/ugs_estaduais.csv"))
+readr::write_csv(ugs_municipais, here::here("data/tce_pe/ugs_municipais.csv"))
+readr::write_csv(fornecedores, here::here("data/tce_pe/fornecedores.csv"))
+readr::write_csv(itens, here::here("data/tce_pe/itens.csv"))

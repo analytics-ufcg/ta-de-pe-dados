@@ -1,0 +1,365 @@
+---
+title: "Ta-na-mesa: CNAE"
+subtitle: Red Flag - CNAEs incomuns do Rio Grande do Sul (entre 2018 e 2020).
+output: 
+    html_document:
+      df_print: paged
+      code_folding: hide
+      toc: true
+      toc_float: true
+---
+
+```{r setup, include=FALSE}
+    # toc: true
+    # toc_float: true
+
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  fig.retina = 2,
+  collapse = TRUE,
+  out.width = "100%",
+  fig.asp = 0.618  # 1 / phi
+  # fig.show = "hold"
+)
+
+options(scipen = 999)
+Sys.setlocale(category = "LC_ALL", locale = "pt_PT.UTF-8")
+```
+
+```{css, echo=FALSE}
+#
+# CSS DO RELATORIO
+#
+body {
+  
+}
+
+p {
+  text-align: justify;
+  text-justify: inter-word;
+  font-family: Trebuchet MS, sans-serif !important;
+  font-size: 13px !important;
+}
+
+.main-container {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+h1 {
+  font-size: 36px !important;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 19px;
+  font-weight: 600;
+}
+
+h4 {
+  font-size: 15px;
+  font-weight: 600;
+}
+```
+
+
+```{r, include=FALSE, echo=FALSE}
+library(dplyr)
+library(odbc)
+library(tidyverse)
+library(kableExtra)
+library(ggplot2)
+library(scales)
+theme_set(theme_classic())
+
+POSTGRES_HOST="localhost"
+POSTGRES_DB="tanamesa"
+POSTGRES_USER="postgres"
+POSTGRES_PASSWORD="secret"
+POSTGRES_PORT=7655
+
+db_con <- NULL
+db_con <- DBI::dbConnect(RPostgres::Postgres(),
+                          dbname = POSTGRES_DB, 
+                          host = POSTGRES_HOST, 
+                          port = POSTGRES_PORT,
+                          user = POSTGRES_USER,
+                          password = POSTGRES_PASSWORD)
+
+contrato_1 <- dplyr::tbl(db_con, sql('SELECT * FROM contrato')) %>% dplyr::collect(n = Inf)
+item_contrato_2 <- dplyr::tbl(db_con, sql('SELECT * FROM item_contrato')) %>% dplyr::collect(n = Inf)
+dados_cadastrais_3 <- dplyr::tbl(db_con, sql('SELECT * FROM dados_cadastrais')) %>% dplyr::collect(n = Inf)
+cnae_4 <- dplyr::tbl(db_con, sql('SELECT * FROM cnae')) %>% dplyr::collect(n = Inf)
+cnae_secundario_5 <- dplyr::tbl(db_con, sql('SELECT * FROM cnae_secundario')) %>% dplyr::collect(n = Inf)
+```
+
+```{r joins, echo=FALSE}
+contrato_filtrado_1 <- contrato_1 %>% 
+  filter(nchar(nr_documento_contratado) == 14) %>% 
+  select (id_contrato, nr_documento_contratado)
+
+# 2->1 = 21
+itens_contrato_21 <- item_contrato_2 %>%  
+  select(id_item_contrato, id_contrato, id_item_licitacao,ds_item, ds_1, ds_2, ds_3) %>% 
+  left_join(contrato_filtrado_1, by = c("id_contrato"))
+
+# 21->3 =213
+dados_cadastrais_filtrados_3 <- dados_cadastrais_3 %>% select(cnpj, razao_social, nome_fantasia, cnae_fiscal)
+itens_contrato_info_213 <- itens_contrato_21 %>% left_join(dados_cadastrais_filtrados_3, by = c("nr_documento_contratado" = "cnpj"))
+
+# -- cnae fiscal
+itens_contrato_info_213_cnae_fiscal <- itens_contrato_info_213 %>% 
+  mutate(id_cnae=cnae_fiscal) %>% 
+  select(-c(cnae_fiscal)) %>% 
+  mutate(is_cnae_fiscal="t")
+
+# 5->213=5213
+cnae_secundario_filtrado_5 <- cnae_secundario_5 %>% select (cnpj, id_cnae)
+
+cnae_secundario_itens_5213 <- cnae_secundario_filtrado_5 %>% 
+  left_join(itens_contrato_info_213, by = c("cnpj" = "nr_documento_contratado")) %>% 
+  select(-c(cnae_fiscal)) %>% 
+  mutate(nr_documento_contratado=cnpj) %>% 
+  select(-c(cnpj)) %>% 
+  mutate(is_cnae_fiscal="f")
+
+# 5213->4
+cnae_filtrado_4 <- cnae_4 %>% select(id_cnae, nm_cnae, nm_classe, nm_grupo, nm_divisao, nm_secao)
+
+
+cnae_secundario_itens <- cnae_secundario_itens_5213 %>% left_join(cnae_filtrado_4, by = c("id_cnae")) %>% 
+  filter(!is.na(nm_cnae))
+cnae_fiscal_itens <- itens_contrato_info_213_cnae_fiscal %>% left_join(cnae_filtrado_4, by = c("id_cnae"))%>% 
+  filter(!is.na(nm_cnae))
+
+all_cnaes <- bind_rows (cnae_secundario_itens, cnae_fiscal_itens) %>% 
+  filter(!is.na(nm_cnae))
+
+##################################################
+# RODAR CODIGO COMENTADO ABAIXO NO BANCO
+##################################################
+
+# CREATE EXTENSION pg_trgm;
+
+# create table if not exists unique_contratos_itens(id_item_contrato serial primary key, ds_item text, sg_unidade_medida text, ds_1 text, ds_2 text, ds_3 text, ids_itens_contratos varchar[]);
+
+# do $$
+# declare
+#     e record;
+#     found_id int;
+# begin
+#     truncate unique_contratos_itens;
+#     for e in (select * from item_contrato) loop
+#         select min(id_item_contrato)
+#         into found_id
+#         from unique_contratos_itens u
+#         where (similarity(u.ds_2, e.ds_2) + similarity(u.ds_3, e.ds_3))/2 > 0.50;
+#         if found_id is not null then
+#             update unique_contratos_itens
+#             set ids_itens_contratos = ids_itens_contratos || e.id_item_contrato
+#             where id_item_contrato = found_id;
+#         else
+#             insert into unique_contratos_itens (ds_item, sg_unidade_medida, ds_1, ds_2, ds_3, ids_itens_contratos)
+#             values (e.ds_item,e.sg_unidade_medida, e.ds_1, e.ds_2, e.ds_3, array[e.id_item_contrato]);
+#         end if;
+#     end loop;
+# end $$;
+
+######################################################
+
+itens <- dplyr::tbl(db_con, sql('SELECT * FROM unique_contratos_itens')) %>% dplyr::collect(n = Inf) %>% select (-c(id_item_contrato))
+
+itens_separated <- separate_rows(itens, ids_itens_contratos, convert = TRUE) %>% 
+  mutate (id_item_contrato = ids_itens_contratos) %>% 
+  select (-c(ids_itens_contratos)) %>% 
+  filter (id_item_contrato != "") %>% 
+  mutate (item_class = ds_item)
+
+
+cnae_fiscal_itens_unicos <- cnae_fiscal_itens %>% 
+  left_join(itens_separated %>% select(c(id_item_contrato, item_class)), by="id_item_contrato")
+
+cnae_secundario_itens_unicos <- cnae_secundario_itens %>%
+  left_join(itens_separated %>% select(c(id_item_contrato, item_class)), by="id_item_contrato")
+
+cnae_all_itens_unicos <- all_cnaes %>%
+  left_join(itens_separated %>% select(c(id_item_contrato, item_class)), by="id_item_contrato")
+
+
+total_item_df <- cnae_fiscal_itens_unicos %>% 
+  select (item_class) %>% 
+  group_by(item_class) %>% 
+  mutate(qt_total_item = n())%>%
+  unique() %>% 
+  arrange(desc(qt_total_item))
+
+total_cnae_df <- cnae_fiscal_itens_unicos %>% 
+  select (nm_cnae) %>% 
+  group_by(nm_cnae) %>% 
+  mutate(qt_total_cnae = n())%>%
+  unique() %>% 
+  arrange(desc(qt_total_cnae))
+
+total_item_cnae_df <- cnae_fiscal_itens_unicos %>% 
+  select (item_class,  nm_cnae) %>% 
+  group_by(item_class, nm_cnae) %>% 
+  mutate(qt_total_item_cnae = n())%>%
+  unique() %>% 
+  arrange(desc(qt_total_item_cnae))
+
+# cnae_fiscal_itens_unicos_totais <- cnae_fiscal_itens_unicos %>% 
+#   left_join(total_item_df, by="item_class") %>% 
+#   left_join(total_cnae_df, by="nm_cnae") %>%
+#   left_join(total_item_cnae_df, by=c("nm_cnae", "item_class")) %>% 
+#   mutate(perc= qt_total_item_cnae/qt_total_item) %>%
+#   arrange(desc(perc))
+
+cnae_all_itens_unicos_totais <- cnae_all_itens_unicos%>% 
+  left_join(total_item_df, by="item_class") %>%
+  left_join(total_cnae_df, by="nm_cnae")%>%
+  left_join(total_item_cnae_df, by=c("nm_cnae", "item_class")) %>% 
+  mutate(perc= qt_total_item_cnae/qt_total_item) %>%
+  arrange(desc(perc))
+
+cnae_all_totais_selected <- cnae_all_itens_unicos_totais %>% 
+  select("id_cnae", "id_item_contrato", "id_contrato", "ds_item", "razao_social", "nr_documento_contratado", "is_cnae_fiscal", "nm_cnae", "item_class","qt_total_item", "qt_total_cnae", "qt_total_item_cnae", "perc") %>%
+  mutate_all(funs(ifelse(is.na(.), 0, .))) %>% 
+  filter(qt_total_item>=10)
+
+
+maior_frequencia <- cnae_all_totais_selected %>% 
+  group_by(id_contrato, razao_social, nr_documento_contratado, item_class) %>% 
+  arrange(desc(perc)) %>% 
+  mutate(max_perc = max(perc))
+```
+
+
+### Visão geral
+
+A Classificação Nacional de Atividades Econômicas (CNAE) é uma definição utilizada nacionalmente e visa categorizar quais são as atividades econômicas exercidas por uma empresa. Essas empresas, podem fornecer uma diversidade de itens/produtos para o governo. No entanto, o fornecimento desses itens pode não ser frequente em determinadas categorias econômicas. 
+
+Este relatório tem como objetivo avaliar e identificar itens que não são frequentemente distribuídos pela categoria econômica da empresa fornecedora.
+
+### Análise
+Os dados utilizados na análise são de compras relacionadas a alimentação escolar do Rio Grande do Sul (entre 2018 e 2020).
+
+#### Desafios
+Abaixo estão elencados os principais desafios para avaliar os itens presentes na base de dados:
+
+* Não existe um identificador único para cada item do contrato. Sendo assim, foi necessário agrupar todos os itens via similaridade (em torno de 2h para realizar esse processamento);
+
+* Existem itens que não foram devidamente agrupados devido baixa qualidade da descrição. 
+
+#### CNAEs e itens de alimentação escolar
+
+* CNAES Fiscais frequentes
+
+```{r, echo=FALSE}
+
+theme_update(text = element_text(size=9))
+# Plot
+ggplot(total_cnae_df %>% head(10), aes(x=reorder(stringr::str_wrap(nm_cnae, 70), qt_total_cnae), y=qt_total_cnae)) + xlab(NULL) + 
+  geom_point(col="tomato2", size=3) +   # Draw points
+    # Draw dashed lines
+  labs(title="Top 10 CNAEs frequentes", 
+       subtitle="alimentação escolar do Rio Grande do Sul (entre 2018 e 2020)", 
+       caption="source: Ta-na-mesa/TCE-RS")+
+  theme(legend.position = 'top', 
+        legend.spacing.x = unit(10.0, 'cm'))+ 
+  coord_flip() 
+# knitr::kable(total_cnae_df, format = "html")
+```
+
+* Alguns CNAEs fiscais não relacionados a alimentação escolar
+
+```{r, echo=FALSE}
+iconmuns <- c("Transporte rodoviário coletivo de passageiros sob regime de fretamento intermunicipal interestadual e internacional",
+              "Atividades de organizações sindicais",
+              "Transporte rodoviário de carga exceto produtos perigosos e mudanças intermunicipal interestadual e internacional",
+              "Casas lotéricas")
+
+ggplot(total_cnae_df %>% filter(nm_cnae %in% iconmuns), aes(x=reorder(stringr::str_wrap(nm_cnae, 50), qt_total_cnae), y=qt_total_cnae)) + xlab(NULL) + 
+  geom_point(col="purple", size=3) +   # Draw points
+    # Draw dashed lines
+  labs(title="CNAEs fiscais não relacionados a alimentação escolar", 
+       subtitle="alimentação escolar do Rio Grande do Sul (entre 2018 e 2020)", 
+       caption="source: Ta-na-mesa/TCE-RS")+
+  theme(legend.position = 'top', 
+        legend.spacing.x = unit(.8, 'cm'))+ 
+  coord_flip() 
+```
+
+* Frequência dos CNAEs fiscais e secundários por item:
+
+```{r, echo=FALSE}
+maior_frequencia %>% 
+  ggplot(aes(x=is_cnae_fiscal,y=perc, fill=is_cnae_fiscal)) +
+  geom_boxplot() 
+```
+
+
+Exemplo de CNAE fiscal comum ([contrato](https://ta-na-mesa-validacao.herokuapp.com/compras/0bbb79cf50dd8d28d93a37764cb5f207) e [fornecedor](https://ta-na-mesa-validacao.herokuapp.com/fornecedores/06087823000182)):
+
+```{r, echo=FALSE, message=FALSE}
+exemplo_freq_fiscal <- maior_frequencia %>% 
+  filter(id_item_contrato == "d0a194fa35c1542bc8fa4b5da450c290") %>% 
+  filter(id_contrato == "0bbb79cf50dd8d28d93a37764cb5f207") %>% 
+  select(-c("id_contrato","ds_item","id_item_contrato", "qt_total_item" ,"qt_total_cnae", "qt_total_item_cnae", "max_perc")) 
+  
+exemplo_freq_fiscal$id_contrato<-NULL
+
+# For "kableExtra," we need to specify "html" format:
+kable(head(exemplo_freq_fiscal), digits = 2, format = "html", row.names = TRUE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"),
+                full_width = F,
+                font_size = 12,
+                position = "left")
+```
+
+
+Exemplo onde o CNAE mais frequente não é o fiscal   ([contrato](https://ta-na-mesa-validacao.herokuapp.com/compras/66f2fbd4bf10e1178272942f068effad) e [fornecedor](https://ta-na-mesa-validacao.herokuapp.com/fornecedores/15156051000184)):
+
+```{r, echo=FALSE, message=FALSE}
+exemplo_freq_fiscal_incoerente <- maior_frequencia %>% 
+  filter(id_item_contrato == "bb30395a3d9e9d57767c44bc710fd500") %>% 
+  filter(id_contrato == "66f2fbd4bf10e1178272942f068effad") %>% 
+  select(-c("id_contrato","ds_item","id_item_contrato", "qt_total_item" ,"qt_total_cnae", "qt_total_item_cnae", "max_perc")) 
+  
+exemplo_freq_fiscal_incoerente$id_contrato<-NULL
+
+# For "kableExtra," we need to specify "html" format:
+kable(head(exemplo_freq_fiscal_incoerente), digits = 2, format = "html", row.names = TRUE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"),
+                full_width = F,
+                font_size = 12,
+                position = "left")
+```
+
+
+Exemplo onde nenhum dos CNAES são frequentes  ([contrato](https://ta-na-mesa-validacao.herokuapp.com/compras/b8a01d6ceb9cd02931b82d6f8911a36e) e [fornecedor](https://ta-na-mesa-validacao.herokuapp.com/fornecedores/18835040000119)):
+
+```{r, echo=FALSE, message=FALSE}
+
+nao_relacionado <- maior_frequencia  %>% 
+  filter(max_perc < 0.20)
+
+nao_relacionado <- maior_frequencia %>% 
+  filter(id_item_contrato == "eca6303dadddb94413b350d11ad94b0e") %>% 
+  filter(id_contrato == "b8a01d6ceb9cd02931b82d6f8911a36e") %>% 
+  select(-c("id_contrato","ds_item","id_item_contrato", "qt_total_item" ,"qt_total_cnae", "qt_total_item_cnae", "max_perc")) 
+  
+nao_relacionado$id_contrato<-NULL
+
+# For "kableExtra," we need to specify "html" format:
+kable(head(nao_relacionado), digits = 10, format = "html", row.names = TRUE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"),
+                full_width = F,
+                font_size = 12,
+                position = "left")
+```

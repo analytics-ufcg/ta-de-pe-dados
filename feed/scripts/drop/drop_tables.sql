@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS "itens_unicos_similaridade";
+DROP TABLE IF EXISTS "item_atipico";
 DROP TABLE IF EXISTS "alerta";
 DROP TABLE IF EXISTS "tipo_alerta";
 DROP TABLE IF EXISTS "novidade";
@@ -18,3 +20,4 @@ DROP TABLE IF EXISTS "item";
 DROP TABLE IF EXISTS "documento_licitacao";
 DROP TABLE IF EXISTS "licitacao";
 DROP TABLE IF EXISTS "orgao";
+DROP MATERIALIZED VIEW IF EXISTS unique_lexeme;

@@ -1,7 +1,7 @@
 library(magrittr)
 
-source(here::here("code/fetcher/setup/constants.R"))
-source(here::here("code/fetcher/DAO_Receita.R"))
+source(here::here("fetcher/config/constants.R"))
+source(here::here("fetcher/receita/DAO_Receita.R"))
 source(here::here("code/utils/utils.R"))
 source(here::here("code/utils/constants.R"))
 

@@ -333,6 +333,25 @@ info_alteracoes_contrato <- alteracoes_rs %>%
 
 
 #----------------------------------------------- # Escrita dos dados-------------------------------------------------
+# ## Órgãos
+# message("#### órgãos")
+# source(here::here("code/orgaos/processa_orgaos.R"))
+# info_orgaos_municipios <- import_orgaos() %>%
+#   processa_info_orgaos()
+
+# ## Completa CSV de órgãos com os órgãos presentes na tabela de licitação
+# info_orgaos <- info_orgaos_municipios %>%
+#   dplyr::mutate(id_orgao = as.character(id_orgao)) %>%
+#   dplyr::bind_rows(orgaos_licitacao %>%
+#                      dplyr::mutate(esfera = "ESTADUAL")) %>%
+#   dplyr::distinct(id_orgao, .keep_all = TRUE) %>%
+#   dplyr::mutate(nome_entidade = nome_municipio) %>%
+#   dplyr::mutate(nome_administracao = dplyr::if_else(esfera == "ESTADUAL",
+#                                                 "ESTADO DO RIO GRANDE DO SUL",
+#                                                 nome_municipio)) %>%
+#   dplyr::mutate(sigla_estado = "RS")
+  
+# Escrita dos dados
 
 message("#### escrevendo dados...")
 
