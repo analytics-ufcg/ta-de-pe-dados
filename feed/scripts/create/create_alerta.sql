@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS "alerta" (
     "nr_documento" VARCHAR(14),
     "id_contrato" VARCHAR(32),
     "id_tipo" INTEGER,
-    "info_contrato" VARCHAR(240),
+    "info" VARCHAR(240),
     PRIMARY KEY("id_alerta"),
     FOREIGN KEY("nr_documento") REFERENCES fornecedor("nr_documento") ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY("id_tipo") REFERENCES tipo_alerta("id_tipo") ON DELETE CASCADE ON UPDATE CASCADE,

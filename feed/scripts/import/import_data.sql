@@ -1,4 +1,6 @@
 SET datestyle = ymd;
+CREATE EXTENSION pg_trgm;
+
 \copy orgao FROM '/data/bd/info_orgaos.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
 \copy licitacao FROM '/data/bd/info_licitacao.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
 \copy documento_licitacao FROM '/data/bd/info_documento_licitacao.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
@@ -14,6 +16,12 @@ SET datestyle = ymd;
 \copy item_contrato FROM '/data/bd/info_item_contrato.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
 \copy licitante FROM '/data/bd/info_licitante.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
 
+ALTER TABLE licitacao ADD COLUMN language VARCHAR(10);
+UPDATE licitacao SET language = 'portuguese';
+
+ALTER TABLE orgao ADD COLUMN language VARCHAR(10);
+UPDATE orgao SET language = 'portuguese';
+
 
 CREATE MATERIALIZED VIEW item_search AS 
 SELECT o.nome_municipio, i.ano_licitacao, i.id_item_contrato, i.id_contrato, i.nr_contrato, i.dt_inicio_vigencia, i.id_licitacao, 
@@ -27,3 +35,16 @@ LEFT JOIN orgao AS o
 ON i.id_orgao = o.id_orgao;
 
 CREATE INDEX idx_item_search ON item_search USING gin(document);
+
+CREATE MATERIALIZED VIEW unique_lexeme AS
+SELECT word FROM ts_stat(
+'SELECT to_tsvector(item_contrato.language :: regconfig, item_contrato.ds_item) ||
+	to_tsvector(contrato.language :: regconfig, contrato.descricao_objeto_contrato) ||
+	to_tsvector(licitacao.language :: regconfig, licitacao.descricao_objeto) ||
+	to_tsvector(orgao.language :: regconfig, orgao.nome_municipio)
+FROM item_contrato
+JOIN contrato ON contrato.id_contrato = item_contrato.id_contrato 
+JOIN licitacao ON licitacao.id_licitacao = contrato.id_licitacao
+JOIN orgao ON orgao.id_orgao = licitacao.id_orgao');
+
+CREATE INDEX words_idx ON unique_lexeme USING gin(word gin_trgm_ops);

@@ -338,10 +338,38 @@ read_contratos_pe <- function() {
 
 #' @return Dataframe de fornecedores de contratos
 read_fornecedores_contratos_pe <- function() {
-  forencedores <- readr::read_csv(here::here("data/tce_pe/fornecedores.csv"),
+  fornecedores <- readr::read_csv(here::here("data/tce_pe/fornecedores.csv"),
                                   col_types = list(
                                     .default = readr::col_character())
   )
-  return(forencedores)
+  return(fornecedores)
+
+}
   
+read_cnaes_processados <- function() {
+  cnaes <- readr::read_csv(here::here("data/bd/info_cnaes.csv"),
+                                      col_types = list(
+                                        .default = readr::col_character()
+                                      ))
+}
+
+read_cnaes_secundarios_processados <- function() {
+  cnaes <- readr::read_csv(here::here("data/bd/cnaes_secundarios.csv"),
+                           col_types = list(
+                             .default = readr::col_character()
+                           ))
+}
+
+read_itens_contrato_processados <- function() {
+  cnaes <- readr::read_csv(here::here("data/bd/info_item_contrato.csv"),
+                           col_types = list(
+                             .default = readr::col_character()
+                           ))
+}
+
+read_itens_similares_processados <- function() {
+  itens <- readr::read_csv(here::here("data/bd/itens_similares.csv"),
+                           col_types = list(
+                             .default = readr::col_character()
+                           ))
 }
