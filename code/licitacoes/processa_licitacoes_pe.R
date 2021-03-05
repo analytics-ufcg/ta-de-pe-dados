@@ -58,13 +58,14 @@ processa_info_licitacoes_pe <- function(licitacoes_df, tipo_filtro) {
                                          valor_orcamento_estimativo, total_adjudicado_licitacao),
                   dt_adjudicacao = as.Date(data_publicacao_homologacao, format="%Y-%m-%d"),
                   vl_homologado = as.numeric(vl_homologado),
-                  vl_licitacao = as.numeric(valor_orcamento_estimativo), assunto = "merenda") %>%
+                  vl_licitacao = as.numeric(valor_orcamento_estimativo)) %>%
     dplyr::select(id_estado, cd_orgao = codigo_ug, nm_orgao = ug, nr_licitacao = codigo_pl, 
                   ano_licitacao = ano_processo, cd_tipo_modalidade = codigo_modalidade, 
                   descricao_objeto = objeto_conforme_edital, vl_estimado_licitacao = vl_licitacao, 
                   data_abertura = data_emissao_edital, data_homologacao = dt_adjudicacao,
-                  data_adjudicacao = dt_adjudicacao, vl_homologado, assunto) %>% 
-    unique()
+                  data_adjudicacao = dt_adjudicacao, vl_homologado, assunto, 
+                  tipo_modalidade_licitacao = nome_modalidade) %>% 
+    dplyr::distinct()
   
   return(info_licitacoes)
 }

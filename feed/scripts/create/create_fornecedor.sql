@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS fornecedor;
 
 CREATE TABLE IF NOT EXISTS "fornecedor" ( 
     "nr_documento" VARCHAR(14),
+    "id_estado" INTEGER,
     "nm_pessoa" VARCHAR(500),
     "tp_pessoa" VARCHAR(4),
     "total_de_contratos" INTEGER,

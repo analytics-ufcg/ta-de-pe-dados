@@ -33,7 +33,14 @@ processa_info_contratos_pe <- function(contratos_df) {
            nr_processo = numero_processo, ano_processo, tp_documento_contratado = tipo_documento,
            nr_documento_contratado = numero_documento, vigencia, vl_contrato = valor_contrato,
            descricao_objeto_contrato = objeto, nr_licitacao = codigo_pl) %>% 
+    dplyr::mutate(nr_documento_contratado = str_replace_all(nr_documento_contratado, "[[:punct:]]", "")) %>% 
+    dplyr::mutate(tp_documento_contratado = 
+                    dplyr::case_when(
+                      tp_documento_contratado == "CPF" ~ "F",
+                      tp_documento_contratado == "CNPJ" ~ "J",
+                      TRUE ~ tp_documento_contratado
+                    )) %>% 
     separate(vigencia, c("dt_inicio_vigencia", "dt_final_vigencia"), " a ") %>% 
-    mutate(dt_inicio_vigencia = as.POSIXct(as.Date(dt_inicio_vigencia), "%d-%m-%Y") + lubridate::years(2000), 
-           dt_final_vigencia = as.POSIXct(as.Date(dt_final_vigencia), "%d-%m-%Y") + lubridate::years(2000))
+    mutate(dt_inicio_vigencia = lubridate::dmy(dt_inicio_vigencia), 
+           dt_final_vigencia = lubridate::dmy(dt_final_vigencia))
 }

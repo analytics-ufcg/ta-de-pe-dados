@@ -69,7 +69,8 @@ processa_info_orgaos_pe <- function(orgaos_municipais, orgaos_estaduais, municip
   
   info_orgaos <- info_orgaos_municipais %>% 
     dplyr::bind_rows(info_orgaos_estaduais) %>%
-    dplyr::select(-codigo)
+    dplyr::select(-codigo) %>% 
+    dplyr::distinct(cd_orgao, .keep_all = TRUE)
   
   return(info_orgaos)
 }

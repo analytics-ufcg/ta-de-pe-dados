@@ -50,15 +50,12 @@ filter_licitacoes_merenda_pe <- function(licitacoes_df) {
                                               from="UTF-8", 
                                               to="ASCII//TRANSLIT")) %>% 
     # Filtra descrições relacionadas a alimentação
-    dplyr::mutate(merenda = grepl("^.*(merenda|pnae|aliment.*fnde|aliment.*escolar).*$",
-                                  tolower(DS_OBJETO_PROCESSED))) %>% 
-    dplyr::mutate(isAlimentacao = DescricaoObjeto == "GÊNEROS ALIMENTÍCIOS") %>%
-    # Remove casos em que o filtro foi muito abrangente (falsos positivos)
-    # dplyr::mutate(falso_positivo = grepl("^.*(pnaest).*$",
-    #                                      tolower(DS_OBJETO_PROCESSED),
-    #                                      perl = TRUE)) %>%
-    # considera apenas alimentação e merenda
-    dplyr::filter(isAlimentacao, merenda) %>% 
+    dplyr::mutate(isAlimentacao = grepl("^.*(genero.*aliment|aliment.*escola|genero.*agric.*famil|merenda|pnae).*$",
+                                        tolower(DS_OBJETO_PROCESSED))) %>%
+    dplyr::filter(isAlimentacao) %>% 
+    dplyr::mutate(merenda = grepl("^.*(escol|educ|merenda|pnae).*$",
+                                  tolower(DS_OBJETO_PROCESSED))) %>%
+    dplyr::mutate(assunto = ifelse(merenda, "merenda", "não definido")) %>% 
     dplyr::select(-DS_OBJETO_PROCESSED)
   
   return(licitacoes_merenda)
