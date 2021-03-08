@@ -161,9 +161,6 @@ message("#### itens sem contratos...")
 itens_licitacao <- itens_licitacao_raw %>%
   processa_item_licitacao_comprado(compras_rs)
 
-rm(itens_licitacao_raw)
-gc()
-
 intersecao <- Reduce(dplyr::intersect, list(names(itens_contrato), names(itens_licitacao)))
 
 itens_comprados <- itens_licitacao %>%
@@ -171,16 +168,10 @@ itens_comprados <- itens_licitacao %>%
   dplyr::bind_rows(itens_contrato) %>% 
   distinct()
 
-rm(itens_licitacao)
-gc()
-
 message("#### processando todos os itens comprados...")
 itens_contratos_rs <- itens_comprados %>%
   processa_info_item_contrato() %>% 
   add_info_estado(sigla_estado = "RS", id_estado = "43")
-
-rm(itens_comprados)
-gc()
 
 ## Fornecedores nos contratos --------------------------------------------------------------
 message("#### fornecedores (contratos)...")
@@ -281,9 +272,6 @@ info_item_licitacao <- itens_licitacao_rs %>%
                    I_ID) %>%
   dplyr::select(id_item, id_licitacao, id_orgao, dplyr::everything())
 
-rm(itens_licitacao_rs)
-gc()
-
 info_documento_licitacao <- documento_licitacao_rs %>%
   left_join(info_orgaos %>% select(id_orgao, cd_orgao, id_estado)) %>% 
   join_licitacoes_e_documentos(info_licitacoes) %>%
@@ -293,9 +281,6 @@ info_documento_licitacao <- documento_licitacao_rs %>%
                      "cd_tipo_fase", "id_evento_licitacao", "tp_documento", "nr_documento"),
                    DOC_LIC_ID) %>%
   dplyr::select(id_documento_licitacao, id_licitacao, id_orgao, dplyr::everything())
-
-rm(documento_licitacao_rs)
-gc()
 
 info_compras <- compras_rs %>%
   dplyr::left_join(info_licitacoes %>%
