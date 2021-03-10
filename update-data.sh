@@ -24,7 +24,7 @@ download_data_tce_rs() {
     docker build -t fetcher-ta-na-mesa scripts/
 
     pprint "2. Faz o Download dos Órgãos"
-    docker run --rm -v `pwd`/data/:/code/scripts/data/ fetcher-ta-na-mesa python3.6 fetch_orgaos.py ./data
+    docker run --rm -v `pwd`/data/:/code/scripts/data/ fetch-data-rs python3.6 fetch_orgaos.py ./data
 
     pprint "3. Faz o Download dos dados brutos"
 
@@ -32,7 +32,7 @@ download_data_tce_rs() {
     for ano in "${anos[@]}"
     do
         pprint "Baixando $ano"
-        docker run --rm -v `pwd`/data/:/code/scripts/data/ fetcher-ta-na-mesa python3.6 fetch_all_data.py "$ano" ./data 4
+        docker run --rm -v `pwd`/data/:/code/scripts/data/ fetch-data-rs python3.6 fetch_all_data.py "$ano" ./data 4
     done
 }
 
@@ -58,7 +58,7 @@ run_data_process_update() {
     docker exec r-container sh -c "cd /app/code/processor && Rscript export_fornecedores_bd.R $anosDownload"
 
     pprint "Processa dados da Receita"
-    docker exec -it r-container sh -c "cd /app/code/fetcher/scripts &&  Rscript fetch_dados_receita.R"
+    docker exec -it r-container sh -c "cd /fetcher/receita &&  Rscript fetch_dados_receita.R"
 
     pprint "Cria schema do BD"
     docker exec feed python3.6 /feed/manage.py create
@@ -86,7 +86,7 @@ run_data_process_update() {
 
     pprint "Processa dados de itens similares"
     docker exec -it feed python3.6 /feed/manage.py process-itens-similares
-	docker exec -it r-container sh -c "cd /app/code/fetcher/scripts && Rscript fetch_ta_na_mesa.R"
+	docker exec -it r-container sh -c "cd /app/code/processor/ && Rscript export_itens_similares.R"
 
     pprint "Processa dados de alertas"
     docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_alertas_bd.R $anosDownload $filtro"
