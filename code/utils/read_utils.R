@@ -2,7 +2,7 @@
 #' @param source Ano correspondente ao arquivo para leitura
 #' @return Dataframe de licitações
 read_licitacoes <- function(source) {
-  licitacoes <- readr::read_csv(here::here(paste0("data/licitacoes/", source,"/licitacao.csv")), 
+  licitacoes <- readr::read_csv(here::here(paste0("data/licitacoes/", source,"/licitacao.csv")),
                                 col_types = list(
                                   .default = readr::col_character(),
                                   NR_LICITACAO = readr::col_character(),
@@ -32,7 +32,7 @@ read_licitacoes <- function(source) {
 #' @param source Ano correspondente ao arquivo para leitura
 #' @return Dataframe de itens de licitações
 read_itens <- function(source) {
-  itens <- readr::read_csv(here::here(paste0("data/licitacoes/", source,"/item.csv")), 
+  itens <- readr::read_csv(here::here(paste0("data/licitacoes/", source,"/item.csv")),
                            col_types = list(
                              .default = readr::col_character(),
                              NR_LICITACAO = readr::col_character(),
@@ -53,7 +53,7 @@ read_itens <- function(source) {
                              CD_TIPO_SUBFAMILIA = readr::col_integer(),
                              PC_TX_ESTIMADA = readr::col_double(),
                              PC_TX_HOMOLOGADA = readr::col_double()
-                             
+
                            ))
   return(itens)
 }
@@ -75,10 +75,10 @@ read_contratos <- function(source) {
                                  VL_CONTRATO = readr::col_double(),
                                  DT_ASSINATURA = readr::col_datetime(format = ""),
                                  NR_DIAS_PRAZO = readr::col_integer()
-                                 
+
                                ))
   return(contratos)
-  
+
 }
 
 #' Lê arquivo csv de itens de contratos
@@ -107,12 +107,12 @@ read_itens_contrato <- function(source) {
 #' @param source Ano correspondente ao arquivo para leitura
 #' @return Dataframe de licitantes
 read_licitantes <- function(source) {
-  licitantes <- readr::read_csv(here::here(paste0("data/licitacoes/", source, "/licitante.csv")), 
+  licitantes <- readr::read_csv(here::here(paste0("data/licitacoes/", source, "/licitante.csv")),
                                 col_types = cols(.default = readr::col_character(),
                                                  NR_LICITACAO = readr::col_character(),
                                                  ANO_LICITACAO = readr::col_integer()))
   return(licitantes)
-  
+
 }
 
 #' Lê arquivo csv de alterações de contratos
@@ -120,8 +120,8 @@ read_licitantes <- function(source) {
 #' @return Dataframe de alterações de contratos
 read_alteracoes_contratos <- function(source) {
   file_path <- here::here(paste0("data/contratos/", source, "/alteracao.csv"))
-  
-  alteracoes_contratos <- readr::read_csv(file = readLines(file_path, skipNul = TRUE), 
+
+  alteracoes_contratos <- readr::read_csv(file = readLines(file_path, skipNul = TRUE),
                                           col_types = cols(.default = readr::col_character(),
                                                            ANO_LICITACAO = readr::col_integer(),
                                                            NR_LICITACAO = readr::col_character(),
@@ -129,7 +129,7 @@ read_alteracoes_contratos <- function(source) {
                                                            ANO_CONTRATO = readr::col_integer()
                                           ))
   return(alteracoes_contratos)
-  
+
 }
 
 #' Lê arquivo csv de fornecedores de contratos
@@ -141,7 +141,7 @@ read_fornecedores_contratos <- function(source) {
                                     .default = readr::col_character())
                                   )
   return(forencedores)
-  
+
 }
 
 #' Lê arquivo csv de documentos das licitações
@@ -154,7 +154,7 @@ read_documentos_licitacoes <- function(source) {
                                                    ANO_LICITACAO = readr::col_integer())
   )
   return(documentos)
-  
+
 }
 
 #' Lê arquivo csv de eventos das licitações
@@ -166,7 +166,7 @@ read_eventos_licitacoes <- function(source) {
                                                  ANO_LICITACAO = readr::col_integer())
   )
   return(eventos)
-  
+
 }
 
 #' Lê arquivo csv de lotes das licitações
@@ -181,7 +181,7 @@ read_lotes_licitacoes <- function(source) {
                                               PC_TX_HOMOLOGADA = readr::col_number())
   )
   return(lotes)
-  
+
 }
 
 read_orgaos <- function() {
@@ -192,16 +192,16 @@ read_orgaos <- function() {
                               CD_MUNICIPIO_TCERS = readr::col_integer(),
                               CD_MUNICIPIO_IBGE = readr::col_integer()
                             ))
-  
+
   return(orgaos)
 }
 
 read_licitacoes_processadas <- function() {
-  licitacoes_processadas <- readr::read_csv(here::here("./data/bd/info_licitacao.csv"), 
+  licitacoes_processadas <- readr::read_csv(here::here("./data/bd/info_licitacao.csv"),
                                 col_types = list(
                                   .default = readr::col_character(),
                                   id_estado = readr::col_number(),
-                                  id_orgao = readr::col_number(),
+                                  id_orgao = readr::col_character(),
                                   nr_licitacao = readr::col_character(),
                                   ano_licitacao = readr::col_number(),
                                   vl_estimado_licitacao = readr::col_number(),
@@ -211,7 +211,7 @@ read_licitacoes_processadas <- function() {
                                   vl_homologado = readr::col_number()
                                 ))
   return(licitacoes_processadas)
-  
+
 }
 
 read_orgaos_processados <- function() {
@@ -238,7 +238,7 @@ read_contratos_processados <- function() {
   contratos <- readr::read_csv(here::here("./data/bd/info_contrato.csv"),
                                col_types = list(
                                  .default = readr::col_character(),
-                                 id_orgao = readr::col_integer(),
+                                 id_orgao = readr::col_character(),
                                  nr_contrato = readr::col_character(),
                                  ano_contrato = readr::col_integer(),
                                  nr_licitacao = readr::col_character(),
@@ -267,6 +267,85 @@ read_dados_cadastrais_processados <- function() {
                                         ))
 }
 
+#------------------------------------ TCE-PE A PARTIR DAQUI ---------------------------------------------------#
+
+#' Lê arquivo csv de licitações do estado de Pernambuco
+
+#' @return Dataframe de licitações
+read_licitacoes_pe <- function() {
+  licitacoes <- readr::read_csv(here::here("data/tce_pe/licitacoes.csv"),
+                                col_types = list(
+                                  codigoPL = readr::col_character(),
+                                  codigoUG = readr::col_character(),
+                                  CodigoModalidade = readr::col_character(),
+                                  DataPublicacaoJulgamento = readr::col_datetime(format = ""),
+                                  CodigoNatureza = readr::col_character(),
+                                  CodigoDescricaoObjeto = readr::col_character(),
+                                  CodigoSituacaoLicitacao = readr::col_character(),
+                                  CodigoEstagioLicitacao = readr::col_character(),
+                                  CodigoObjeto = readr::col_character()
+                                ))
+  return(licitacoes)
+}
+
+
+read_orgaos_estaduais_pe <- function() {
+  orgaos_estaduais <- readr::read_csv(here::here("data/tce_pe/ugs_estaduais.csv"),
+                                      col_types = list(
+                                        CODIGO_TCE = col_character()
+                                      ))
+}
+
+read_orgaos_municipais_pe <- function() {
+  orgaos_municipais <- readr::read_csv(here::here("data/tce_pe/ugs_municipais.csv"),
+                                       col_types = list(
+                                         ID_UNIDADE_GESTORA = col_character(),
+                                         NATUREZA_ORGAO  = col_character()
+                                       ))
+}
+
+read_municipios_pe <- function() {
+  municipios <- readr::read_csv(here::here("data/tce_pe/municipios.csv"),
+                                col_types = list(
+                                  CodigoSagres = col_character(),
+                                  CodigoIBGE  = col_character()
+                                ))
+}
+
+#' Lê arquivo csv de contratos do estado de Pernambuco
+
+#' @return Dataframe de contratos
+read_contratos_pe <- function() {
+  contratos <- readr::read_csv(here::here("data/tce_pe/contratos.csv"),
+                               col_types = list(
+                                 .default = readr::col_character(),
+                                 CodigoContrato = readr::col_character(),
+                                 NumeroContrato = readr::col_character(),
+                                 AnoContrato = readr::col_integer(),
+                                 NumeroProcesso = readr::col_character(),
+                                 AnoProcesso = readr::col_integer(),
+                                 CPF_CNPJ = readr::col_character(),
+                                 NumeroDocumento = readr::col_character(),
+                                 NumeroDocumentoAjustado = readr::col_character(),
+                                 Vigencia = readr::col_character(),
+                                 ValorContrato = readr::col_double()
+                               ))
+  return(contratos)
+
+}
+
+#' Lê arquivo csv de fornecedores de contratos de Pernambuco
+
+#' @return Dataframe de fornecedores de contratos
+read_fornecedores_contratos_pe <- function() {
+  fornecedores <- readr::read_csv(here::here("data/tce_pe/fornecedores.csv"),
+                                  col_types = list(
+                                    .default = readr::col_character())
+  )
+  return(fornecedores)
+
+}
+  
 read_cnaes_processados <- function() {
   cnaes <- readr::read_csv(here::here("data/bd/info_cnaes.csv"),
                                       col_types = list(

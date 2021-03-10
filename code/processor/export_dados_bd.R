@@ -19,7 +19,7 @@ if (length(args) < min_num_args) {
 }
 
 anos <- unlist(strsplit(args[1], split=","))
-# anos = c(2018, 2019, 2020)
+# anos = c(2020)
 filtro <- args[2]
 # filtro <- "merenda"
 
@@ -33,123 +33,104 @@ source(here::here("code/utils/constants.R"))
 # Processamento dos dados
 message("#### Iniciando processamento...")
 
-## Licitações
+#--------------------------------- Processamento das tabelas do Rio Grande do Sul-------------------------------------------
+
+## Licitações 
+
 message("#### licitações...")
 source(here::here("code/licitacoes/processa_licitacoes.R"))
 source(here::here("code/licitacoes/processa_tipos_licitacoes.R"))
 source(here::here("code/licitacoes/processa_tipos_modalidade_licitacoes.R"))
 
-licitacoes_falsos_positivos <- readr::read_csv(here::here("code/utils/licitacoes_falsos_positivos.csv"))
-
 licitacoes_raw <- import_licitacoes(anos)
 
-licitacoes <- licitacoes_raw %>%
+licitacoes_rs <- licitacoes_raw %>%
   processa_info_licitacoes(tipo_filtro = filtro)
-
-orgaos_licitacao <- licitacoes %>%
-  dplyr::distinct(id_orgao, nm_orgao)
 
 tipo_licitacao <- processa_tipos_licitacoes()
 tipo_modalidade_licitacao <- processa_tipos_modalidade_licitacoes()
 
-info_licitacoes <- join_licitacao_e_tipo(licitacoes, tipo_licitacao) %>%
-  join_licitacao_e_tipo_modalidade(tipo_modalidade_licitacao) %>%
-  generate_hash_id(c("id_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade"),
-                   L_ID) %>%
-  dplyr::select(id_licitacao, dplyr::everything()) %>%
-  dplyr::filter(!id_licitacao %in% (licitacoes_falsos_positivos %>% pull(id_licitacao)))
+licitacoes_rs <- join_licitacao_e_tipo(licitacoes_rs, tipo_licitacao) %>%
+  join_licitacao_e_tipo_modalidade(tipo_modalidade_licitacao) %>% 
+  add_info_estado(sigla_estado = "RS", id_estado = "43")
 
-## Licitantes
+## Órgãos --------------------------------------------------------------------------
+
+message("#### órgãos")
+source(here::here("code/orgaos/processa_orgaos.R"))
+
+info_orgaos_rs <- import_orgaos() %>%
+  processa_info_orgaos(import_licitacoes(anos) %>%
+                         processa_info_licitacoes(tipo_filtro = filtro)) %>% 
+  add_info_estado(sigla_estado = "RS", id_estado = "43")
+
+
+## Licitantes ----------------------------------------------------------------------
+
 message("### licitantes...")
 
 source(here::here("code/licitacoes/processa_licitantes.R"))
 
-licitantes <- import_licitantes(anos) %>%
-  processa_info_licitantes()
+licitantes_rs <- import_licitantes(anos) %>%
+  processa_info_licitantes() %>% 
+  add_info_estado(sigla_estado = "RS", id_estado = "43")
 
-info_licitantes <- join_licitante_e_licitacao(
-  licitantes,
-  info_licitacoes %>%
-    dplyr::select(id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, L_ID)
-) %>%
-  generate_hash_id(c("id_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade",
-                     "tp_documento_licitante", "nr_documento_licitante"), LICITANTE_ID) %>%
-  dplyr::select(id_licitante, id_licitacao, dplyr::everything())
-
-## Itens de licitações
+## Itens de licitações -------------------------------------------------------------
 message("#### itens de licitações...")
 source(here::here("code/licitacoes/processa_itens_licitacao.R"))
 
 itens_licitacao_raw <- import_itens_licitacao(anos)
 
-info_item_licitacao <- itens_licitacao_raw %>%
-  processa_info_item_licitacao() %>%
-  join_licitacoes_e_itens(info_licitacoes) %>%
-  generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao",
-                     "cd_tipo_modalidade", "nr_lote", "nr_item"),
-                   I_ID) %>%
-  dplyr::select(id_item, id_licitacao, dplyr::everything())
+itens_licitacao_rs <- itens_licitacao_raw %>%
+  processa_info_item_licitacao() %>% 
+  add_info_estado(sigla_estado = "RS", id_estado = "43")
 
-## Documentos de licitações
+## Documentos de licitações --------------------------------------------------------
+
 message("#### Documentos de licitações...")
 source(here::here("code/licitacoes/processa_documentos_licitacao.R"))
 source(here::here("code/licitacoes/processa_tipos_documentos_licitacoes.R"))
 
 tipos_documento_licitacao <- processa_tipos_documento_licitacoes()
 
-info_documento_licitacao <- import_documentos_licitacoes(anos) %>%
-  processa_info_documentos_licitacoes() %>%
-  join_licitacoes_e_documentos(info_licitacoes) %>%
-  join_documento_e_tipo(tipos_documento_licitacao) %>%
-  generate_hash_id(c("id_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade",
-                     "cd_tipo_documento", "nome_arquivo_documento",
-                     "cd_tipo_fase", "id_evento_licitacao", "tp_documento", "nr_documento"),
-                   DOC_LIC_ID) %>%
-  dplyr::select(id_documento_licitacao, id_licitacao, dplyr::everything())
+documento_licitacao_rs <- import_documentos_licitacoes(anos) %>%
+  processa_info_documentos_licitacoes() %>% 
+  add_info_estado(sigla_estado = "RS", id_estado = "43")
 
-## Contratos
+## Contratos ------------------------------------------------------------------------
+
 message("#### contratos...")
 source(here::here("code/contratos/processa_contratos.R"))
 source(here::here("code/contratos/processa_tipos_instrumento_contrato.R"))
+source(here::here("code/contratos/processa_contratos_pe.R"))
 
-contratos <- import_contratos(anos) %>%
+contratos_rs <- import_contratos(anos) %>%
   processa_info_contratos()
+  
+tipo_instrumento_contrato <- processa_tipos_instrumento_contrato()
 
-tipo_instrumento_contrato <-
-  processa_tipos_instrumento_contrato()
+contratos_rs <- join_contrato_e_instrumento(contratos_rs, tipo_instrumento_contrato) %>% 
+  add_info_estado(sigla_estado = "RS", id_estado = "43")
 
-info_contratos <-
-  join_contrato_e_licitacao(contratos,
-                            info_licitacoes %>%
-                              dplyr::select(id_orgao,
-                                            nr_licitacao,
-                                            ano_licitacao,
-                                            cd_tipo_modalidade,
-                                            id_licitacao)) %>%
+## *Compras* ----------------------------------------------------------------------------
 
-  join_contrato_e_instrumento(tipo_instrumento_contrato) %>%
-  generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade",
-                     "nr_contrato", "ano_contrato", "tp_instrumento_contrato"), CONTRATO_ID) %>%
-  dplyr::select(id_contrato, id_licitacao, id_orgao, dplyr::everything())
-
-
-## Compras
 message("#### licitações encerradas...")
 source(here("code/licitacoes/processa_eventos_licitacoes.R"))
 
-licitacoes_encerradas <- import_eventos_licitacoes(anos) %>%
+licitacoes_encerradas_rs <- import_eventos_licitacoes(anos) %>%
   filtra_licitacoes_encerradas() %>%
   dplyr::mutate(data_evento = as.POSIXct(data_evento, format="%Y-%m-%d")) %>%
   dplyr::mutate(dt_inicio_vigencia = data_evento)
 
-
 message("#### lotes de licitação...")
 source(here("code/licitacoes/processa_lotes_licitacao.R"))
 
-lotes_licitacoes <- import_lotes_licitacao(anos) %>%
-  processa_info_lote_licitacao()
+lotes_licitacoes_rs <- import_lotes_licitacao(anos) %>%
+  processa_info_lote_licitacao() %>% 
+  add_info_estado(sigla_estado = "RS", id_estado = "43")
 
-### Itens de contratos e licitação
+### Itens de contratos e licitação -------------------------------------------------------
+
 message("#### preparando dados de itens de licitação e contratos...")
 source(here("code/contratos/processa_itens_contrato.R"))
 source(here("code/licitacoes/processa_itens_licitacao.R"))
@@ -161,37 +142,15 @@ itens_licitacao <- itens_licitacao_raw %>%
 
 message("#### processando compras e itens...")
 source(here("code/contratos/processa_compras.R"))
-compras <- processa_compras_itens(licitacoes_raw, licitacoes_encerradas,
-                                  lotes_licitacoes, itens_licitacao,
-                                  itens_contrato)
+
+compras_rs <- processa_compras_itens(licitacoes_raw, licitacoes_encerradas_rs,
+                                     lotes_licitacoes_rs, itens_licitacao, itens_contrato) %>% 
+  add_info_estado(sigla_estado = "RS", id_estado = "43")
 
 
 message("#### processando dataframe de compras...")
-info_compras <- compras %>%
-  dplyr::left_join(info_licitacoes %>%
-                     dplyr::mutate(cd_orgao = id_orgao) %>%
-                     dplyr::select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade,
-                                   id_licitacao, nm_orgao),
-                   by = c("cd_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade")) %>%
-  dplyr::filter(!is.na(id_licitacao)) %>%
-  dplyr::rename(id_orgao = cd_orgao) %>%
-  generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade",
-                     "nr_contrato", "ano_contrato", "tp_instrumento_contrato"), CONTRATO_ID) %>%
-  dplyr::distinct(id_licitacao, id_contrato, .keep_all = TRUE) %>%
-  dplyr::select(id_contrato, id_licitacao, id_orgao, nr_contrato, ano_contrato, nm_orgao,
-                nr_licitacao, ano_licitacao, cd_tipo_modalidade,
-                dt_inicio_vigencia, vl_contrato,
-                descricao_objeto_contrato = ds_objeto,
-                tp_instrumento_contrato,
-                dt_inicio_vigencia,
-                tipo_instrumento_contrato,
-                tp_documento_contratado = tp_fornecedor,
-                nr_documento_contratado = nr_fornecedor)
 
-info_contratos %<>% dplyr::bind_rows(info_compras) %>%
-  dplyr::mutate(language = 'portuguese')
-
-### Itens Comprados
+### Itens Comprados ---------------------------------------------------------------------
 message("#### processando itens comprados...")
 
 message("#### itens com contratos...")
@@ -200,82 +159,187 @@ itens_contrato <- itens_contrato %>%
 
 message("#### itens sem contratos...")
 itens_licitacao <- itens_licitacao_raw %>%
-  processa_item_licitacao_comprado(compras)
+  processa_item_licitacao_comprado(compras_rs)
 
-colunas_item_contrato <- names(itens_contrato)
-colunas_item_licitacao <- names(itens_licitacao)
-intersecao <- Reduce(dplyr::intersect, list(colunas_item_contrato, colunas_item_licitacao))
+intersecao <- Reduce(dplyr::intersect, list(names(itens_contrato), names(itens_licitacao)))
 
 itens_comprados <- itens_licitacao %>%
   dplyr::select(all_of(intersecao)) %>%
-  dplyr::bind_rows(itens_contrato)
+  dplyr::bind_rows(itens_contrato) %>% 
+  distinct()
 
 message("#### processando todos os itens comprados...")
-info_item_contrato <- itens_comprados %>%
-  processa_info_item_contrato() %>%
+itens_contratos_rs <- itens_comprados %>%
+  processa_info_item_contrato() %>% 
+  add_info_estado(sigla_estado = "RS", id_estado = "43")
+
+## Fornecedores nos contratos --------------------------------------------------------------
+message("#### fornecedores (contratos)...")
+source(here("code/contratos/processa_fornecedores.R"))
+source(here("code/contratos/processa_fornecedores_pe.R"))
+
+fornecedores_contratos_rs <- import_fornecedores(anos) %>%
+  processa_info_fornecedores(contratos_rs, compras_rs) %>% 
+  add_info_estado(sigla_estado = "RS", id_estado = "43")
+
+
+## Alterações contratos --------------------------------------------------------------------
+message("#### alterações de contratos...")
+source(here::here("code/contratos/processa_alteracoes_contratos.R"))
+source(here::here("code/contratos/processa_tipos_alteracao_contrato.R"))
+
+alteracoes_rs <- import_alteracoes_contratos(anos) %>%
+  processa_info_alteracoes_contratos() %>% 
+  add_info_estado(sigla_estado = "RS", id_estado = "43")
+
+tipo_operacao_alteracao <- processa_tipos_alteracao_contrato()
+
+
+
+#--------------------------------- Processamento das tabelas de Pernambuco-------------------------------------------
+
+source(here::here("code/licitacoes/processa_licitacoes_pe.R"))
+source(here::here("code/orgaos/processa_orgaos_pe.R"))
+source(here::here("code/contratos/processa_fornecedores_pe.R"))
+source(here::here("code/contratos/processa_contratos_pe.R"))
+
+info_orgaos_pe <- import_orgaos_municipais_pe() %>%
+  processa_info_orgaos_pe(import_orgaos_estaduais_pe(), import_municipios_pe()) %>%
+  add_info_estado(sigla_estado = "PE", id_estado = "26")
+
+licitacoes_pe <- import_licitacoes_pe() %>%
+  processa_info_licitacoes_pe(tipo_filtro = filtro) %>%
+  add_info_estado(sigla_estado = "PE", id_estado = "26")
+
+contratos_pe <- import_contratos_pe() %>% 
+  processa_info_contratos_pe() %>%
+  add_info_estado(sigla_estado = "PE", id_estado = "26") 
+
+fornecedores_contratos_pe <- import_fornecedores_pe() %>%
+  processa_info_fornecedores_pe(contratos_pe) %>%
+  add_info_estado(sigla_estado = "PE", id_estado = "26")
+  
+
+#---------------------------------------------- Agregador------------------------------------------------------------
+
+
+info_orgaos <- bind_rows(info_orgaos_rs,
+                         info_orgaos_pe) %>%
+  generate_hash_id(c("cd_orgao", "id_estado"),
+                   O_ID) %>%
+  dplyr::select(id_orgao, dplyr::everything())
+
+licitacoes_falsos_positivos <- readr::read_csv(here::here("code/utils/licitacoes_falsos_positivos.csv"))
+
+info_licitacoes <- bind_rows(licitacoes_rs,
+                             licitacoes_pe)  %>% 
+  left_join(info_orgaos %>% select(id_orgao, cd_orgao, id_estado)) %>% 
+  distinct() %>% 
+  generate_hash_id(c("id_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade"),
+                   L_ID) %>%
+  dplyr::select(id_licitacao, id_estado, id_orgao, dplyr::everything()) %>%
+  dplyr::filter(!id_licitacao %in% (licitacoes_falsos_positivos %>% pull(id_licitacao)))
+
+
+info_licitantes <- join_licitante_e_licitacao(
+  licitantes_rs,
+  info_licitacoes %>%
+    dplyr::select(id_estado, id_orgao, cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, id_licitacao)
+) %>%
+  generate_hash_id(c("id_licitacao", "tp_documento_licitante", "nr_documento_licitante"), LICITANTE_ID) %>%
+  dplyr::select(id_licitante, id_estado, id_orgao, id_licitacao, dplyr::everything())
+  
+info_contratos <- bind_rows(contratos_pe, contratos_rs) %>% 
+    join_contrato_e_licitacao(info_licitacoes %>%
+                                dplyr::select(cd_orgao,
+                                              nr_licitacao,
+                                              ano_licitacao,
+                                              cd_tipo_modalidade,
+                                              id_licitacao, 
+                                              id_orgao,
+                                              id_estado)) %>% 
+  generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade",
+                      "nr_contrato", "ano_contrato", "tp_instrumento_contrato"), CONTRATO_ID) %>%
+   dplyr::select(id_contrato, id_estado, id_orgao, id_licitacao, dplyr::everything())
+  
+
+info_item_licitacao <- itens_licitacao_rs %>%
+  left_join(info_orgaos %>% select(id_orgao, cd_orgao, id_estado)) %>% 
+  join_licitacoes_e_itens(info_licitacoes) %>%
+  distinct() %>% 
+  generate_hash_id(c("cd_orgao", "ano_licitacao", "nr_licitacao",
+                     "cd_tipo_modalidade", "nr_lote", "nr_item"),
+                   I_ID) %>%
+  dplyr::select(id_item, id_licitacao, id_orgao, dplyr::everything())
+
+info_documento_licitacao <- documento_licitacao_rs %>%
+  left_join(info_orgaos %>% select(id_orgao, cd_orgao, id_estado)) %>% 
+  join_licitacoes_e_documentos(info_licitacoes) %>%
+  join_documento_e_tipo(tipos_documento_licitacao) %>%
+  generate_hash_id(c("cd_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade",
+                     "cd_tipo_documento", "nome_arquivo_documento",
+                     "cd_tipo_fase", "id_evento_licitacao", "tp_documento", "nr_documento"),
+                   DOC_LIC_ID) %>%
+  dplyr::select(id_documento_licitacao, id_licitacao, id_orgao, dplyr::everything())
+
+info_compras <- compras_rs %>%
+  dplyr::left_join(info_licitacoes %>%
+                     dplyr::select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade,
+                                   id_licitacao, nm_orgao),
+                   by = c("cd_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade")) %>%
+  dplyr::filter(!is.na(id_licitacao)) %>%
+  generate_hash_id(c("cd_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade",
+                     "nr_contrato", "ano_contrato", "tp_instrumento_contrato"), CONTRATO_ID) %>%
+  dplyr::distinct(id_licitacao, id_contrato, .keep_all = TRUE) %>%
+  dplyr::select(id_contrato, id_licitacao, cd_orgao, nr_contrato, ano_contrato, nm_orgao,
+                nr_licitacao, ano_licitacao, cd_tipo_modalidade,
+                dt_inicio_vigencia, vl_contrato,
+                descricao_objeto_contrato = ds_objeto,
+                tp_instrumento_contrato,
+                dt_inicio_vigencia,
+                tipo_instrumento_contrato,
+                tp_documento_contratado = tp_fornecedor,
+                nr_documento_contratado = nr_fornecedor) %>% 
+  add_info_estado(sigla_estado = "RS", id_estado = "43")
+
+info_contratos %<>% dplyr::bind_rows(info_compras) %>%
+  dplyr::mutate(language = 'portuguese')
+
+
+info_item_contrato <- itens_contratos_rs %>%
+  left_join(info_orgaos %>% select(id_orgao, cd_orgao, id_estado)) %>% 
   join_contratos_e_itens(info_contratos %>%
-                           dplyr::select(dt_inicio_vigencia, id_orgao, id_contrato, nr_licitacao, ano_licitacao,
+                           dplyr::select(dt_inicio_vigencia, cd_orgao, id_contrato, nr_licitacao, ano_licitacao,
                                          cd_tipo_modalidade, nr_contrato, ano_contrato,
                                          tp_instrumento_contrato)) %>%
-  generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", "nr_contrato", "ano_contrato",
+  generate_hash_id(c("cd_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", "nr_contrato", "ano_contrato",
                      "tp_instrumento_contrato", "nr_lote", "nr_item"), ITEM_CONTRATO_ID) %>%
   join_licitacoes_e_itens(info_licitacoes) %>%
   join_itens_contratos_e_licitacoes(info_item_licitacao) %>%
   dplyr::ungroup() %>%
-  dplyr::select(id_item_contrato, id_contrato, id_orgao, id_licitacao, id_item_licitacao, dplyr::everything()) %>%
+  dplyr::select(id_item_contrato, id_contrato, id_orgao, cd_orgao, id_licitacao, id_item_licitacao, dplyr::everything()) %>%
   create_categoria() %>%
   split_descricao() %>%
   dplyr::ungroup() %>%
   marca_servicos()
 
-## Fornecedores nos contratos
-message("#### fornecedores (contratos)...")
-source(here("code/contratos/processa_fornecedores.R"))
-
-info_fornecedores_contratos <- import_fornecedores(anos) %>%
-  processa_info_fornecedores(contratos, info_contratos) %>%
+info_fornecedores_contratos <- bind_rows(fornecedores_contratos_rs,
+                                         fornecedores_contratos_pe) %>%
   join_contratos_e_fornecedores(info_contratos %>%
                                   dplyr::select(nr_documento_contratado)) %>%
   dplyr::distinct(nr_documento, .keep_all = TRUE) %>%
-  dplyr::select(nr_documento, nm_pessoa, tp_pessoa, total_de_contratos, data_primeiro_contrato)
+  dplyr::select(nr_documento, id_estado, nm_pessoa, tp_pessoa, total_de_contratos, data_primeiro_contrato)
 
-## Alterações contratos
-message("#### alterações de contratos...")
-source(here::here("code/contratos/processa_alteracoes_contratos.R"))
-source(here::here("code/contratos/processa_tipos_alteracao_contrato.R"))
-
-alteracoes <- import_alteracoes_contratos(anos) %>%
-  processa_info_alteracoes_contratos()
-
-tipo_operacao_alteracao <- processa_tipos_alteracao_contrato()
-
-info_alteracoes_contrato <- alteracoes %>%
+info_alteracoes_contrato <- alteracoes_rs %>%
+  left_join(info_orgaos %>% select(id_orgao, cd_orgao, id_estado)) %>% 
   join_alteracoes_contrato_e_tipo(tipo_operacao_alteracao) %>%
   join_alteracoes_contrato_e_contrato(info_contratos) %>%
-  generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", "nr_contrato", "ano_contrato",
+  generate_hash_id(c("cd_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", "nr_contrato", "ano_contrato",
                      "tp_instrumento_contrato", "id_evento_contrato", "cd_tipo_operacao"), ALTERACOES_CONTRATO_ID) %>%
-  dplyr::select(id_alteracoes_contrato, id_contrato, dplyr::everything())
+  dplyr::select(id_alteracoes_contrato, id_contrato, id_orgao, dplyr::everything())
 
-## Órgãos
-message("#### órgãos")
-source(here::here("code/orgaos/processa_orgaos.R"))
-info_orgaos_municipios <- import_orgaos() %>%
-  processa_info_orgaos()
 
-## Completa CSV de órgãos com os órgãos presentes na tabela de licitação
-info_orgaos <- info_orgaos_municipios %>%
-  dplyr::mutate(id_orgao = as.character(id_orgao)) %>%
-  dplyr::bind_rows(orgaos_licitacao %>%
-                     dplyr::mutate(esfera = "ESTADUAL")) %>%
-  dplyr::distinct(id_orgao, .keep_all = TRUE) %>%
-  dplyr::mutate(nome_entidade = nome_municipio) %>%
-  dplyr::mutate(nome_administracao = dplyr::if_else(esfera == "ESTADUAL",
-                                                "ESTADO DO RIO GRANDE DO SUL",
-                                                nome_municipio)) %>%
-  dplyr::mutate(sigla_estado = "RS")
-  
-# Escrita dos dados
-
+#----------------------------------------------- # Escrita dos dados-------------------------------------------------
 message("#### escrevendo dados...")
 
 readr::write_csv(info_licitacoes, here("data/bd/info_licitacao.csv"))

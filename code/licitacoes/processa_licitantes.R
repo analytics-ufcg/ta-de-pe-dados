@@ -66,7 +66,7 @@ processa_info_licitantes <- function(licitantes_df) {
   licitantes <- licitantes_df %>% 
     rename_duplicate_columns_licitantes() %>% 
     janitor::clean_names() %>% 
-    dplyr::select(id_orgao = cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, tp_documento_licitante,
+    dplyr::select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, tp_documento_licitante,
            nr_documento_licitante, tp_documento_repres, nr_documento_repres, tp_condicao,
            tp_resultado_habilitacao, bl_beneficio_micro_epp)
   

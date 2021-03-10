@@ -37,3 +37,9 @@ rename_duplicate_columns <- function(df) {
   df
 }
 
+#' Adiciona colunas com informações do estado
+#' @param df Dataframe para adição de colunas
+#' @return Dataframe com informações do estado
+add_info_estado <- function(df, sigla_estado, id_estado) {
+  df %<>% dplyr::mutate(sigla_estado = sigla_estado, id_estado = id_estado)
+}

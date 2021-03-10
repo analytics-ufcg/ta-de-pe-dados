@@ -115,17 +115,17 @@ processa_alertas_data_abertura_contrato <- function(anos) {
 .processa_contratos_info <- function(anos) {
   contratos_processados <- read_contratos_processados() %>% 
     mutate(id_orgao = as.character(id_orgao)) %>% 
-    select(id_contrato, id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato,
+    select(id_contrato, cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato,
            nm_orgao, nr_documento_contratado, dt_inicio_vigencia, vl_contrato, descricao_objeto_contrato)
   
   contratos <- import_contratos(anos) %>% 
     processa_info_contratos() %>% 
-    select(id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato,
+    select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato,
            nm_orgao, nr_documento_contratado, dt_inicio_vigencia, vl_contrato, descricao_objeto_contrato)
   
   contratos_merge <- contratos_processados %>% 
     bind_rows(contratos) %>% 
-    distinct(id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato, .keep_all = T)
+    distinct(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato, .keep_all = T)
   
   return(contratos_merge)
 }
