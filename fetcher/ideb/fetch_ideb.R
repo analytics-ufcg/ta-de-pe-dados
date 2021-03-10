@@ -3,7 +3,7 @@ library(here)
 library(readxl)
 
 #' Baixa os dados do IDEB fornecidos pelo INEP e extrai os arquivos para o 
-#' diretório code/ideb/data
+#' diretório fetcher/ideb/data
 #' Fonte dos dados: http://portal.inep.gov.br/web/guest/educacao-basica/ideb/resultados
 #' 
 #' @param url URL com os dados disponibilizados pelo INEP
@@ -17,15 +17,15 @@ fetch_ideb_por_url <- function(url = "download.inep.gov.br/educacao_basica/porta
   download.file(url, 
                 tmp_file, mode = "wb")
   
-  dir.create(file.path(here("code/ideb/"), "data"), showWarnings = FALSE)
-  output_path <- here("code/ideb/data")
+  dir.create(file.path(here("fetcher/ideb/"), "data"), showWarnings = FALSE)
+  output_path <- here("fetcher/ideb/data")
   
   unzip(tmp_file, exdir = output_path)
   
 }
 
 #' Baixa todos os dados do IDEB (fundamental anos iniciais e finais) fornecidos pelo INEP e 
-#' extrai os arquivos para o diretório code/ideb/data
+#' extrai os arquivos para o diretório fetcher/ideb/data
 #' Fonte dos dados: http://portal.inep.gov.br/web/guest/educacao-basica/ideb/resultados
 #' 
 #' @examples 
@@ -51,7 +51,7 @@ fetch_ideb_all_data <- function() {
 #' @examples 
 #' ideb <- process_ideb()
 #'
-process_ideb <- function(data_path = here::here("code/ideb/data/divulgacao_anos_iniciais_municipios2017-atualizado-Jun_2019.xlsx")) {
+process_ideb <- function(data_path = here::here("fetcher/ideb/data/divulgacao_anos_iniciais_municipios2017-atualizado-Jun_2019.xlsx")) {
   
   ideb_raw <- read_excel(data_path) %>% 
     select(uf = ...1, cod_municipio = `Ministério da Educação`, 
@@ -81,8 +81,8 @@ process_ideb <- function(data_path = here::here("code/ideb/data/divulgacao_anos_
 #' ideb_rs <- process_ideb_all_data()
 #'
 process_ideb_all_data <- function(remover_data = TRUE) {
-  fundamental_anos_iniciais <- here("code/ideb/data/divulgacao_anos_iniciais_municipios2017-atualizado-Jun_2019.xlsx")
-  fundamental_anos_finais <- here("code/ideb/data/divulgacao_anos_finais_municipios2017-atualizado-Jun_2019.xlsx")
+  fundamental_anos_iniciais <- here("fetcher/ideb/data/divulgacao_anos_iniciais_municipios2017-atualizado-Jun_2019.xlsx")
+  fundamental_anos_finais <- here("fetcher/ideb/data/divulgacao_anos_finais_municipios2017-atualizado-Jun_2019.xlsx")
 
   ideb_anos_iniciais <- process_ideb(fundamental_anos_iniciais) %>% 
     mutate(periodo = "fundamental anos iniciais")
@@ -95,7 +95,7 @@ process_ideb_all_data <- function(remover_data = TRUE) {
     select(periodo, dplyr::everything())
   
   if(remover_data) {
-    unlink(here("code/ideb/data"), recursive = T, force = T)
+    unlink(here("fetcher/ideb/data"), recursive = T, force = T)
   }
 
   return(ideb_all)

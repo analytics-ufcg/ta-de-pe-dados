@@ -1,7 +1,7 @@
 library(tidyverse)
 library(here)
 library(readxl)
-source(here("code/censo_escolar/colunas_constants.R"))
+source(here("fetcher/censo_escolar/colunas_constants.R"))
 
 #' Recupera e realiza o processo de limpeza dos dados do censo escolar fornecidos pelo INEP
 #' Fonte dos dados: http://portal.inep.gov.br/artigo/-/asset_publisher/B4AQV9zFY7Bv/content/dados-finais-do-censo-escolar-2018-sao-publicados-no-diario-oficial-da-uniao/21206

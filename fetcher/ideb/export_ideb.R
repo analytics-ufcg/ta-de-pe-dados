@@ -1,6 +1,6 @@
 library(tidyverse)
 library(here)
-source(here::here("code/censo_escolar/fetch_censo_escolar_inep.R"))
+source(here::here("fetcher/ideb/fetch_ideb.R"))
 
 if(!require(optparse)){
   install.packages("optparse")
@@ -14,20 +14,22 @@ message("Use --help para mais informações\n")
 
 option_list = list(
   
-  make_option(c("-o", "--outCenso"), type="character", default=here::here("data/censo_escolar/censo_escolar_2018.csv"),
-              help="nome do arquivo de saída para os dados do censo escolar [default= %default]", metavar="character")
-  )
+  make_option(c("-o", "--outIdeb"), type="character", default=here::here("data/ideb/ideb.csv"),
+              help="nome do arquivo de saída para os dados do IDEB [default= %default]", metavar="character")
+)
 
 opt_parser = OptionParser(option_list=option_list);
 opt = parse_args(opt_parser);
 
-output <- opt$outCenso
+output <- opt$outIdeb
 
 message("Iniciando processamento...")
-dados_censo <- fetch_censo_escolar_all()
+fetch_ideb_all_data()
+
+dados_ideb <- process_ideb_all_data()
 
 
 message(paste0("Salvando os dados em: ", output))
-readr::write_csv(dados_censo, output)
+readr::write_csv(dados_ideb, output)
 
 message("Concluído!")
