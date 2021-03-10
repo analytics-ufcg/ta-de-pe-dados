@@ -2,8 +2,9 @@ DROP TABLE IF EXISTS licitacao;
 
 CREATE TABLE IF NOT EXISTS "licitacao" ( 
     "id_licitacao" VARCHAR(32),
-    "id_estado" INTEGER,   
-    "id_orgao" INTEGER,
+    "id_estado" INTEGER,  
+    "id_orgao" VARCHAR(32),
+    "cd_orgao" INTEGER,
     "nm_orgao" VARCHAR(240),
     "nr_licitacao" VARCHAR(20),
     "ano_licitacao" INTEGER,
@@ -20,6 +21,7 @@ CREATE TABLE IF NOT EXISTS "licitacao" (
     "assunto" VARCHAR(20),
     "tipo_licitacao" VARCHAR(100),
     "tipo_modalidade_licitacao" VARCHAR(100),
+    "sigla_estado" VARCHAR(2),
     PRIMARY KEY("id_licitacao"),
     CONSTRAINT licitacao_key UNIQUE (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade),
     FOREIGN KEY("id_orgao") REFERENCES orgao("id_orgao") ON DELETE CASCADE ON UPDATE CASCADE

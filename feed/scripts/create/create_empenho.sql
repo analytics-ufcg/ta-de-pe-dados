@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS empenho;
 CREATE TABLE IF NOT EXISTS "empenho" (
     "id_empenho" BIGINT, 
     "id_licitacao" VARCHAR(32),
-    "id_orgao" INTEGER,
+    "id_orgao" VARCHAR(32),
     "id_contrato" VARCHAR(32),
     "ano_recebimento" INTEGER,
     "mes_recebimento" INTEGER,
