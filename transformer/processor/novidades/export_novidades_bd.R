@@ -4,11 +4,11 @@ help <- "
 Usage:
 Rscript export_novidades_bd.R
 "
-source(here::here("code/utils/utils.R"))
-source(here::here("code/utils/read_utils.R"))
-source(here::here("code/utils/join_utils.R"))
-source(here::here("code/utils/constants.R"))
-source(here::here("code/novidades/processa_novidades.R"))
+source(here::here("transformer/utils/utils.R"))
+source(here::here("transformer/utils/read_utils.R"))
+source(here::here("transformer/utils/join_utils.R"))
+source(here::here("transformer/utils/constants.R"))
+source(here::here("transformer/processor/novidades/processa_novidades.R"))
 
 tipos_novidades <- create_tipo_novidades()
 

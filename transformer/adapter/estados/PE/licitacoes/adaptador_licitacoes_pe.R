@@ -1,6 +1,6 @@
-source(here::here("code/utils/read_utils.R"))
-source(here::here("code/filters/filter_merenda.R"))
-source(here::here("code/filters/filter_covid.R"))
+source(here::here("transformer/utils/read_utils.R"))
+source(here::here("transformer/filters/filter_merenda.R"))
+source(here::here("transformer/filters/filter_covid.R"))
 
 #' Importa dados de licitações do estado de Pernambuco
 #' 

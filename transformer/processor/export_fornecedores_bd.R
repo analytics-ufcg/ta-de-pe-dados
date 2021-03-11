@@ -16,10 +16,10 @@ if (length(args) < min_num_args) {
 anos <- unlist(strsplit(args[1], split=","))
 # anos = c(2018, 2019, 2020)
 
-source(here::here("code/contratos/processa_contratos.R"))
-source(here::here("code/contratos/processa_fornecedores.R"))
-source(here::here("code/utils/read_utils.R"))
-source(here::here("code/utils/join_utils.R"))
+source(here::here("transformer/adapter/estados/RS/contratos/adaptador_contratos_rs.R"))
+source(here::here("transformer/adapter/estados/RS/contratos/adaptador_fornecedores_contratos_rs.R"))
+source(here::here("transformer/utils/read_utils.R"))
+source(here::here("transformer/utils/join_utils.R"))
 
 compras_df <- read_contratos_processados()
 

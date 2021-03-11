@@ -1,8 +1,8 @@
 library(magrittr)
 
-source(here::here("code/utils/bd_constants.R"))
-source(here::here("code/utils/utils.R"))
-source(here::here("code/utils/constants.R"))
+source(here::here("transformer/utils/bd_constants.R"))
+source(here::here("transformer/utils/utils.R"))
+source(here::here("transformer/utils/constants.R"))
 .HELP <- "Rscript fetch_dados_ta_na_mesa.R"
 
 ta_na_mesa_db <- NULL

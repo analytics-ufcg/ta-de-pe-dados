@@ -15,10 +15,10 @@ password <- Sys.getenv("POSTGRES_PASSWORD")
 message(paste0("Host: ", host))
 message(paste0("User: ", user))
 
-source(here::here("code/utils/utils.R"))
-source(here::here("code/utils/join_utils.R"))
-source(here::here("code/utils/constants.R"))
-source(here::here("code/empenhos/processa_empenhos.R"))
+source(here::here("transformer/utils/utils.R"))
+source(here::here("transformer/utils/join_utils.R"))
+source(here::here("transformer/utils/constants.R"))
+source(here::here("transformer/adapter/estados/RS/empenhos/adaptador_empenhos_rs.R"))
 
 con <- DBI::dbConnect(RPostgres::Postgres(),
                       dbname = database, 

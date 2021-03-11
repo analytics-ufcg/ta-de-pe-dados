@@ -42,26 +42,26 @@ fetch-data-pe:
 	docker exec -it r-container sh -c "cd /app/fetcher/estados/PE/tce/ && Rscript fetch_dados_tce_pe.R --data_inicio $(ano_inicial) --data_fim $(ano_final)"
 .PHONY: fetch-data-pe
 process-data:
-	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_dados_bd.R $(anos) $(filtro)"
+	docker exec -it r-container sh -c "cd /app/transformer/processor && Rscript export_dados_bd.R $(anos) $(filtro)"
 .PHONY: process-data
 process-data-empenhos:
-	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_empenhos_bd.R"
+	docker exec -it r-container sh -c "cd /app/transformer/processor && Rscript export_empenhos_bd.R"
 .PHONY: process-data-empenhos
 process-data-novidades:
-	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_novidades_bd.R"
+	docker exec -it r-container sh -c "cd /app/transformer/processor && Rscript export_novidades_bd.R"
 .PHONY: process-data-novidades
 process-data-fornecedores:
-	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_fornecedores_bd.R $(anos)"
+	docker exec -it r-container sh -c "cd /app/transformer/processor && Rscript export_fornecedores_bd.R $(anos)"
 .PHONY: process-data-fornecedores
 fetch-process-receita:
 	docker exec -it r-container sh -c "cd /app/fetcher/receita &&  Rscript fetch_dados_receita.R"
 .PHONY: fetch-process-receita
 process-data-itens-similares:
 	docker exec -it feed python3.6 /feed/manage.py process-itens-similares
-	docker exec -it r-container sh -c "cd /app/code/processor/ && Rscript export_itens_similares.R"
+	docker exec -it r-container sh -c "cd /app/transformer/processor/alertas && Rscript export_itens_similares.R"
 .PHONY: process-data-itens-similares
 process-data-alertas:
-	docker exec -it r-container sh -c "cd /app/code/processor && Rscript export_alertas_bd.R $(anos) $(filtro)"
+	docker exec -it r-container sh -c "cd /app/transformer/processor/alertas && Rscript export_alertas_bd.R $(anos) $(filtro)"
 .PHONY: process-data-alertas
 feed-create:
 	docker exec -it feed python3.6 /feed/manage.py create

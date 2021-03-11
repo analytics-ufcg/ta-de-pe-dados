@@ -2,8 +2,8 @@ library(magrittr)
 
 source(here::here("fetcher/config/constants.R"))
 source(here::here("fetcher/receita/DAO_Receita.R"))
-source(here::here("code/utils/utils.R"))
-source(here::here("code/utils/constants.R"))
+source(here::here("transformer/utils/utils.R"))
+source(here::here("transformer/utils/constants.R"))
 
 .HELP <- "Rscript fetch_dados_receita.R"
 

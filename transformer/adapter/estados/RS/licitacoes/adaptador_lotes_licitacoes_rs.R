@@ -1,7 +1,7 @@
 library(here)
 library(janitor)
-source(here::here('code/utils/read_utils.R'))
-source(here::here('code/utils/utils.R'))
+source(here::here('transformer/utils/read_utils.R'))
+source(here::here('transformer/utils/utils.R'))
 
 #' Importa lotes das licitações de um ano específico
 #' @param ano Inteiro com o ano para recuperação dos lotes

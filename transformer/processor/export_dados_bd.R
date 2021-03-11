@@ -23,9 +23,9 @@ anos <- unlist(strsplit(args[1], split=","))
 filtro <- args[2]
 # filtro <- "merenda"
 
-source(here::here("code/utils/utils.R"))
-source(here::here("code/utils/join_utils.R"))
-source(here::here("code/utils/constants.R"))
+source(here::here("transformer/utils/utils.R"))
+source(here::here("transformer/utils/join_utils.R"))
+source(here::here("transformer/utils/constants.R"))
 
 ## Assume que os dados foram baixados usando o módulo do crawler de dados (presente no diretório crawler
 ## na raiz desse repositório)
@@ -38,9 +38,9 @@ message("#### Iniciando processamento...")
 ## Licitações 
 
 message("#### licitações...")
-source(here::here("code/licitacoes/processa_licitacoes.R"))
-source(here::here("code/licitacoes/processa_tipos_licitacoes.R"))
-source(here::here("code/licitacoes/processa_tipos_modalidade_licitacoes.R"))
+source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_licitacoes_rs.R"))
+source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_tipos_licitacoes_rs.R"))
+source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_tipos_modalidades_licitacoes_rs.R"))
 
 licitacoes_raw <- import_licitacoes(anos)
 
@@ -57,7 +57,7 @@ licitacoes_rs <- join_licitacao_e_tipo(licitacoes_rs, tipo_licitacao) %>%
 ## Órgãos --------------------------------------------------------------------------
 
 message("#### órgãos")
-source(here::here("code/orgaos/processa_orgaos.R"))
+source(here::here("transformer/adapter/estados/RS/orgaos/adaptador_orgaos_rs.R"))
 
 info_orgaos_rs <- import_orgaos() %>%
   processa_info_orgaos(import_licitacoes(anos) %>%
@@ -69,7 +69,7 @@ info_orgaos_rs <- import_orgaos() %>%
 
 message("### licitantes...")
 
-source(here::here("code/licitacoes/processa_licitantes.R"))
+source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_licitantes_rs.R"))
 
 licitantes_rs <- import_licitantes(anos) %>%
   processa_info_licitantes() %>% 
@@ -77,7 +77,7 @@ licitantes_rs <- import_licitantes(anos) %>%
 
 ## Itens de licitações -------------------------------------------------------------
 message("#### itens de licitações...")
-source(here::here("code/licitacoes/processa_itens_licitacao.R"))
+source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_itens_licitacoes_rs.R"))
 
 itens_licitacao_raw <- import_itens_licitacao(anos)
 
@@ -88,8 +88,8 @@ itens_licitacao_rs <- itens_licitacao_raw %>%
 ## Documentos de licitações --------------------------------------------------------
 
 message("#### Documentos de licitações...")
-source(here::here("code/licitacoes/processa_documentos_licitacao.R"))
-source(here::here("code/licitacoes/processa_tipos_documentos_licitacoes.R"))
+source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_documentos_licitacoes_rs.R"))
+source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_tipos_documentos_licitacoes_rs.R"))
 
 tipos_documento_licitacao <- processa_tipos_documento_licitacoes()
 
@@ -100,9 +100,9 @@ documento_licitacao_rs <- import_documentos_licitacoes(anos) %>%
 ## Contratos ------------------------------------------------------------------------
 
 message("#### contratos...")
-source(here::here("code/contratos/processa_contratos.R"))
-source(here::here("code/contratos/processa_tipos_instrumento_contrato.R"))
-source(here::here("code/contratos/processa_contratos_pe.R"))
+source(here::here("transformer/adapter/estados/RS/contratos/adaptador_contratos_rs.R"))
+source(here::here("transformer/adapter/estados/RS/contratos/adaptador_tipos_instrumentos_contratos_rs.R"))
+source(here::here("transformer/adapter/estados/PE/contratos/adaptador_contratos_pe.R"))
 
 contratos_rs <- import_contratos(anos) %>%
   processa_info_contratos()
@@ -115,7 +115,7 @@ contratos_rs <- join_contrato_e_instrumento(contratos_rs, tipo_instrumento_contr
 ## *Compras* ----------------------------------------------------------------------------
 
 message("#### licitações encerradas...")
-source(here("code/licitacoes/processa_eventos_licitacoes.R"))
+source(here("transformer/adapter/estados/RS/licitacoes/adaptador_eventos_licitacoes_rs.R"))
 
 licitacoes_encerradas_rs <- import_eventos_licitacoes(anos) %>%
   filtra_licitacoes_encerradas() %>%
@@ -123,7 +123,7 @@ licitacoes_encerradas_rs <- import_eventos_licitacoes(anos) %>%
   dplyr::mutate(dt_inicio_vigencia = data_evento)
 
 message("#### lotes de licitação...")
-source(here("code/licitacoes/processa_lotes_licitacao.R"))
+source(here("transformer/adapter/estados/RS/licitacoes/adaptador_lotes_licitacoes_rs.R"))
 
 lotes_licitacoes_rs <- import_lotes_licitacao(anos) %>%
   processa_info_lote_licitacao() %>% 
@@ -132,8 +132,8 @@ lotes_licitacoes_rs <- import_lotes_licitacao(anos) %>%
 ### Itens de contratos e licitação -------------------------------------------------------
 
 message("#### preparando dados de itens de licitação e contratos...")
-source(here("code/contratos/processa_itens_contrato.R"))
-source(here("code/licitacoes/processa_itens_licitacao.R"))
+source(here("transformer/adapter/estados/RS/contratos/adaptador_itens_contratos_rs.R"))
+source(here("transformer/adapter/estados/RS/licitacoes/adaptador_itens_licitacoes_rs.R"))
 
 itens_contrato <- import_itens_contrato(anos)
 
@@ -141,7 +141,7 @@ itens_licitacao <- itens_licitacao_raw %>%
   rename_duplicate_columns()
 
 message("#### processando compras e itens...")
-source(here("code/contratos/processa_compras.R"))
+source(here("transformer/adapter/estados/RS/contratos/adaptador_compras_rs.R"))
 
 compras_rs <- processa_compras_itens(licitacoes_raw, licitacoes_encerradas_rs,
                                      lotes_licitacoes_rs, itens_licitacao, itens_contrato) %>% 
@@ -175,8 +175,8 @@ itens_contratos_rs <- itens_comprados %>%
 
 ## Fornecedores nos contratos --------------------------------------------------------------
 message("#### fornecedores (contratos)...")
-source(here("code/contratos/processa_fornecedores.R"))
-source(here("code/contratos/processa_fornecedores_pe.R"))
+source(here("transformer/adapter/estados/RS/contratos/adaptador_fornecedores_contratos_rs.R"))
+source(here("transformer/adapter/estados/PE/contratos/adaptador_fornecedores_contratos_pe.R"))
 
 fornecedores_contratos_rs <- import_fornecedores(anos) %>%
   processa_info_fornecedores(contratos_rs, compras_rs) %>% 
@@ -185,8 +185,8 @@ fornecedores_contratos_rs <- import_fornecedores(anos) %>%
 
 ## Alterações contratos --------------------------------------------------------------------
 message("#### alterações de contratos...")
-source(here::here("code/contratos/processa_alteracoes_contratos.R"))
-source(here::here("code/contratos/processa_tipos_alteracao_contrato.R"))
+source(here::here("transformer/adapter/estados/RS/contratos/adaptador_alteracoes_contratos_rs.R"))
+source(here::here("transformer/adapter/estados/RS/contratos/adaptador_tipos_alteracoes_contratos_rs.R"))
 
 alteracoes_rs <- import_alteracoes_contratos(anos) %>%
   processa_info_alteracoes_contratos() %>% 
@@ -198,10 +198,10 @@ tipo_operacao_alteracao <- processa_tipos_alteracao_contrato()
 
 #--------------------------------- Processamento das tabelas de Pernambuco-------------------------------------------
 
-source(here::here("code/licitacoes/processa_licitacoes_pe.R"))
-source(here::here("code/orgaos/processa_orgaos_pe.R"))
-source(here::here("code/contratos/processa_fornecedores_pe.R"))
-source(here::here("code/contratos/processa_contratos_pe.R"))
+source(here::here("transformer/adapter/estados/PE/licitacoes/adaptador_licitacoes_pe.R"))
+source(here::here("transformer/adapter/estados/PE/orgaos/adaptador_orgaos_pe.R"))
+source(here::here("transformer/adapter/estados/PE/contratos/adaptador_fornecedores_contratos_pe.R"))
+source(here::here("transformer/adapter/estados/PE/contratos/adaptador_contratos_pe.R"))
 
 info_orgaos_pe <- import_orgaos_municipais_pe() %>%
   processa_info_orgaos_pe(import_orgaos_estaduais_pe(), import_municipios_pe()) %>%
@@ -229,7 +229,7 @@ info_orgaos <- bind_rows(info_orgaos_rs,
                    O_ID) %>%
   dplyr::select(id_orgao, dplyr::everything())
 
-licitacoes_falsos_positivos <- readr::read_csv(here::here("code/utils/licitacoes_falsos_positivos.csv"))
+licitacoes_falsos_positivos <- readr::read_csv(here::here("transformer/utils/files/licitacoes_falsos_positivos.csv"))
 
 info_licitacoes <- bind_rows(licitacoes_rs,
                              licitacoes_pe)  %>% 

@@ -22,10 +22,10 @@ anos <- unlist(strsplit(args[1], split=","))
 filtro <- args[2]
 # filtro <- "merenda"
 
-source(here::here("code/utils/utils.R"))
-source(here::here("code/utils/read_utils.R"))
-source(here::here("code/utils/constants.R"))
-source(here::here("code/alertas/processa_alertas_data.R"))
+source(here::here("transformer/utils/utils.R"))
+source(here::here("transformer/utils/read_utils.R"))
+source(here::here("transformer/utils/constants.R"))
+source(here::here("transformer/processor/alertas/processa_alertas_data.R"))
 
 print("Criando alertas...")
 

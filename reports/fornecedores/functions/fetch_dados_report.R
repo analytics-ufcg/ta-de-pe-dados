@@ -8,8 +8,8 @@ library(here)
 #' fornecedores <- fetch_diferenca_abertura_contrato()
 #' 
 fetch_diferenca_abertura_contrato <- function() {
-  source(here::here("code/contratos/processa_contratos.R"))
-  source(here::here("code/utils/read_utils.R"))
+  source(here::here("transformer/adapter/RS/contratos/adaptador_contratos_rs.R"))
+  source(here::here("transformer/utils/read_utils.R"))
   
   fornecedores_tce <- read_csv(here("data/bd/info_fornecedores_contrato.csv"))
   

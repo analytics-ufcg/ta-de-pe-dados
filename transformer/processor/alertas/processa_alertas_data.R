@@ -1,9 +1,9 @@
 library(tidyverse)
-source(here::here("code/utils/read_utils.R"))
-source(here::here("code/utils/utils.R"))
-source(here::here("code/utils/constants.R"))
-source(here::here("code/contratos/processa_contratos.R"))
-source(here::here("code/alertas/processa_itens_fornecedores.R"))
+source(here::here("transformer/utils/read_utils.R"))
+source(here::here("transformer/utils/utils.R"))
+source(here::here("transformer/utils/constants.R"))
+source(here::here("transformer/adapter/estados/RS/contratos/adaptador_contratos_rs.R"))
+source(here::here("transformer/processor/alertas/processa_itens_fornecedores.R"))
 
 #' Cria dataframe com os tipos de alertas
 #' 
@@ -31,7 +31,7 @@ processa_alertas_cnaes_atipicos_itens <- function(filtro) {
 
   cnaes_itens_forcenedor <- processa_itens_cnaes_fornecedores()
   
-  cnaes_falsos_positivos <- read_csv(here::here("code/alertas/cnaes_desconsiderados_produtos.csv")) %>% 
+  cnaes_falsos_positivos <- read_csv(here::here("transformer/processor/alertas/cnaes_desconsiderados_produtos.csv")) %>% 
     filter(assunto %in% c(filtro, "geral")) %>% 
     pull(id_cnae)
   

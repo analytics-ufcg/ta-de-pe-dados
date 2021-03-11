@@ -1,8 +1,8 @@
 library(tidyverse)
 library(tidyselect)
-source(here::here("code/utils/utils.R"))
-source(here::here("code/utils/join_utils.R"))
-source(here::here("code/utils/read_utils.R"))
+source(here::here("transformer/utils/utils.R"))
+source(here::here("transformer/utils/join_utils.R"))
+source(here::here("transformer/utils/read_utils.R"))
 
 #' Processa dados de empenhos do estado do Rio Grande do Sul para um conjunto de anos
 #' 
