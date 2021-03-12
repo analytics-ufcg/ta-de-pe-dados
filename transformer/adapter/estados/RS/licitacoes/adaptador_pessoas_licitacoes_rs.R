@@ -7,9 +7,9 @@ library(tidyverse)
 #' @return Dataframe com informações das pessoas envolvidas no processo licitatório
 #' 
 #' @examples
-#' pessoas_licitacao <- processa_pessoas()
+#' pessoas_licitacao <- adapta_pessoas()
 #' 
-processa_pessoas <- function(anos = c(2017, 2018, 2019)) {
+adapta_pessoas <- function(anos = c(2017, 2018, 2019)) {
   
   pessoas <- pmap_dfr(list(anos),
                       ~ import_pessoas_licitacao_por_ano(..1)

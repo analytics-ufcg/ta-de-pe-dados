@@ -4,9 +4,9 @@ library(here)
 #' Cria dataframe com tipos de instrumento de contrato
 #' 
 #' @examples 
-#' tipo_instrumento_contrato <- processa_tipos_instrumento_contrato()
+#' tipo_instrumento_contrato <- adapta_tipos_instrumento_contrato()
 #' 
-processa_tipos_instrumento_contrato <- function() {
+adapta_tipos_instrumento_contrato <- function() {
   tipo_instrumento_contrato <- data.frame(tp_instrumento_contrato = c("A", "C", "F", "P", "R", "T", "O", "U" ),
                                           tipo_instrumento_contrato = c("Termo de adesão", "Contrato", "Termo de fomento", 
                                                                         "Termo de parceria", "Termo de credenciamento", 

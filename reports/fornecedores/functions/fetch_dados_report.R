@@ -30,7 +30,7 @@ fetch_diferenca_abertura_contrato <- function() {
            nm_orgao, nr_documento_contratado, dt_inicio_vigencia, vl_contrato, descricao_objeto_contrato)
   
   contratos <- import_contratos(c(2018, 2019, 2020)) %>% 
-    processa_info_contratos() %>% 
+    adapta_info_contratos() %>% 
     select(id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato,
            nm_orgao, nr_documento_contratado, dt_inicio_vigencia, vl_contrato, descricao_objeto_contrato)
   

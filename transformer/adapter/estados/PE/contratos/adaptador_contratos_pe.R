@@ -25,7 +25,7 @@ import_contratos_pe <- function() {
 #'
 #' Chave primária:
 #' (a ser definida)
-processa_info_contratos_pe <- function(contratos_df) {
+adapta_info_contratos_pe <- function(contratos_df) {
 
   info_contratos <- contratos_df %>%
     janitor::clean_names() %>%

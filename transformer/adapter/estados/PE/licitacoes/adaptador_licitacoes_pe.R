@@ -24,12 +24,12 @@ import_licitacoes_pe <- function(ano) {
 #' @return Dataframe com informações das licitações filtradas
 #'   
 #' @examples 
-#' licitacoes <- processa_info_licitacoes(import_licitacoes(c(2019)))
+#' licitacoes <- adapta_info_licitacoes(import_licitacoes(c(2019)))
 #' 
 #' Chave primária:
 #' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade)
 #' 
-processa_info_licitacoes_pe <- function(licitacoes_df, tipo_filtro) {
+adapta_info_licitacoes_pe <- function(licitacoes_df, tipo_filtro) {
   
   if (tipo_filtro == "merenda") {
     info_licitacoes <- licitacoes_df %>% 

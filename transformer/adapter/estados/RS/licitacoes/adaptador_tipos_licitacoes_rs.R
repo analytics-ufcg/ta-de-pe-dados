@@ -4,9 +4,9 @@ library(here)
 #' Cria dataframe com tipos de licitações
 #' 
 #' @examples 
-#' tipos_licitacoes <- processa_tipos_licitacoes()
+#' tipos_licitacoes <- adapta_tipos_licitacoes()
 #' 
-processa_tipos_licitacoes <- function() {
+adapta_tipos_licitacoes <- function() {
   tipo_licitacao <- data.frame(tp_licitacao = c("MCA", "MDE", "MLO", "MOO", 
                                                 "MOP", "MOQ", "MOT", "MPP",
                                                 "MPR", "MRE", "MTC", "MTX", "MTO",

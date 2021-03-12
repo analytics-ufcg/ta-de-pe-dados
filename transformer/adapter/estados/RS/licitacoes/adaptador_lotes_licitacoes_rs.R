@@ -41,12 +41,12 @@ import_lotes_licitacao <- function(anos = c(2017, 2018, 2019)) {
 #' @return Dataframe com informações dos vencedores dos lotes das licitações
 #'   
 #' @examples 
-#' info_lote_licitacao <- processa_info_lote_licitacao(import_lotes_licitacao(c(2017, 2018, 2019)))
+#' info_lote_licitacao <- adapta_info_lote_licitacao(import_lotes_licitacao(c(2017, 2018, 2019)))
 #' 
 #' Chave primária: 
 #' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_lote)
 #' 
-processa_info_lote_licitacao <- function(lotes_licitacao) {
+adapta_info_lote_licitacao <- function(lotes_licitacao) {
   
   info_lote_licitacao <- lotes_licitacao %>%
     rename_duplicate_columns() %>% 

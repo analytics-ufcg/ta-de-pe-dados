@@ -24,11 +24,11 @@ import_fornecedores_pe <- function() {
 #' @return Dataframe com informações dos fornecedores
 #'   
 #' @examples 
-#' fornecedores <- processa_info_fornecedores_pe(fornecedores_pe_df)
+#' fornecedores <- adapta_info_fornecedores_pe(fornecedores_pe_df)
 #' 
 #' Chave primária: 
 #' (nr_documento)
-processa_info_fornecedores_pe <- function(fornecedores_pe_df, contratos_pe_df) {
+adapta_info_fornecedores_pe <- function(fornecedores_pe_df, contratos_pe_df) {
   fornecedores_info_geral <- contratos_pe_df %>%
     dplyr::group_by(nr_documento_contratado) %>%
     dplyr::summarise(
@@ -72,11 +72,11 @@ processa_info_fornecedores_pe <- function(fornecedores_pe_df, contratos_pe_df) {
 #' @return Dataframe dos contratos e os fornecedores preenchidos.
 #'   
 #' @examples 
-#' contratos_com_todos_fornecedores <- processa_fornecedores_compras(empenhos_df, compras_df)
+#' contratos_com_todos_fornecedores <- adapta_fornecedores_compras(empenhos_df, compras_df)
 #' 
 #' Chave primária: 
 #' (nr_documento)
-processa_fornecedores_compras <- function(empenhos_df, compras_df) {
+adapta_fornecedores_compras <- function(empenhos_df, compras_df) {
   
   fornecedores_empenhos <- empenhos_df %>% 
     dplyr::mutate(cnpj_cpf = 

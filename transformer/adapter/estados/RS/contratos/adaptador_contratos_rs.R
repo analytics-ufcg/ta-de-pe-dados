@@ -45,7 +45,7 @@ import_contratos_por_ano <- function(ano = 2019) {
 #' 
 #' Chave primária: 
 #' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato)
-processa_info_contratos <- function(contratos_df) {
+adapta_info_contratos <- function(contratos_df) {
 
   info_contratos <- contratos_df %>%
     janitor::clean_names() %>% 

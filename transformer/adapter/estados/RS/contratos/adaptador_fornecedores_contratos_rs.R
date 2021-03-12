@@ -46,11 +46,11 @@ import_fornecedores_por_ano <- function(ano = 2019) {
 #' @return Dataframe com informações dos fornecedores
 #'   
 #' @examples 
-#' fornecedores <- processa_info_fornecedores(fornecedores_df)
+#' fornecedores <- adapta_info_fornecedores(fornecedores_df)
 #' 
 #' Chave primária: 
 #' (nr_documento)
-processa_info_fornecedores <- function(fornecedores_df, contratos_df, compras_df) {
+adapta_info_fornecedores <- function(fornecedores_df, contratos_df, compras_df) {
   
   compras_df_sem_contratos <- compras_df %>% 
     dplyr::mutate(cd_orgao = as.character(cd_orgao)) %>% 
@@ -104,11 +104,11 @@ processa_info_fornecedores <- function(fornecedores_df, contratos_df, compras_df
 #' @return Dataframe dos contratos e os fornecedores preenchidos.
 #'   
 #' @examples 
-#' contratos_com_todos_fornecedores <- processa_fornecedores_compras(empenhos_df, compras_df)
+#' contratos_com_todos_fornecedores <- adapta_fornecedores_compras(empenhos_df, compras_df)
 #' 
 #' Chave primária: 
 #' (nr_documento)
-processa_fornecedores_compras <- function(empenhos_df, compras_df) {
+adapta_fornecedores_compras <- function(empenhos_df, compras_df) {
   
   fornecedores_empenhos <- empenhos_df %>% 
     dplyr::mutate(cnpj_cpf = 

@@ -41,9 +41,9 @@ import_municipios_pe <- function() {
 #' Cria dataframe com informações dos orgãos participantes de licitações
 #' 
 #' @examples 
-#' orgaos <- processa_info_orgaos_pe()
+#' orgaos <- adapta_info_orgaos_pe()
 #' 
-processa_info_orgaos_pe <- function(orgaos_municipais, orgaos_estaduais, municipios) {
+adapta_info_orgaos_pe <- function(orgaos_municipais, orgaos_estaduais, municipios) {
   
   info_municipios <- municipios %>%
     janitor::clean_names() %>% 

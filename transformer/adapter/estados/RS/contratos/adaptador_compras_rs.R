@@ -10,9 +10,9 @@ library(tidyverse)
 #' @return Dataframe com informações das compras realizadas 
 #' @examples 
 #' compras_itens <- 
-#' processa_compras_itens(licitacoes_df, licitacoes_encerradas_df, lotes_df, itens_licitacao_df, itens_contrato_df)
+#' adapta_compras_itens(licitacoes_df, licitacoes_encerradas_df, lotes_df, itens_licitacao_df, itens_contrato_df)
 #' 
-processa_compras_itens <- function(licitacoes_df, licitacoes_encerradas_df, lotes_df, 
+adapta_compras_itens <- function(licitacoes_df, licitacoes_encerradas_df, lotes_df, 
                                    itens_licitacao_df, itens_contrato_df) {
   licitacoes_compras <- licitacoes_encerradas_df %>% 
     dplyr::filter(cd_tipo_modalidade %in% c("PRD", "PRI"))
@@ -43,7 +43,7 @@ processa_compras_itens <- function(licitacoes_df, licitacoes_encerradas_df, lote
     dplyr::left_join(itens_licitacao_filtrados,
                      by = c("cd_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade", "nr_lote"))
   
-  compras_itens <- .processa_dataframe_compras(licitacoes_itens) %>% 
+  compras_itens <- .adapta_dataframe_compras(licitacoes_itens) %>% 
     filter(!tem_item_contrato) 
   ## apenas considera compras comoa ligação entre fornecedor e licitação nos itens de licitação que não possuem itens de contratos
   
@@ -110,9 +110,9 @@ processa_compras_itens <- function(licitacoes_df, licitacoes_encerradas_df, lote
 #' @param licitacoes_itens Dataframe com dados de licitações encerradas ligadas a itens de licitação e a lotes
 #' @return Dataframe com informações das compras realizadas (completando as colunas necessárias)
 #' @examples 
-#' compras <- processa_dataframe_compras(licitacoes_itens)
+#' compras <- adapta_dataframe_compras(licitacoes_itens)
 #' 
-.processa_dataframe_compras <- function(licitacoes_itens) {
+.adapta_dataframe_compras <- function(licitacoes_itens) {
   
   compras <- licitacoes_itens %>% 
     dplyr::mutate(tp_fornecedor = dplyr::case_when(

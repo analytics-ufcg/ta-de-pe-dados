@@ -4,9 +4,9 @@ library(here)
 #' Cria dataframe com tipos de modalidade de licitações
 #' 
 #' @examples 
-#' tipos_modalidade_licitacoes <- processa_tipos_modalidade_licitacoes()
+#' tipos_modalidade_licitacoes <- adapta_tipos_modalidade_licitacoes()
 #' 
-processa_tipos_modalidade_licitacoes <- function() {
+adapta_tipos_modalidade_licitacoes <- function() {
   tipo_modalidade_licitacao <- data.frame(cd_tipo_modalidade = c("CPP", "CHP", "CPC", "CNC", "CNS", "CNV", "ESE", "EST", 
                                                       "LEE", "LEI", "MAI", "PRE", "PRP", "PRD", "PDE", "PRI", 
                                                       "RDE", "RDC", "RPO", "RIN", "TMP"),

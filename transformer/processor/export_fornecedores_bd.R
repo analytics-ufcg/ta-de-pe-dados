@@ -25,10 +25,10 @@ compras_df <- read_contratos_processados()
 
 print("Atualizando dados de fornecedores...")
 contratos <- import_contratos(anos) %>% 
-  processa_info_contratos()
+  adapta_info_contratos()
 
 info_fornecedores_contratos <- import_fornecedores(anos) %>% 
-  processa_info_fornecedores(contratos, compras_df) %>% 
+  adapta_info_fornecedores(contratos, compras_df) %>% 
   join_contratos_e_fornecedores(compras_df %>% 
                                   dplyr::select(nr_documento_contratado)) %>% 
   dplyr::distinct(nr_documento, .keep_all = TRUE) %>% 

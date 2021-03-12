@@ -16,9 +16,9 @@ import_orgaos <- function() {
 #' Cria dataframe com informações dos orgãos participantes de licitações
 #' 
 #' @examples 
-#' orgaos <- processa_info_orgaos()
+#' orgaos <- adapta_info_orgaos()
 #' 
-processa_info_orgaos <- function(orgaos_df, licitacoes) {
+adapta_info_orgaos <- function(orgaos_df, licitacoes) {
   
   orgaos_licitacao <- licitacoes %>%
     dplyr::distinct(cd_orgao, nm_orgao)

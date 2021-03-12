@@ -57,12 +57,12 @@ import_licitantes_por_ano <- function(ano = 2019) {
 #' @return Dataframe com informações tratadas dos licitantes
 #'   
 #' @examples 
-#' licitantes <- processa_info_licitantes(licitantes_df)
+#' licitantes <- adapta_info_licitantes(licitantes_df)
 #' 
 #' Chave primária:
 #' (cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, tp_documento_licitante, nr_documento_licitante)
 #' 
-processa_info_licitantes <- function(licitantes_df) {
+adapta_info_licitantes <- function(licitantes_df) {
   licitantes <- licitantes_df %>% 
     rename_duplicate_columns_licitantes() %>% 
     janitor::clean_names() %>% 

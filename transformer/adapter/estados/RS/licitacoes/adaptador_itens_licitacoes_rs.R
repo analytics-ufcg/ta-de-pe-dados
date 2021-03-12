@@ -41,12 +41,12 @@ import_itens_licitacao <- function(anos = c(2017, 2018, 2019)) {
 #' @return Dataframe com informações dos itens das licitações
 #'   
 #' @examples 
-#' info_item_licitacao <- processa_info_item_licitacao(anos = c(2017, 2018, 2019))
+#' info_item_licitacao <- adapta_info_item_licitacao(anos = c(2017, 2018, 2019))
 #' 
 #' Chave primária: 
 #' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_lote, nr_item)
 #' 
-processa_info_item_licitacao <- function(itens_licitacao) {
+adapta_info_item_licitacao <- function(itens_licitacao) {
   
   info_item_licitacao <- itens_licitacao %>% 
     rename_duplicate_columns() %>% 
@@ -68,12 +68,12 @@ processa_info_item_licitacao <- function(itens_licitacao) {
 #' @return Dataframe com informações dos itens das licitações
 #'   
 #' @examples 
-#' info_item_licitacao_comprado <- processa_item_licitacao_comprado(itens_licitacao_df, itens_contrato, licitacoes_encerradas)
+#' info_item_licitacao_comprado <- adapta_item_licitacao_comprado(itens_licitacao_df, itens_contrato, licitacoes_encerradas)
 #' 
 #' Chave primária: 
 #' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_lote, nr_item)
 #' 
-processa_item_licitacao_comprado <- function(itens_licitacao_df, compras_df) {
+adapta_item_licitacao_comprado <- function(itens_licitacao_df, compras_df) {
   
   compras_alt <- compras_df %>% 
     janitor::clean_names("all_caps") %>% 

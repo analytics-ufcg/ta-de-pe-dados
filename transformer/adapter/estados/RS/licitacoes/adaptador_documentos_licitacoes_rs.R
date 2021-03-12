@@ -36,13 +36,13 @@ import_documentos_licitacoes_por_ano <- function(ano) {
 #' @return Dataframe com informações dos documentos das licitações
 #'   
 #' @examples 
-#' info_documentos_licitacoes <- processa_info_documentos_licitacoes(import_documentos_licitacoes(c(2019)))
+#' info_documentos_licitacoes <- adapta_info_documentos_licitacoes(import_documentos_licitacoes(c(2019)))
 #' 
 #' Chave primária:
 #' (id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, cd_tipo_documento, nome_arquivo_documento, 
 #' cd_tipo_fase, id_evento_licitacao, tp_documento, nr_documento)
 #' 
-processa_info_documentos_licitacoes <- function(documentos_licitacoes_df) {
+adapta_info_documentos_licitacoes <- function(documentos_licitacoes_df) {
   
   info_documentos_licitacoes <- documentos_licitacoes_df %>%
     janitor::clean_names() %>%

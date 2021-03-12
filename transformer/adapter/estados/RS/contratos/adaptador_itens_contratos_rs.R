@@ -41,12 +41,12 @@ import_itens_contrato_por_ano <- function(ano = 2019) {
 #' @return Dataframe com informações dos itens dos contratos
 #'   
 #' @examples 
-#' info_item_contrato <- processa_info_item_contrato(itens_contrato_df)
+#' info_item_contrato <- adapta_info_item_contrato(itens_contrato_df)
 #'
 #' Chave primária: 
 #' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato,
 #' nr_lote, nr_item)
-processa_info_item_contrato <- function(itens_contrato_df) {
+adapta_info_item_contrato <- function(itens_contrato_df) {
   
   info_item_contrato <- itens_contrato_df %>% 
     distinct(CD_ORGAO, NR_LICITACAO, ANO_LICITACAO, CD_TIPO_MODALIDADE, NR_CONTRATO, 

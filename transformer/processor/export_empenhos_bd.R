@@ -36,10 +36,10 @@ res <- DBI::dbGetQuery(con, "SELECT licitacao.id_licitacao, empenho_raw.* FROM l
 contratos_df <- read_contratos_processados()
 
 info_empenhos <- res %>% 
-  processa_info_empenhos() %>% 
+  adapta_info_empenhos() %>% 
   join_empenhos_e_contratos(contratos_df) %>% 
   generate_id(TABELA_EMPENHO, E_ID) %>% 
   dplyr::select(id_empenho, id_licitacao, id_orgao, id_contrato, dplyr::everything()) %>% 
-  processa_id_contrato_empenhos()
+  adapta_id_contrato_empenhos()
 
 readr::write_csv(info_empenhos, here("data/bd/info_empenhos.csv"))

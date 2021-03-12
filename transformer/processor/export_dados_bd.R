@@ -45,10 +45,10 @@ source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_tipos_mod
 licitacoes_raw <- import_licitacoes(anos)
 
 licitacoes_rs <- licitacoes_raw %>%
-  processa_info_licitacoes(tipo_filtro = filtro)
+  adapta_info_licitacoes(tipo_filtro = filtro)
 
-tipo_licitacao <- processa_tipos_licitacoes()
-tipo_modalidade_licitacao <- processa_tipos_modalidade_licitacoes()
+tipo_licitacao <- adapta_tipos_licitacoes()
+tipo_modalidade_licitacao <- adapta_tipos_modalidade_licitacoes()
 
 licitacoes_rs <- join_licitacao_e_tipo(licitacoes_rs, tipo_licitacao) %>%
   join_licitacao_e_tipo_modalidade(tipo_modalidade_licitacao) %>% 
@@ -60,8 +60,8 @@ message("#### órgãos")
 source(here::here("transformer/adapter/estados/RS/orgaos/adaptador_orgaos_rs.R"))
 
 info_orgaos_rs <- import_orgaos() %>%
-  processa_info_orgaos(import_licitacoes(anos) %>%
-                         processa_info_licitacoes(tipo_filtro = filtro)) %>% 
+  adapta_info_orgaos(import_licitacoes(anos) %>%
+                         adapta_info_licitacoes(tipo_filtro = filtro)) %>% 
   add_info_estado(sigla_estado = "RS", id_estado = "43")
 
 
@@ -72,7 +72,7 @@ message("### licitantes...")
 source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_licitantes_rs.R"))
 
 licitantes_rs <- import_licitantes(anos) %>%
-  processa_info_licitantes() %>% 
+  adapta_info_licitantes() %>% 
   add_info_estado(sigla_estado = "RS", id_estado = "43")
 
 ## Itens de licitações -------------------------------------------------------------
@@ -82,7 +82,7 @@ source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_itens_lic
 itens_licitacao_raw <- import_itens_licitacao(anos)
 
 itens_licitacao_rs <- itens_licitacao_raw %>%
-  processa_info_item_licitacao() %>% 
+  adapta_info_item_licitacao() %>% 
   add_info_estado(sigla_estado = "RS", id_estado = "43")
 
 ## Documentos de licitações --------------------------------------------------------
@@ -91,10 +91,10 @@ message("#### Documentos de licitações...")
 source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_documentos_licitacoes_rs.R"))
 source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_tipos_documentos_licitacoes_rs.R"))
 
-tipos_documento_licitacao <- processa_tipos_documento_licitacoes()
+tipos_documento_licitacao <- adapta_tipos_documento_licitacoes()
 
 documento_licitacao_rs <- import_documentos_licitacoes(anos) %>%
-  processa_info_documentos_licitacoes() %>% 
+  adapta_info_documentos_licitacoes() %>% 
   add_info_estado(sigla_estado = "RS", id_estado = "43")
 
 ## Contratos ------------------------------------------------------------------------
@@ -105,9 +105,9 @@ source(here::here("transformer/adapter/estados/RS/contratos/adaptador_tipos_inst
 source(here::here("transformer/adapter/estados/PE/contratos/adaptador_contratos_pe.R"))
 
 contratos_rs <- import_contratos(anos) %>%
-  processa_info_contratos()
+  adapta_info_contratos()
   
-tipo_instrumento_contrato <- processa_tipos_instrumento_contrato()
+tipo_instrumento_contrato <- adapta_tipos_instrumento_contrato()
 
 contratos_rs <- join_contrato_e_instrumento(contratos_rs, tipo_instrumento_contrato) %>% 
   add_info_estado(sigla_estado = "RS", id_estado = "43")
@@ -126,7 +126,7 @@ message("#### lotes de licitação...")
 source(here("transformer/adapter/estados/RS/licitacoes/adaptador_lotes_licitacoes_rs.R"))
 
 lotes_licitacoes_rs <- import_lotes_licitacao(anos) %>%
-  processa_info_lote_licitacao() %>% 
+  adapta_info_lote_licitacao() %>% 
   add_info_estado(sigla_estado = "RS", id_estado = "43")
 
 ### Itens de contratos e licitação -------------------------------------------------------
@@ -143,7 +143,7 @@ itens_licitacao <- itens_licitacao_raw %>%
 message("#### processando compras e itens...")
 source(here("transformer/adapter/estados/RS/contratos/adaptador_compras_rs.R"))
 
-compras_rs <- processa_compras_itens(licitacoes_raw, licitacoes_encerradas_rs,
+compras_rs <- adapta_compras_itens(licitacoes_raw, licitacoes_encerradas_rs,
                                      lotes_licitacoes_rs, itens_licitacao, itens_contrato) %>% 
   add_info_estado(sigla_estado = "RS", id_estado = "43")
 
@@ -159,7 +159,7 @@ itens_contrato <- itens_contrato %>%
 
 message("#### itens sem contratos...")
 itens_licitacao <- itens_licitacao_raw %>%
-  processa_item_licitacao_comprado(compras_rs)
+  adapta_item_licitacao_comprado(compras_rs)
 
 intersecao <- Reduce(dplyr::intersect, list(names(itens_contrato), names(itens_licitacao)))
 
@@ -170,7 +170,7 @@ itens_comprados <- itens_licitacao %>%
 
 message("#### processando todos os itens comprados...")
 itens_contratos_rs <- itens_comprados %>%
-  processa_info_item_contrato() %>% 
+  adapta_info_item_contrato() %>% 
   add_info_estado(sigla_estado = "RS", id_estado = "43")
 
 ## Fornecedores nos contratos --------------------------------------------------------------
@@ -179,7 +179,7 @@ source(here("transformer/adapter/estados/RS/contratos/adaptador_fornecedores_con
 source(here("transformer/adapter/estados/PE/contratos/adaptador_fornecedores_contratos_pe.R"))
 
 fornecedores_contratos_rs <- import_fornecedores(anos) %>%
-  processa_info_fornecedores(contratos_rs, compras_rs) %>% 
+  adapta_info_fornecedores(contratos_rs, compras_rs) %>% 
   add_info_estado(sigla_estado = "RS", id_estado = "43")
 
 
@@ -189,10 +189,10 @@ source(here::here("transformer/adapter/estados/RS/contratos/adaptador_alteracoes
 source(here::here("transformer/adapter/estados/RS/contratos/adaptador_tipos_alteracoes_contratos_rs.R"))
 
 alteracoes_rs <- import_alteracoes_contratos(anos) %>%
-  processa_info_alteracoes_contratos() %>% 
+  adapta_info_alteracoes_contratos() %>% 
   add_info_estado(sigla_estado = "RS", id_estado = "43")
 
-tipo_operacao_alteracao <- processa_tipos_alteracao_contrato()
+tipo_operacao_alteracao <- adapta_tipos_alteracao_contrato()
 
 
 
@@ -204,19 +204,19 @@ source(here::here("transformer/adapter/estados/PE/contratos/adaptador_fornecedor
 source(here::here("transformer/adapter/estados/PE/contratos/adaptador_contratos_pe.R"))
 
 info_orgaos_pe <- import_orgaos_municipais_pe() %>%
-  processa_info_orgaos_pe(import_orgaos_estaduais_pe(), import_municipios_pe()) %>%
+  adapta_info_orgaos_pe(import_orgaos_estaduais_pe(), import_municipios_pe()) %>%
   add_info_estado(sigla_estado = "PE", id_estado = "26")
 
 licitacoes_pe <- import_licitacoes_pe() %>%
-  processa_info_licitacoes_pe(tipo_filtro = filtro) %>%
+  adapta_info_licitacoes_pe(tipo_filtro = filtro) %>%
   add_info_estado(sigla_estado = "PE", id_estado = "26")
 
 contratos_pe <- import_contratos_pe() %>% 
-  processa_info_contratos_pe() %>%
+  adapta_info_contratos_pe() %>%
   add_info_estado(sigla_estado = "PE", id_estado = "26") 
 
 fornecedores_contratos_pe <- import_fornecedores_pe() %>%
-  processa_info_fornecedores_pe(contratos_pe) %>%
+  adapta_info_fornecedores_pe(contratos_pe) %>%
   add_info_estado(sigla_estado = "PE", id_estado = "26")
   
 

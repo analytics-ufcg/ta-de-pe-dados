@@ -43,12 +43,12 @@ import_empenhos_por_ano <- function(ano) {
 #' @return Dataframe com informações das licitações
 #'   
 #' @examples 
-#' licitacoes <- processa_info_licitacoes(2019)
+#' licitacoes <- adapta_info_licitacoes(2019)
 #' 
 #' Chave primária:
 #' (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade)
 #' 
-processa_info_empenhos <- function(empenhos_df) {
+adapta_info_empenhos <- function(empenhos_df) {
   
   empenhos_df %<>% dplyr::select(id_licitacao, ano_recebimento, mes_recebimento, id_orgao = cd_orgao, nome_orgao, cd_orgao_orcamentario,
                                  nome_orgao_orcamentario, cd_unidade_orcamentaria, nome_unidade_orcamentaria, tp_unidade, 
@@ -71,9 +71,9 @@ processa_info_empenhos <- function(empenhos_df) {
 #' @return Dataframe com informações dos ids dos contratos ligados aos empenhos
 #'   
 #' @examples 
-#' empenhos_contratos <- processa_id_contrato_empenhos(empenhos_df)
+#' empenhos_contratos <- adapta_id_contrato_empenhos(empenhos_df)
 #' 
-processa_id_contrato_empenhos <- function(empenhos_df) {
+adapta_id_contrato_empenhos <- function(empenhos_df) {
   chave_empenhos_contratos <- c("ano_recebimento", "mes_recebimento", "id_orgao", "cd_orgao_orcamentario", "nome_orgao_orcamentario", 
                                 "cd_unidade_orcamentaria", "nome_unidade_orcamentaria", "tp_unidade", "dt_empenho", "ano_empenho", 
                                 "ano_operacao", "nr_empenho", "cd_credor", "cnpj_cpf",

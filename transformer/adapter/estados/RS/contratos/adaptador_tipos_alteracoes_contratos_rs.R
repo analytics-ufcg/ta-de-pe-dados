@@ -4,9 +4,9 @@ library(here)
 #' Cria dataframe com tipos de alteração de contrato
 #' 
 #' @examples 
-#' tipo_instrumento_contrato <- processa_tipos_alteracao_contrato()
+#' tipo_instrumento_contrato <- adapta_tipos_alteracao_contrato()
 #' 
-processa_tipos_alteracao_contrato <- function() {
+adapta_tipos_alteracao_contrato <- function() {
   tipo_operacao_alteracao <- data.frame( cd_tipo_operacao = c("ACA", "ACC", "ADO", "AGF", "ANR",
                                                               "AVI", "MFP", "MMF", "MPE", "MRE",
                                                               "OUT", "PPC", "REF", "REN", "RJP",
