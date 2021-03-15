@@ -1,0 +1,72 @@
+---
+title: "Avaliação do filtro de merenda para Licitações de Pernambuco"
+output: 
+  html_document:
+    css: styles.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.cap = '',
+  fig.align = 'center',
+  fig.width = 10,
+  fig.height = 8
+)
+```
+
+```{r}
+library(tidyverse)
+library(here)
+library(ggchicklet)
+library(hrbrthemes)
+theme_set(theme_minimal())
+
+source(here("reports/filtro-merenda-pe/lib.R"))
+```
+
+<br>
+
+## *Resumo*
+
+Esta análise tem por objetivo avaliar o regex usado para filtrar as licitações de merenda no estado de Pernambuco.
+
+### Quantas licitações registradas em Pernambuco entre 2018 e 2021?
+
+```{r}
+licitacoes <- process_licitacoes_filtradas_pe()
+```
+
+```{r fig.height=7}
+paleta <- c("#91bfda", "#E89D68", "#e06264", "#BA7E53")
+
+licitacoes %>% 
+  mutate(assunto = if_else(is.na(assunto), "outros", assunto)) %>% 
+  group_by(ano_processo, .drop = TRUE) %>% 
+  mutate(total_ano = n_distinct(codigo_pl)) %>% 
+  group_by(ano_processo, assunto, total_ano, .drop = TRUE) %>% 
+  summarise(n_licitacoes = n_distinct(codigo_pl)) %>% 
+  ggplot(aes(x = as.factor(ano_processo), y = n_licitacoes, fill = assunto)) +
+  geom_chicklet(width = 0.8, stat = "identity", position = "dodge") +
+  geom_text(aes(label = paste0(n_licitacoes, " (", round((n_licitacoes/total_ano)*100, 1), "%)")),
+            hjust = -0.1,
+            position = position_dodge(width = 0.8),
+            size = 4,
+            color = "#333333") +
+  coord_flip() +
+  scale_fill_manual(values = c("merenda" = paleta[3],
+                               "não definido" = paleta[2],
+                               "outros" = paleta[1]),
+                  name = "", labels = c("Merenda",
+                                        "Gêneros alimentícios",
+                                        "Outros")) +
+  scale_y_continuous(limits = c(0, 3.1e4), breaks = seq(0, 3e4, 5e3)) +
+  labs(x = "", y = "Número de licitações") +
+  theme_ipsum_gs()
+```
+
+
+
+
