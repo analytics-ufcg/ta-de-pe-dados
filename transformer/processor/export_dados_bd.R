@@ -27,6 +27,20 @@ source(here::here("transformer/utils/utils.R"))
 source(here::here("transformer/utils/join_utils.R"))
 source(here::here("transformer/utils/constants.R"))
 
+source(here::here("transformer/processor/estados/RS/licitacoes/processador_licitacoes_rs.R"))
+source(here::here("transformer/processor/estados/RS/orgaos/processador_orgaos_rs.R"))
+source(here::here("transformer/processor/estados/RS/licitacoes/processador_licitantes_rs.R"))
+source(here::here("transformer/processor/estados/RS/licitacoes/processador_itens_licitacoes_rs.R"))
+source(here::here("transformer/processor/estados/RS/licitacoes/processador_documentos_licitacoes_rs.R"))
+source(here::here("transformer/processor/estados/RS/contratos/processador_contratos_rs.R"))
+source(here::here("transformer/processor/estados/RS/licitacoes/processador_eventos_licitacoes_rs.R"))
+source(here::here("transformer/processor/estados/RS/licitacoes/processador_lotes_licitacoes_rs.R"))
+source(here::here("transformer/processor/estados/RS/contratos/processador_itens_contratos_rs.R"))
+source(here::here("transformer/processor/estados/RS/contratos/processador_compras_rs.R"))
+source(here::here("transformer/processor/estados/RS/contratos/processador_fornecedores_contratos_rs.R"))
+source(here::here("transformer/processor/estados/RS/contratos/processador_alteracoes_contratos_rs.R"))
+source(here::here("transformer/processor/estados/RS/contratos/processador_tipos_alteracoes_contratos_rs.R"))
+
 ## Assume que os dados foram baixados usando o módulo do crawler de dados (presente no diretório crawler
 ## na raiz desse repositório)
 
@@ -35,166 +49,62 @@ message("#### Iniciando processamento...")
 
 #--------------------------------- Processamento das tabelas do Rio Grande do Sul-------------------------------------------
 
-## Licitações 
-
+## Licitações
 message("#### licitações...")
-source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_licitacoes_rs.R"))
-source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_tipos_licitacoes_rs.R"))
-source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_tipos_modalidades_licitacoes_rs.R"))
-
-licitacoes_raw <- import_licitacoes(anos)
-
-licitacoes_rs <- licitacoes_raw %>%
-  adapta_info_licitacoes(tipo_filtro = filtro)
-
-tipo_licitacao <- adapta_tipos_licitacoes()
-tipo_modalidade_licitacao <- adapta_tipos_modalidade_licitacoes()
-
-licitacoes_rs <- join_licitacao_e_tipo(licitacoes_rs, tipo_licitacao) %>%
-  join_licitacao_e_tipo_modalidade(tipo_modalidade_licitacao) %>% 
-  add_info_estado(sigla_estado = "RS", id_estado = "43")
+licitacoes_rs <- processa_licitacoes_rs(anos, filtro)
 
 ## Órgãos --------------------------------------------------------------------------
-
 message("#### órgãos")
-source(here::here("transformer/adapter/estados/RS/orgaos/adaptador_orgaos_rs.R"))
-
-info_orgaos_rs <- import_orgaos() %>%
-  adapta_info_orgaos(import_licitacoes(anos) %>%
-                         adapta_info_licitacoes(tipo_filtro = filtro)) %>% 
-  add_info_estado(sigla_estado = "RS", id_estado = "43")
-
+info_orgaos_rs <- processa_orgaos_rs(anos, filtro)
 
 ## Licitantes ----------------------------------------------------------------------
-
 message("### licitantes...")
-
-source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_licitantes_rs.R"))
-
-licitantes_rs <- import_licitantes(anos) %>%
-  adapta_info_licitantes() %>% 
-  add_info_estado(sigla_estado = "RS", id_estado = "43")
+licitantes_rs <- processa_licitantes_rs(anos)
 
 ## Itens de licitações -------------------------------------------------------------
 message("#### itens de licitações...")
-source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_itens_licitacoes_rs.R"))
-
-itens_licitacao_raw <- import_itens_licitacao(anos)
-
-itens_licitacao_rs <- itens_licitacao_raw %>%
-  adapta_info_item_licitacao() %>% 
-  add_info_estado(sigla_estado = "RS", id_estado = "43")
+itens_licitacao_rs <- processa_itens_licitacoes_rs(anos)
 
 ## Documentos de licitações --------------------------------------------------------
-
 message("#### Documentos de licitações...")
-source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_documentos_licitacoes_rs.R"))
-source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_tipos_documentos_licitacoes_rs.R"))
-
-tipos_documento_licitacao <- adapta_tipos_documento_licitacoes()
-
-documento_licitacao_rs <- import_documentos_licitacoes(anos) %>%
-  adapta_info_documentos_licitacoes() %>% 
-  add_info_estado(sigla_estado = "RS", id_estado = "43")
+documento_licitacao_rs <- processa_documentos_licitacoes_rs(anos)
 
 ## Contratos ------------------------------------------------------------------------
-
 message("#### contratos...")
-source(here::here("transformer/adapter/estados/RS/contratos/adaptador_contratos_rs.R"))
-source(here::here("transformer/adapter/estados/RS/contratos/adaptador_tipos_instrumentos_contratos_rs.R"))
-source(here::here("transformer/adapter/estados/PE/contratos/adaptador_contratos_pe.R"))
-
-contratos_rs <- import_contratos(anos) %>%
-  adapta_info_contratos()
-  
-tipo_instrumento_contrato <- adapta_tipos_instrumento_contrato()
-
-contratos_rs <- join_contrato_e_instrumento(contratos_rs, tipo_instrumento_contrato) %>% 
-  add_info_estado(sigla_estado = "RS", id_estado = "43")
+contratos_rs <- processa_contratos_rs(anos)
 
 ## *Compras* ----------------------------------------------------------------------------
-
 message("#### licitações encerradas...")
-source(here("transformer/adapter/estados/RS/licitacoes/adaptador_eventos_licitacoes_rs.R"))
-
-licitacoes_encerradas_rs <- import_eventos_licitacoes(anos) %>%
-  filtra_licitacoes_encerradas() %>%
-  dplyr::mutate(data_evento = as.POSIXct(data_evento, format="%Y-%m-%d")) %>%
-  dplyr::mutate(dt_inicio_vigencia = data_evento)
+licitacoes_encerradas_rs <- processa_eventos_licitacoes_rs(anos)
 
 message("#### lotes de licitação...")
-source(here("transformer/adapter/estados/RS/licitacoes/adaptador_lotes_licitacoes_rs.R"))
-
-lotes_licitacoes_rs <- import_lotes_licitacao(anos) %>%
-  adapta_info_lote_licitacao() %>% 
-  add_info_estado(sigla_estado = "RS", id_estado = "43")
+lotes_licitacoes_rs <- processa_lotes_licitacoes_rs(anos)
 
 ### Itens de contratos e licitação -------------------------------------------------------
-
 message("#### preparando dados de itens de licitação e contratos...")
-source(here("transformer/adapter/estados/RS/contratos/adaptador_itens_contratos_rs.R"))
-source(here("transformer/adapter/estados/RS/licitacoes/adaptador_itens_licitacoes_rs.R"))
+itens_contrato <- processa_itens_contrato_rs(anos)
+itens_licitacao <- processa_itens_licitacoes_renamed_columns_rs()
 
-itens_contrato <- import_itens_contrato(anos)
-
-itens_licitacao <- itens_licitacao_raw %>%
-  rename_duplicate_columns()
-
-message("#### processando compras e itens...")
-source(here("transformer/adapter/estados/RS/contratos/adaptador_compras_rs.R"))
-
-compras_rs <- adapta_compras_itens(licitacoes_raw, licitacoes_encerradas_rs,
-                                     lotes_licitacoes_rs, itens_licitacao, itens_contrato) %>% 
-  add_info_estado(sigla_estado = "RS", id_estado = "43")
-
-
-message("#### processando dataframe de compras...")
-
-### Itens Comprados ---------------------------------------------------------------------
-message("#### processando itens comprados...")
+message("#### processando compras...")
+compras_rs <- processa_compras_rs(anos, licitacoes_encerradas_rs, lotes_licitacoes_rs, itens_licitacao, itens_contrato)
 
 message("#### itens com contratos...")
-itens_contrato <- itens_contrato %>%
-  dplyr::mutate(ORIGEM_VALOR = "contrato")
+itens_contrato <- processa_itens_contratos_renamed_columns_rs()
 
 message("#### itens sem contratos...")
-itens_licitacao <- itens_licitacao_raw %>%
-  adapta_item_licitacao_comprado(compras_rs)
-
-intersecao <- Reduce(dplyr::intersect, list(names(itens_contrato), names(itens_licitacao)))
-
-itens_comprados <- itens_licitacao %>%
-  dplyr::select(all_of(intersecao)) %>%
-  dplyr::bind_rows(itens_contrato) %>% 
-  distinct()
+itens_comprados <- processa_item_licitacao_comprados_rs(anos, compras_rs, itens_contrato)
 
 message("#### processando todos os itens comprados...")
-itens_contratos_rs <- itens_comprados %>%
-  adapta_info_item_contrato() %>% 
-  add_info_estado(sigla_estado = "RS", id_estado = "43")
+itens_contratos_rs <- processa_todos_itens_comprados(itens_comprados)
 
 ## Fornecedores nos contratos --------------------------------------------------------------
 message("#### fornecedores (contratos)...")
-source(here("transformer/adapter/estados/RS/contratos/adaptador_fornecedores_contratos_rs.R"))
-source(here("transformer/adapter/estados/PE/contratos/adaptador_fornecedores_contratos_pe.R"))
-
-fornecedores_contratos_rs <- import_fornecedores(anos) %>%
-  adapta_info_fornecedores(contratos_rs, compras_rs) %>% 
-  add_info_estado(sigla_estado = "RS", id_estado = "43")
-
+fornecedores_contratos_rs <- processa_fornecedores_contrato_rs(anos, contratos_rs, compras_rs)
 
 ## Alterações contratos --------------------------------------------------------------------
 message("#### alterações de contratos...")
-source(here::here("transformer/adapter/estados/RS/contratos/adaptador_alteracoes_contratos_rs.R"))
-source(here::here("transformer/adapter/estados/RS/contratos/adaptador_tipos_alteracoes_contratos_rs.R"))
-
-alteracoes_rs <- import_alteracoes_contratos(anos) %>%
-  adapta_info_alteracoes_contratos() %>% 
-  add_info_estado(sigla_estado = "RS", id_estado = "43")
-
-tipo_operacao_alteracao <- adapta_tipos_alteracao_contrato()
-
-
+alteracoes_rs <- processa_alteracoes_contratos_rs(anos)
+tipo_operacao_alteracao <- processa_tipos_alteracoes_contratos_rs(anos)
 
 #--------------------------------- Processamento das tabelas de Pernambuco-------------------------------------------
 
