@@ -22,9 +22,11 @@ library(tidyverse)
 library(here)
 library(ggchicklet)
 library(hrbrthemes)
+library(DT)
 theme_set(theme_minimal())
 
 source(here("reports/filtro-merenda-pe/lib.R"))
+source(here::here("transformer/adapter/estados/PE/orgaos/adaptador_orgaos_pe.R"))
 ```
 
 <br>
@@ -33,7 +35,7 @@ source(here("reports/filtro-merenda-pe/lib.R"))
 
 Esta análise tem por objetivo avaliar o regex usado para filtrar as licitações de merenda no estado de Pernambuco.
 
-### Quantas licitações registradas em Pernambuco entre 2018 e 2021?
+### Quantas licitações foram registradas em Pernambuco entre 2018 e 2021?
 
 ```{r}
 licitacoes <- process_licitacoes_filtradas_pe()
@@ -42,12 +44,14 @@ licitacoes <- process_licitacoes_filtradas_pe()
 ```{r fig.height=7}
 paleta <- c("#91bfda", "#E89D68", "#e06264", "#BA7E53")
 
-licitacoes %>% 
+classificacao_licitacoes <- licitacoes %>% 
   mutate(assunto = if_else(is.na(assunto), "outros", assunto)) %>% 
   group_by(ano_processo, .drop = TRUE) %>% 
   mutate(total_ano = n_distinct(codigo_pl)) %>% 
   group_by(ano_processo, assunto, total_ano, .drop = TRUE) %>% 
-  summarise(n_licitacoes = n_distinct(codigo_pl)) %>% 
+  summarise(n_licitacoes = n_distinct(codigo_pl))
+
+classificacao_licitacoes %>% 
   ggplot(aes(x = as.factor(ano_processo), y = n_licitacoes, fill = assunto)) +
   geom_chicklet(width = 0.8, stat = "identity", position = "dodge") +
   geom_text(aes(label = paste0(n_licitacoes, " (", round((n_licitacoes/total_ano)*100, 1), "%)")),
@@ -67,6 +71,93 @@ licitacoes %>%
   theme_ipsum_gs()
 ```
 
+### Total de licitações classificadas (merenda + gêneros alimentícios) por ano
 
+```{r}
+classificacao_licitacoes %>% 
+  filter(assunto != "outros") %>% 
+  group_by(ano_processo) %>% 
+  summarise(total = sum(n_licitacoes),
+            prop = round((total/total_ano)*100, 2),
+            .groups = "drop") %>% 
+  distinct() %>% 
+  datatable(
+    class = 'cell-border stripe',
+    rownames = FALSE,
+    options = list(pageLength = 10,
+                   dom = 't'),
+    colnames = c(
+      "Ano",
+      "Licitações de merenda",
+      "Proporção (%)"
+    )
+  ) %>% 
+  formatStyle(columns = dplyr::everything(.), 'font-size' = "13px")
+```
 
+### Qual a média do número de licitações de merenda por município por ano?
 
+Considerando apenas os municípios com licitações de merenda capturadas.
+
+```{r}
+contagem_licitacoes_merenda <- licitacoes %>% 
+  filter(!is.na(assunto)) %>% 
+  group_by(ano_processo, nome_municipio) %>% 
+  summarise(total_licitacoes = n_distinct(codigo_pl),
+            .groups = "drop")
+```
+
+```{r fig.height=4}
+contagem_licitacoes_merenda %>% 
+  group_by(ano_processo) %>% 
+  summarise(media = mean(total_licitacoes)) %>% 
+  ggplot(aes(x = as.factor(ano_processo), y = media)) +
+  geom_chicklet(width = 0.6, stat = "identity", fill = "#91bfda") +
+  geom_text(aes(label = round(media, 2)),
+            hjust = -0.1,
+            size = 4,
+            color = "#333333") +
+  coord_flip() +
+  labs(x = "", y = "Número de licitações") +
+  theme_ipsum_gs()
+```
+
+### Quais municípios tiveram licitações de merenda capturadas?
+
+Considerando todos os anos.
+
+```{r}
+contagem_licitacoes_merenda %>% 
+  group_by(nome_municipio) %>% 
+  summarise(total = sum(total_licitacoes)) %>%
+  distinct() %>% 
+  datatable(
+    class = 'cell-border stripe',
+    filter = 'top',
+    rownames = FALSE,
+    options = list(pageLength = 15,
+                   dom = 'ftp'),
+    colnames = c(
+      "Nome do Município",
+      "Número de licitações"
+    )
+  ) %>% 
+  formatStyle(columns = dplyr::everything(.), 'font-size' = "13px")
+```
+
+`r (contagem_licitacoes_merenda %>% count(nome_municipio) %>% nrow()) - 2` de 185 municípios tem licitações de merenda capturadas.
+
+```{r}
+municipios_pe <- import_municipios_pe() %>% 
+  select(nome = NOME, uf = CUNIFED) %>% 
+  filter(uf == "PE")
+
+municipios_com_licitacoes <- licitacoes %>% 
+  filter(!nome_municipio %in% c("ESTADO DE PERNAMBUCO", "Não definido")) %>% 
+  count(nome_municipio)
+
+municipios_sem_licitacoes <- municipios_pe %>% 
+  anti_join(municipios_com_licitacoes, by = c("nome" = "nome_municipio"))
+```
+
+O único município sem licitações de merenda no período é Fernando de Noronha - PE.

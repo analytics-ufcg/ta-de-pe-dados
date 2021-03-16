@@ -61,7 +61,7 @@ adapta_info_orgaos_pe <- function(orgaos_municipais, orgaos_estaduais, municipio
   
   info_orgaos_estaduais <- orgaos_estaduais %>%
     janitor::clean_names() %>% 
-    dplyr::mutate(cd_orgao = id_unidadegestora, nm_orgao = nome_unidade_gestora,
+    dplyr::mutate(cd_orgao = codigo_tce, nm_orgao = nome_unidade_gestora,
                   sigla_orgao = NA, esfera = "ESTADUAL", home_page = NA,
                   nome_municipio = "ESTADO DE PERNAMBUCO", nome_entidade = NA) %>% 
     dplyr::select(cd_orgao, nm_orgao, sigla_orgao, esfera, home_page, nome_municipio,
