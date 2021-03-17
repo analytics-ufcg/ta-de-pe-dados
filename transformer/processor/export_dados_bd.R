@@ -41,6 +41,10 @@ source(here::here("transformer/processor/estados/RS/contratos/processador_fornec
 source(here::here("transformer/processor/estados/RS/contratos/processador_alteracoes_contratos_rs.R"))
 source(here::here("transformer/processor/estados/RS/contratos/processador_tipos_alteracoes_contratos_rs.R"))
 
+source(here::here("transformer/processor/estados/PE/orgaos/processador_orgaos_pe.R"))
+source(here::here("transformer/processor/estados/PE/licitacoes/processador_licitacoes_pe.R"))
+source(here::here("transformer/processor/estados/PE/contratos/processador_contratos_pe.R"))
+source(here::here("transformer/processor/estados/PE/contratos/processador_fornecedores_contratos_pe.R"))
 ## Assume que os dados foram baixados usando o módulo do crawler de dados (presente no diretório crawler
 ## na raiz desse repositório)
 
@@ -48,6 +52,7 @@ source(here::here("transformer/processor/estados/RS/contratos/processador_tipos_
 message("#### Iniciando processamento...")
 
 #--------------------------------- Processamento das tabelas do Rio Grande do Sul-------------------------------------------
+message("#### Processando infos. do RS...")
 
 ## Licitações
 message("#### licitações...")
@@ -106,32 +111,25 @@ message("#### alterações de contratos...")
 alteracoes_rs <- processa_alteracoes_contratos_rs(anos)
 tipo_operacao_alteracao <- processa_tipos_alteracoes_contratos_rs(anos)
 
-#--------------------------------- Processamento das tabelas de Pernambuco-------------------------------------------
+#--------------------------------- Processamento das tabelas de Pernambuco-------------------
+message("#### Processando infos. de PE...")
+# Órgãos ------------------------------------------------------------------------------------
+message("#### órgãos...")
+info_orgaos_pe <- processa_orgaos_pe()
 
-source(here::here("transformer/adapter/estados/PE/licitacoes/adaptador_licitacoes_pe.R"))
-source(here::here("transformer/adapter/estados/PE/orgaos/adaptador_orgaos_pe.R"))
-source(here::here("transformer/adapter/estados/PE/contratos/adaptador_fornecedores_contratos_pe.R"))
-source(here::here("transformer/adapter/estados/PE/contratos/adaptador_contratos_pe.R"))
+# Licitacoes  -------------------------------------------------------------------------------
+message("#### Licitações...")
+licitacoes_pe <- processa_licitacoes_pe()
 
-info_orgaos_pe <- import_orgaos_municipais_pe() %>%
-  adapta_info_orgaos_pe(import_orgaos_estaduais_pe(), import_municipios_pe()) %>%
-  add_info_estado(sigla_estado = "PE", id_estado = "26")
+# Contratos  --------------------------------------------------------------------------------
+message("#### Contratos...")
+contratos_pe <- processa_contratos_pe()
 
-licitacoes_pe <- import_licitacoes_pe() %>%
-  adapta_info_licitacoes_pe(tipo_filtro = filtro) %>%
-  add_info_estado(sigla_estado = "PE", id_estado = "26")
-
-contratos_pe <- import_contratos_pe() %>% 
-  adapta_info_contratos_pe() %>%
-  add_info_estado(sigla_estado = "PE", id_estado = "26") 
-
-fornecedores_contratos_pe <- import_fornecedores_pe() %>%
-  adapta_info_fornecedores_pe(contratos_pe) %>%
-  add_info_estado(sigla_estado = "PE", id_estado = "26")
-  
+# Fornecedores contratos  -------------------------------------------------------------------
+message("#### Fornecedores contratos...")
+fornecedores_contratos_pe <- processa_fornecedores_contratos_pe()
 
 #---------------------------------------------- Agregador------------------------------------------------------------
-
 
 info_orgaos <- bind_rows(info_orgaos_rs,
                          info_orgaos_pe) %>%
