@@ -25,7 +25,7 @@ filtro <- args[2]
 source(here::here("transformer/utils/utils.R"))
 source(here::here("transformer/utils/read_utils.R"))
 source(here::here("transformer/utils/constants.R"))
-source(here::here("transformer/processor/alertas/processa_alertas_data.R"))
+source(here::here("transformer/processor/geral/alertas/processa_alertas_data.R"))
 
 print("Criando alertas...")
 
