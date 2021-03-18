@@ -45,6 +45,7 @@ source(here::here("transformer/processor/estados/PE/orgaos/processador_orgaos_pe
 source(here::here("transformer/processor/estados/PE/licitacoes/processador_licitacoes_pe.R"))
 source(here::here("transformer/processor/estados/PE/contratos/processador_contratos_pe.R"))
 source(here::here("transformer/processor/estados/PE/contratos/processador_fornecedores_contratos_pe.R"))
+source(here::here("transformer/processor/estados/PE/contratos/processador_itens_contratos_pe.R"))
 ## Assume que os dados foram baixados usando o módulo do crawler de dados (presente no diretório crawler
 ## na raiz desse repositório)
 
@@ -72,6 +73,7 @@ itens_licitacao_rs <- processa_itens_licitacoes_rs(anos)
 
 ## Documentos de licitações --------------------------------------------------------
 message("#### Documentos de licitações...")
+tipos_documento_licitacao_rs <- processa_tipos_documentos_licitacoes_rs()
 documento_licitacao_rs <- processa_documentos_licitacoes_rs(anos)
 
 ## Contratos ------------------------------------------------------------------------
@@ -100,7 +102,10 @@ message("#### itens sem contratos...")
 itens_comprados <- processa_item_licitacao_comprados_rs(anos, compras_rs, itens_contrato)
 
 message("#### processando todos os itens comprados...")
-itens_contratos_rs <- processa_todos_itens_comprados(itens_comprados)
+itens_contratos_rs <- processa_todos_itens_comprados(itens_comprados, itens_licitacao_rs %>%
+                                                       select("ds_item", "sg_unidade_medida", "cd_orgao", 
+                                                              "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", 
+                                                              "nr_lote", "nr_item"))
 
 ## Fornecedores nos contratos --------------------------------------------------------------
 message("#### fornecedores (contratos)...")
@@ -128,6 +133,10 @@ contratos_pe <- processa_contratos_pe()
 # Fornecedores contratos  -------------------------------------------------------------------
 message("#### Fornecedores contratos...")
 fornecedores_contratos_pe <- processa_fornecedores_contratos_pe()
+
+# Itens dos contratos  -------------------------------------------------------------------
+message("#### Itens contratos...")
+itens_contratos_pe <- processa_itens_contrato_pe(contratos_pe, licitacoes_pe)
 
 #---------------------------------------------- Agregador------------------------------------------------------------
 
@@ -183,7 +192,7 @@ info_item_licitacao <- itens_licitacao_rs %>%
 info_documento_licitacao <- documento_licitacao_rs %>%
   left_join(info_orgaos %>% select(id_orgao, cd_orgao, id_estado)) %>% 
   join_licitacoes_e_documentos(info_licitacoes) %>%
-  join_documento_e_tipo(tipos_documento_licitacao) %>%
+  join_documento_e_tipo(tipos_documento_licitacao_rs) %>%
   generate_hash_id(c("cd_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade",
                      "cd_tipo_documento", "nome_arquivo_documento",
                      "cd_tipo_fase", "id_evento_licitacao", "tp_documento", "nr_documento"),
@@ -215,12 +224,13 @@ info_contratos %<>% dplyr::bind_rows(info_compras) %>%
 
 
 info_item_contrato <- itens_contratos_rs %>%
+  dplyr::bind_rows(itens_contratos_pe) %>% 
   left_join(info_orgaos %>% select(id_orgao, cd_orgao, id_estado)) %>% 
   join_contratos_e_itens(info_contratos %>%
                            dplyr::select(dt_inicio_vigencia, cd_orgao, id_contrato, nr_licitacao, ano_licitacao,
                                          cd_tipo_modalidade, nr_contrato, ano_contrato,
                                          tp_instrumento_contrato)) %>%
-  generate_hash_id(c("cd_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", "nr_contrato", "ano_contrato",
+  generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", "nr_contrato", "ano_contrato",
                      "tp_instrumento_contrato", "nr_lote", "nr_item"), ITEM_CONTRATO_ID) %>%
   join_licitacoes_e_itens(info_licitacoes) %>%
   join_itens_contratos_e_licitacoes(info_item_licitacao) %>%
@@ -229,7 +239,11 @@ info_item_contrato <- itens_contratos_rs %>%
   create_categoria() %>%
   split_descricao() %>%
   dplyr::ungroup() %>%
-  marca_servicos()
+  marca_servicos() %>% 
+  select(id_item_contrato, id_contrato, id_orgao, cd_orgao, id_licitacao, id_item_licitacao, nr_lote, 
+         nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato, 
+         nr_item, qt_itens_contrato, vl_item_contrato, vl_total_item_contrato, origem_valor, sigla_estado, id_estado, dt_inicio_vigencia, ds_item, 
+         sg_unidade_medida, categoria, language, ds_1, ds_2, ds_3, servico)
 
 info_fornecedores_contratos <- bind_rows(fornecedores_contratos_rs,
                                          fornecedores_contratos_pe) %>%
