@@ -34,9 +34,9 @@ processa_itens_contratos_renamed_columns_rs <- function() {
 #' 
 #' @examples 
 #' itens_contratos_rs <- processa_todos_itens_comprados(itens_comprados)
-processa_todos_itens_comprados <- function(itens_comprados) {
+processa_todos_itens_comprados <- function(itens_comprados, itens_licitacoes) {
   itens_contratos_rs <- itens_comprados %>%
-    adapta_info_item_contrato() %>% 
+    adapta_info_item_contrato(itens_licitacoes) %>% 
     add_info_estado(sigla_estado = "RS", id_estado = "43")
   
   return(itens_contratos_rs)

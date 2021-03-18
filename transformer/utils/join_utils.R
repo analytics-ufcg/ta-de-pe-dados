@@ -16,7 +16,7 @@ join_licitacoes_e_itens <- function(itens_df, licitacoes_df) {
 
 join_contratos_e_itens <- function(itens_contrato_df, contratos_df) {
   itens_contrato_df %>% 
-    dplyr::left_join(contratos_df, 
+    dplyr::inner_join(contratos_df, 
                by = c("cd_orgao", "nr_licitacao", "cd_tipo_modalidade",
                      "ano_licitacao", "nr_contrato", "ano_contrato", 
                      "tp_instrumento_contrato"))
@@ -74,9 +74,10 @@ join_contrato_e_orgao <- function(contratos, orgao_municipio) {
 }
 
 join_itens_contratos_e_licitacoes <- function(itens_contratos, itens_licitacoes) {
-  itens_licitacoes %<>% dplyr::select(id_licitacao, id_item_licitacao = id_item, ds_item, 
-                                      nr_lote, nr_item, sg_unidade_medida)
-  itens_contratos %<>% dplyr::left_join(itens_licitacoes) 
+  itens_licitacoes %<>% dplyr::select(id_licitacao, id_item_licitacao = id_item, 
+                                      nr_lote, nr_item) 
+  itens_contratos %<>% dplyr::left_join(itens_licitacoes, c("id_licitacao", "nr_lote", "nr_item"))
+    
 }
 
 join_contratos_e_fornecedores <- function(fornecedores_df, contratos_df) {
