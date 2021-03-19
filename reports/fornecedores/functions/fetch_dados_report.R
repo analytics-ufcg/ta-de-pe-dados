@@ -8,8 +8,8 @@ library(here)
 #' fornecedores <- fetch_diferenca_abertura_contrato()
 #' 
 fetch_diferenca_abertura_contrato <- function() {
-  source(here::here("code/contratos/processa_contratos.R"))
-  source(here::here("code/utils/read_utils.R"))
+  source(here::here("transformer/adapter/RS/contratos/adaptador_contratos_rs.R"))
+  source(here::here("transformer/utils/read_utils.R"))
   
   fornecedores_tce <- read_csv(here("data/bd/info_fornecedores_contrato.csv"))
   
@@ -30,7 +30,7 @@ fetch_diferenca_abertura_contrato <- function() {
            nm_orgao, nr_documento_contratado, dt_inicio_vigencia, vl_contrato, descricao_objeto_contrato)
   
   contratos <- import_contratos(c(2018, 2019, 2020)) %>% 
-    processa_info_contratos() %>% 
+    adapta_info_contratos() %>% 
     select(id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato,
            nm_orgao, nr_documento_contratado, dt_inicio_vigencia, vl_contrato, descricao_objeto_contrato)
   

@@ -28,7 +28,7 @@ services:
 
 
     volumes:
-      - ./code:/app/code
+      - ./transformer:/app/transformer
       - ./fetcher:/app/fetcher
       - ./data:/app/data
       - ./reports:/app/reports
