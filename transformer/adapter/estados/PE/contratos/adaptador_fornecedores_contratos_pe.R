@@ -57,6 +57,14 @@ adapta_info_fornecedores_pe <- function(fornecedores_pe_df, contratos_pe_df) {
     dplyr::right_join(fornecedores_info_geral,
                      by = c("nr_documento" = "nr_documento_contratado")) %>% 
     dplyr::mutate(total_de_contratos = ifelse(is.na(total_de_contratos), 0, total_de_contratos)) %>% 
+    #TODO: melhorar classificação de tp_pessoa
+    dplyr::mutate(tp_pessoa = dplyr::if_else(
+      is.na(tp_pessoa),
+      dplyr::if_else(nchar(nr_documento) < 14,
+                     "F",
+                     "J"),
+      tp_pessoa
+    )) %>% 
     dplyr::filter(!is.na(nr_documento))
   
   return(info_fornecedores)
