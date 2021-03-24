@@ -8,7 +8,7 @@ source(here::here("transformer/utils/utils.R"))
 source(here::here("transformer/utils/read_utils.R"))
 source(here::here("transformer/utils/join_utils.R"))
 source(here::here("transformer/utils/constants.R"))
-source(here::here("transformer/processor/novidades/processa_novidades.R"))
+source(here::here("transformer/processor/geral/novidades/processa_novidades.R"))
 
 tipos_novidades <- create_tipo_novidades()
 

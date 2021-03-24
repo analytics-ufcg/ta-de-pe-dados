@@ -58,10 +58,10 @@ fetch-process-receita:
 .PHONY: fetch-process-receita
 process-data-itens-similares:
 	docker exec -it feed python3.6 /feed/manage.py process-itens-similares
-	docker exec -it r-container sh -c "cd /app/transformer/processor/alertas && Rscript export_itens_similares.R"
+	docker exec -it r-container sh -c "cd /app/transformer/processor/geral/alertas && Rscript export_itens_similares.R"
 .PHONY: process-data-itens-similares
 process-data-alertas:
-	docker exec -it r-container sh -c "cd /app/transformer/processor/alertas && Rscript export_alertas_bd.R $(anos) $(filtro)"
+	docker exec -it r-container sh -c "cd /app/transformer/processor/geral/alertas && Rscript export_alertas_bd.R $(anos) $(filtro)"
 .PHONY: process-data-alertas
 feed-create:
 	docker exec -it feed python3.6 /feed/manage.py create
