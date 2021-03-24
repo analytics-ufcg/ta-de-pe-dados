@@ -346,7 +346,7 @@ read_fornecedores_contratos_pe <- function() {
 
 }
 
-read_itens_contrato_processados_pe <- function() {
+read_itens_contratos_pe <- function() {
   cnaes <- readr::read_csv(here::here("data/tce_pe/itens.csv"),
                            col_types = list(
                              .default = readr::col_character()

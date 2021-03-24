@@ -96,7 +96,7 @@ message("#### processando compras...")
 compras_rs <- processa_compras_rs(anos, licitacoes_encerradas_rs, lotes_licitacoes_rs, itens_licitacao, itens_contrato)
 
 message("#### itens com contratos...")
-itens_contrato <- processa_itens_contratos_renamed_columns_rs()
+itens_contrato <- processa_itens_contratos_renamed_columns_rs(itens_contrato)
 
 message("#### itens sem contratos...")
 itens_comprados <- processa_item_licitacao_comprados_rs(anos, compras_rs, itens_contrato)
@@ -132,7 +132,7 @@ contratos_pe <- processa_contratos_pe()
 
 # Fornecedores contratos  -------------------------------------------------------------------
 message("#### Fornecedores contratos...")
-fornecedores_contratos_pe <- processa_fornecedores_contratos_pe()
+fornecedores_contratos_pe <- processa_fornecedores_contratos_pe(contratos_pe)
 
 # Itens dos contratos  -------------------------------------------------------------------
 message("#### Itens contratos...")
@@ -178,7 +178,6 @@ info_contratos <- bind_rows(contratos_pe, contratos_rs) %>%
   generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade",
                       "nr_contrato", "ano_contrato", "tp_instrumento_contrato"), CONTRATO_ID) %>%
    dplyr::select(id_contrato, id_estado, id_orgao, id_licitacao, dplyr::everything())
-  
 
 info_item_licitacao <- itens_licitacao_rs %>%
   left_join(info_orgaos %>% select(id_orgao, cd_orgao, id_estado)) %>% 
@@ -202,10 +201,10 @@ info_documento_licitacao <- documento_licitacao_rs %>%
 info_compras <- compras_rs %>%
   dplyr::left_join(info_licitacoes %>%
                      dplyr::select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade,
-                                   id_licitacao, nm_orgao),
+                                   id_licitacao, id_orgao, nm_orgao),
                    by = c("cd_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade")) %>%
   dplyr::filter(!is.na(id_licitacao)) %>%
-  generate_hash_id(c("cd_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade",
+  generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade",
                      "nr_contrato", "ano_contrato", "tp_instrumento_contrato"), CONTRATO_ID) %>%
   dplyr::distinct(id_licitacao, id_contrato, .keep_all = TRUE) %>%
   dplyr::select(id_contrato, id_licitacao, cd_orgao, nr_contrato, ano_contrato, nm_orgao,
@@ -220,12 +219,14 @@ info_compras <- compras_rs %>%
   add_info_estado(sigla_estado = "RS", id_estado = "43")
 
 info_contratos %<>% dplyr::bind_rows(info_compras) %>%
-  dplyr::mutate(language = 'portuguese')
+  dplyr::mutate(language = 'portuguese') %>% 
+  distinct(id_contrato, .keep_all = TRUE)
 
 
 info_item_contrato <- itens_contratos_rs %>%
-  dplyr::bind_rows(itens_contratos_pe) %>% 
-  left_join(info_orgaos %>% select(id_orgao, cd_orgao, id_estado)) %>% 
+  dplyr::bind_rows(itens_contratos_pe) %>%
+  left_join(info_orgaos %>% select(id_orgao, cd_orgao, id_estado),
+            by = c("cd_orgao", "id_estado")) %>% 
   join_contratos_e_itens(info_contratos %>%
                            dplyr::select(dt_inicio_vigencia, cd_orgao, id_contrato, nr_licitacao, ano_licitacao,
                                          cd_tipo_modalidade, nr_contrato, ano_contrato,

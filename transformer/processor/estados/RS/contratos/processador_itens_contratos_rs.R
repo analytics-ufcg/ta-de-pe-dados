@@ -17,11 +17,13 @@ processa_itens_contrato_rs <- function(anos) {
 
 #' Processa dados de itens de contratos com colunas renomeadas do estado do Rio Grande do Sul
 #' 
+#' @param itens_contrato Dataframe com itens de contrato
+#' 
 #' @return Dataframe com informações processadas dos itens de contratos
 #' 
 #' @examples 
 #' itens_contrato <- processa_itens_contratos_renamed_columns_rs()
-processa_itens_contratos_renamed_columns_rs <- function() {
+processa_itens_contratos_renamed_columns_rs <- function(itens_contrato) {
   itens_contrato <- itens_contrato %>%
     dplyr::mutate(ORIGEM_VALOR = "contrato")
   
