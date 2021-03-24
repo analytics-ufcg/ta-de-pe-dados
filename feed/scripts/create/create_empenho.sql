@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS "empenho" (
     "id_contrato" VARCHAR(32),
     "ano_recebimento" INTEGER,
     "mes_recebimento" INTEGER,
+    "cd_orgao" INTEGER,
     "nome_orgao" VARCHAR(240),
     "cd_orgao_orcamentario" INTEGER,
     "nome_orgao_orcamentario" VARCHAR(240),
