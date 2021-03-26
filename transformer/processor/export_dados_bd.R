@@ -124,7 +124,7 @@ info_orgaos_pe <- processa_orgaos_pe()
 
 # Licitacoes  -------------------------------------------------------------------------------
 message("#### Licitações...")
-licitacoes_pe <- processa_licitacoes_pe()
+licitacoes_pe <- processa_licitacoes_pe(filtro)
 
 # Contratos  --------------------------------------------------------------------------------
 message("#### Contratos...")
