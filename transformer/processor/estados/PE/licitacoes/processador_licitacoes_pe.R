@@ -7,7 +7,7 @@ source(here::here("transformer/adapter/estados/PE/licitacoes/adaptador_licitacoe
 #' @return Dataframe com informações processadas das licitações
 #' 
 #' @examples 
-#' licitacoes_pe <- processa_licitacoes_pe()
+#' licitacoes_pe <- processa_licitacoes_pe(filtro)
 processa_licitacoes_pe <- function(filtro) {
   licitacoes_pe <- import_licitacoes_pe() %>%
     adapta_info_licitacoes_pe(tipo_filtro = filtro) %>%
