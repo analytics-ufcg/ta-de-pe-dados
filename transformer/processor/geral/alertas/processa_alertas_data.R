@@ -1,9 +1,13 @@
 library(tidyverse)
+library(magrittr)
+library(futile.logger)
 source(here::here("transformer/utils/read_utils.R"))
 source(here::here("transformer/utils/utils.R"))
 source(here::here("transformer/utils/constants.R"))
-source(here::here("transformer/adapter/estados/RS/contratos/adaptador_contratos_rs.R"))
+source(here::here("transformer/processor/estados/PE/contratos/processador_contratos_pe.R"))
+source(here::here("transformer/processor/estados/RS/contratos/processador_contratos_rs.R"))
 source(here::here("transformer/processor/geral/alertas/processa_itens_fornecedores.R"))
+source(here::here("transformer/processor/aggregator/agrega_contratos.R"))
 
 #' Cria dataframe com os tipos de alertas
 #' 
@@ -16,6 +20,9 @@ create_tipo_alertas <- function() {
   titulo <- c("Contratado logo após a abertura", "Produtos atípicos")
   
   tipos_alertas <- data.frame(id_tipo, titulo)
+  flog.info(str_glue("{tipos_alertas %>% nrow()} tipos de alertas gerados"))
+  
+  return(tipos_alertas)
 }
 
 #' Processa alertas referentes aos CNAEs principais atípicos no fornecimento de determinados itens
@@ -76,8 +83,9 @@ processa_alertas_cnaes_atipicos_itens <- function(filtro) {
 #' @examples 
 #' alertas <- processa_alertas_data_abertura_contrato(c(2018, 2019, 2020))
 processa_alertas_data_abertura_contrato <- function(anos) {
-  print("Processando alertas da data de abertura...")
+  flog.info(str_glue("Processando alertas da data de abertura!"))
   LIMITE_DIFERENCA_DIAS = 30
+  flog.info(str_glue("Diferença de dias entre a abertura e o primeiro contrato: {LIMITE_DIFERENCA_DIAS}"))
   
   fornecedores_tce <- read_fornecedores_processados()
   
@@ -89,17 +97,24 @@ processa_alertas_data_abertura_contrato <- function(anos) {
                        porte_empresa),
               by = c("nr_documento" = "cnpj")) %>% 
     mutate(diferenca_abertura_contrato = as.numeric(difftime(data_primeiro_contrato, data_inicio_atividade, units="days"))) %>% 
-    filter(diferenca_abertura_contrato < LIMITE_DIFERENCA_DIAS)
+    filter(diferenca_abertura_contrato <= LIMITE_DIFERENCA_DIAS)
+  
+  flog.info(str_glue("{fornecedores %>% nrow()} fornecedores com o alerta!"))
   
   contratos_merge <- .processa_contratos_info(anos)
+  flog.info(str_glue("Pesquisa feita em {contratos_merge %>% nrow()} contratos de {contratos_merge %>% count(id_estado) %>% nrow()} estados."))
   
   fornecedores_contratos <- fornecedores %>% 
-    left_join(contratos_merge, by = c("nr_documento" = "nr_documento_contratado", "data_primeiro_contrato" = "dt_inicio_vigencia"))
+    left_join(contratos_merge, by = c("nr_documento" = "nr_documento_contratado", 
+                                      "data_primeiro_contrato" = "dt_inicio_vigencia"))
   
   alertas_data <- fornecedores_contratos %>% 
     mutate(id_tipo = 1) %>% 
     mutate(info = paste0("Contrato ", nr_contrato, "/", ano_contrato, " em ", nm_orgao)) %>% 
-    select(nr_documento, id_contrato, id_tipo, info)
+    select(nr_documento, id_contrato, id_tipo, info) %>% 
+    distinct(nr_documento, info, .keep_all = TRUE)
+  
+  flog.info(str_glue("{alertas_data %>% nrow()} alertas de data de abertura gerados!"))
   
   return(alertas_data)
 }
@@ -115,17 +130,17 @@ processa_alertas_data_abertura_contrato <- function(anos) {
 .processa_contratos_info <- function(anos) {
   contratos_processados <- read_contratos_processados() %>% 
     mutate(id_orgao = as.character(id_orgao)) %>% 
-    select(id_contrato, cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato,
-           nm_orgao, nr_documento_contratado, dt_inicio_vigencia, vl_contrato, descricao_objeto_contrato)
-  
-  contratos <- import_contratos(anos) %>% 
-    adapta_info_contratos() %>% 
-    select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato,
-           nm_orgao, nr_documento_contratado, dt_inicio_vigencia, vl_contrato, descricao_objeto_contrato)
+    select(id_contrato, id_estado, id_orgao, cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, 
+           nr_contrato, ano_contrato, tp_instrumento_contrato,
+           nm_orgao, nr_documento_contratado, dt_inicio_vigencia, vl_contrato, 
+           descricao_objeto_contrato)
+
+  todos_contratos <- agrega_contratos(anos)
   
   contratos_merge <- contratos_processados %>% 
-    bind_rows(contratos) %>% 
-    distinct(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato, .keep_all = T)
+    bind_rows(todos_contratos) %>% 
+    distinct(id_estado, cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, 
+             nr_contrato, ano_contrato, tp_instrumento_contrato, .keep_all = T)
   
   return(contratos_merge)
 }

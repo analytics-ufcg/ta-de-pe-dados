@@ -1,6 +1,7 @@
 source(here::here("transformer/adapter/estados/RS/contratos/adaptador_contratos_rs.R"))
 source(here::here("transformer/adapter/estados/RS/contratos/adaptador_tipos_instrumentos_contratos_rs.R"))
 source(here::here("transformer/adapter/estados/PE/contratos/adaptador_contratos_pe.R"))
+source(here::here("transformer/utils/join_utils.R"))
 
 #' Processa dados de contratos do estado do Rio Grande do Sul para um conjunto de filtros
 #' 
