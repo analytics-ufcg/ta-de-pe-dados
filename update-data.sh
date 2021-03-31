@@ -79,7 +79,7 @@ run_data_process_update() {
     fi
 
     pprint "Processa dados de empenhos para considerar apenas os das licitações filtradas"
-    docker exec r-container sh -c "cd /app/code/processor && Rscript export_empenhos_bd.R"
+    docker exec r-container sh -c "cd /app/code/processor/estados/RS/empenhos && Rscript export_empenhos_bd.R"
 
     pprint "Processa dados de novidades"
     docker exec r-container sh -c "cd /app/code/processor && Rscript export_novidades_bd.R"
