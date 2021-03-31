@@ -50,7 +50,8 @@ import_empenhos_por_ano <- function(ano) {
 #' 
 adapta_info_empenhos <- function(empenhos_df) {
   
-  empenhos_df %<>% dplyr::select(id_licitacao, ano_recebimento, mes_recebimento, id_orgao = cd_orgao, nome_orgao, cd_orgao_orcamentario,
+  empenhos_df %<>% dplyr::select(id_licitacao, ano_recebimento, mes_recebimento, id_orgao, cd_orgao, 
+                                 nome_orgao, cd_orgao_orcamentario,
                                  nome_orgao_orcamentario, cd_unidade_orcamentaria, nome_unidade_orcamentaria, tp_unidade, 
                                  tipo_operacao, ano_empenho, ano_operacao, 
                                  dt_empenho, dt_operacao, nr_empenho, historico, cd_funcao, ds_funcao, cd_subfuncao, ds_subfuncao, cd_programa, 
@@ -67,13 +68,15 @@ adapta_info_empenhos <- function(empenhos_df) {
 #' Recupera informações dos contratos relacionados a empenhos em fases anteriores
 #'
 #' @param empenhos_df Dataframe de empenhos
+#' 
+#' @param contratos_df Dataframe de contratos
 #'
 #' @return Dataframe com informações dos ids dos contratos ligados aos empenhos
 #'   
 #' @examples 
 #' empenhos_contratos <- adapta_id_contrato_empenhos(empenhos_df)
 #' 
-adapta_id_contrato_empenhos <- function(empenhos_df) {
+adapta_id_contrato_empenhos <- function(empenhos_df, contratos_df) {
   chave_empenhos_contratos <- c("ano_recebimento", "mes_recebimento", "id_orgao", "cd_orgao_orcamentario", "nome_orgao_orcamentario", 
                                 "cd_unidade_orcamentaria", "nome_unidade_orcamentaria", "tp_unidade", "dt_empenho", "ano_empenho", 
                                 "ano_operacao", "nr_empenho", "cd_credor", "cnpj_cpf",
