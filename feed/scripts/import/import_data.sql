@@ -25,7 +25,7 @@ UPDATE orgao SET language = 'portuguese';
 
 CREATE MATERIALIZED VIEW item_search AS 
 SELECT o.nome_municipio, i.ano_licitacao, i.id_item_contrato, i.id_contrato, i.nr_contrato, i.dt_inicio_vigencia, i.id_licitacao, 
-    i.qt_itens_contrato, i.vl_item_contrato, i.vl_total_item_contrato, ds_item, i.sg_unidade_medida, i.servico, i.id_estado,
+    i.qt_itens_contrato, i.vl_item_contrato, i.vl_total_item_contrato, ds_item, i.sg_unidade_medida, i.servico, i.id_estado, i.sigla_estado,
     setweight(to_tsvector(i.language :: regconfig,i.ds_1),'A') || 
     setweight(to_tsvector(i.language :: regconfig,i.ds_2),'C') || 
     setweight(to_tsvector(i.language :: regconfig,i.ds_3),'D') || 
