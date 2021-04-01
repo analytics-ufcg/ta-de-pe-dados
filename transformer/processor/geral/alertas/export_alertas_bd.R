@@ -1,4 +1,6 @@
+library(tidyverse)
 library(magrittr)
+library(futile.logger)
 
 help <- "
 Usage:
@@ -18,7 +20,7 @@ if (length(args) < min_num_args) {
 }
 
 anos <- unlist(strsplit(args[1], split=","))
-# anos = c(2018, 2019, 2020)
+# anos = c(2018, 2019, 2020, 2021)
 filtro <- args[2]
 # filtro <- "merenda"
 
@@ -27,7 +29,7 @@ source(here::here("transformer/utils/read_utils.R"))
 source(here::here("transformer/utils/constants.R"))
 source(here::here("transformer/processor/geral/alertas/processa_alertas_data.R"))
 
-print("Criando alertas...")
+flog.info("Criando alertas...")
 
 tipos_alerta <- create_tipo_alertas()
 
@@ -40,6 +42,7 @@ alertas_bd <- alertas %>%
   generate_hash_id(c("id_tipo", "nr_documento", "id_contrato"), ALERTA_ID) %>% 
   dplyr::select(id_alerta, dplyr::everything())
 
+flog.info("Escrevendo dados em csv...")
 readr::write_csv(tipos_alerta, here::here("data/bd/tipo_alerta.csv"))
 readr::write_csv(alertas_bd, here::here("data/bd/alerta.csv"))
-print("Concluído!")
+flog.info("Concluído!")
