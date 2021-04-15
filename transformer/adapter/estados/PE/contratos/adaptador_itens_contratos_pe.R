@@ -47,7 +47,7 @@ adapta_info_itens_contratos_pe <- function(itens_contrato_pe_df, contratos_pe_df
               by = c("nr_licitacao")) %>%
     dplyr::mutate(origem_valor = 'contrato')  %>%
     mutate(nr_item = as.integer(nr_item),
-      qt_itens_contrato = as.double(nr_item),
+      qt_itens_contrato = as.double(qt_itens_contrato),
       vl_item_contrato = as.double(vl_item_contrato),
       vl_total_item_contrato = as.double(vl_total_item_contrato)
     )
