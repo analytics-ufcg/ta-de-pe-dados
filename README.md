@@ -72,11 +72,11 @@ docker ps
 
 ### Passo 1.1 - Configuração do Banco de dados local da Receita Federal
 
-TODO
+[Link](https://github.com/JoaquimCMH/receita-cnpj-dados) para as instruções de configuração do banco de dados do Cadastro Nacional da Pessoa Jurídica (CNPJ) oriundos da Receita Federal.
 
 ### Passo 1.2 - Configuração do Banco de dados local do Tome Conta (TCE-PE)
 
-TODO
+[Link](https://github.com/JoaquimCMH/tomeconta-tce-pe-dados) para as instruções de configuração do banco de dados do Tribunal de Contas do estado de Pernambuco.
 
 
 ## 2. Fetcher
