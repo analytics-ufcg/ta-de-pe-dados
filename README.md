@@ -26,52 +26,29 @@ Obs: todos comandos citados nesse README utilizam o make como facilitador para e
 
 Mais detalhadamente, cada componente da camada de dados do *Tá de Pé?* realiza as seguintes tarefas:
 
-1. **Fetcher**
-   - 1.1 Download dos dados brutos do TCE-RS
-   - 1.2 Download dos dados brutos do TCE-PE
-   - 1.3 Download dos dados da Receita Federal
-2. **Processor**
-   - 2.1 Processamento dos dados de licitações e contratos
-   - 2.2 Processamento dos dados de fornecedores
-   - 2.3 Processamento dos dados da Receita Federal
-   - 2.4 Processamento dos dados de empenhos processados
-   - 2.5 Processamento dos dados de novidades
-   - 2.6 Processamento dos dados de alertas
-3. **Feed**
-   - 3.1 Importação dos dados de licitações e contratos (processados), e empenhos (brutos) para o BD
-   - 3.2 Importação dos dados de empenhos processados para o BD
-   - 3.3 Importação dos dados de novidades para o BD
-   - 3.4 Importação dos dados de alertas para o BD
+0. **Configuração dos Serviços Tá de pé dados**
+1. **Configuração dos Bancos de dados Locais**
+   - 1.1 Configuração do Banco de dados local da Receita Federal
+   - 1.2 Configuração do Banco de dados local do Tome Conta (TCE-PE)
+2. **Fetcher**
+   - 2.1 Download dos dados brutos do TCE-RS
+   - 2.2 Download dos dados brutos do TCE-PE
+3. **Processor**
+   - 3.1 Processamento dos dados de licitações e contratos
+   - 3.2 Processamento dos dados de fornecedores
+   - 3.3 Processamento dos dados da Receita Federal
+   - 3.4 Processamento dos dados de empenhos processados
+   - 3.5 Processamento dos dados de novidades
+   - 3.6 Processamento dos dados de alertas
+4. **Feed**
+   - 4.1 Importação dos dados de licitações e contratos (processados), e empenhos (brutos) para o BD
+   - 4.2 Importação dos dados de empenhos processados para o BD
+   - 4.3 Importação dos dados de novidades para o BD
+   - 4.4 Importação dos dados de alertas para o BD
 
 Para realizar estas tarefas, siga o tutorial:
 
-## 1. Fetcher
-
-A primeira etapa consiste em baixar os dados brutos, disponíveis na forma de dados abertos, de suas fontes. Assim, baixamos os dados de licitações, contratos e empenhos disponibilizados pelo [TCE-RS](http://dados.tce.rs.gov.br/) e pelo [TCE-PE](https://www.tce.pe.gov.br/internet/index.php/dados-abertos/bases-de-dados-completas), e os dados referentes à informações dos fornecedores disponíveis no Banco da Receita Federal.
-
-### Passo 1.0
-
-Faça o build da imagem docker com as dependências do fetcher
-
-```shell
-make build-fetcher-data-rs
-```
-
-### Passo 1.1
-
-Execute o seguinte comando para baixar os dados do TCE-RS.
-
-```shell
-make fetch-data-rs ano=<ano_para_baixar>
-```
-
-Substitua <ano_para_baixar> com um ano de sua escolha para download (2018, 2019 e 2020 foram os anos já testados para download).
-
-## 2. Processor
-
-Esta etapa consiste em processar os dados para o formato que utilizamos e encontrar alertas.
-
-### Passo 2.0
+### 0. Configuração dos Serviços Tá de pé dados
 
 Precisamos levantar os serviços usados no processamento de dados. Para isso, é preciso configurar as variáveis de ambiente necessárias para os serviços executarem:
 
@@ -91,29 +68,74 @@ d) É possível verificar os serviços em execução:
 docker ps
 ```
 
+## 1. Configuração dos Bancos de dados Locais
+
+### Passo 1.1 - Configuração do Banco de dados local da Receita Federal
+
+[Link](https://github.com/JoaquimCMH/receita-cnpj-dados) para as instruções de configuração do banco de dados do Cadastro Nacional da Pessoa Jurídica (CNPJ) oriundos da Receita Federal.
+
+### Passo 1.2 - Configuração do Banco de dados local do Tome Conta (TCE-PE)
+
+[Link](https://github.com/JoaquimCMH/tomeconta-tce-pe-dados) para as instruções de configuração do banco de dados do Tribunal de Contas do estado de Pernambuco.
+
+
+## 2. Fetcher
+
+A primeira etapa consiste em baixar os dados brutos, disponíveis na forma de dados abertos, de suas fontes. Assim, baixamos os dados de licitações, contratos e empenhos disponibilizados pelo [TCE-RS](http://dados.tce.rs.gov.br/) e pelo [TCE-PE](https://www.tce.pe.gov.br/internet/index.php/dados-abertos/bases-de-dados-completas), e os dados referentes à informações dos fornecedores disponíveis no Banco da Receita Federal.
+
+### Passo 2.0
+
+Faça o build da imagem docker com as dependências do fetcher
+
+```shell
+make build-fetcher-data-rs
+```
+
 ### Passo 2.1
+
+Execute o seguinte comando para baixar os dados do TCE-RS.
+
+```shell
+make fetch-data-rs ano=<ano_para_baixar>
+```
+
+Substitua <ano_para_baixar> com um ano de sua escolha para download (2018, 2019 e 2020 foram os anos já testados para download).
+
+### Passo 2.2
+
+Execute o seguinte comando para baixar os dados do TCE-PE.
+
+```shell
+make fetch-data-pe ano_inicial=<ano> ano_final=<ano>
+```
+
+## 3. Processor
+
+Esta etapa consiste em processar os dados para o formato que utilizamos e encontrar alertas.
+
+### Passo 3.1
 
 Obs: É preciso ter feito o download dos dados para os anos de interesse, conforme explicado na seção *Fetcher*.
 
 Execute o script de processamento dos dados gerais vindos do TCE:
 
 ```shell
-make process-data anos=2018,2019,2020 filtro=covid
+make process-data anos=2018,2019,2020,2021 filtro=merenda
 ```
 
 Obs: o parâmetro anos pode conter um ou mais anos (estes separados por vírgula). O paraâmetro filtro pode ser 'merenda' ou 'covid'.
 
 Os dados processados estarão disponíveis no diretório `data/bd`.
 
-#### Passo 2.2
+#### Passo 3.2
 
 Para processar as informações de fornecedores (como data do primeiro contrato e total de contratos), execute:
 
 ```shell
-make process-data-fornecedores anos=2018,2019,2020
+make process-data-fornecedores anos=2018,2019,2020,2021
 ```
 
-#### Passo 2.3
+#### Passo 3.3
 Para processar as informações da Receita Federal para os fornecedores, execute:
 
 ```shell
@@ -131,9 +153,9 @@ RECEITA_PORT
 ```
 Entre em contato com a equipe de desenvolvimento para ter acesso as variáveis do BD disponível para acesso.
 
-#### Passo 2.4
+#### Passo 3.4
 
-Obs: É preciso realizar o passo 3.1 antes deste.
+Obs: É preciso realizar o passo 4.1 antes deste.
 
 Processe os dados de empenhos:
 
@@ -143,7 +165,7 @@ make process-data-empenhos
 
 Os dados processados de empenhos estarão disponíveis no diretório `data/bd`.
 
-### Passo 2.5
+### Passo 3.5
 
 Processe os dados de novidades:
 
@@ -153,7 +175,7 @@ make process-data-novidades
 
 Os dados processados de novidades estarão disponíveis no diretório `data/bd`.
 
-### Passo 2.6
+### Passo 3.6
 
 Processe os dados de alertas referentes a produtos atípicos:
 
@@ -164,14 +186,14 @@ make process-data-itens-similares
 Processe os dados de alertas referentes a fornecedores contratados logo após a abertura da empresa:
 
 ```shell
-make process-data-alertas anos=2018,2019,2020 filtro=merenda
+make process-data-alertas anos=2018,2019,2020,2021 filtro=merenda
 ```
 
 Os dados processados de alertas estarão disponíveis no diretório `data/bd`.
 
-## 3. Feed
+## 4. Feed
 
-### Passo 3.1
+### Passo 4.1
 
 Importe os dados que foram processados (licitações e contratos) e os dados brutos de empenhos no BD fazendo:
 
@@ -195,7 +217,7 @@ make feed-import-empenho-raw
 
 Obs: Este comando pode demorar bastante devido ao carregamento dos Empenhos.
 
-### Passo 3.2
+### Passo 4.2
 
 Importe os dados de empenhos processados para o BD:
 
@@ -203,7 +225,7 @@ Importe os dados de empenhos processados para o BD:
 make feed-import-empenho
 ```
 
-### Passo 3.3
+### Passo 4.3
 
 Importe os dados de novidades para o BD:
 
@@ -211,7 +233,7 @@ Importe os dados de novidades para o BD:
 make feed-import-novidade
 ```
 
-### Passo 3.4
+### Passo 4.4
 
 Importe para o BD os dados de alertas sobre produtos atípicos:
 
