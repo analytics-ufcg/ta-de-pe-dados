@@ -200,14 +200,14 @@ info_documento_licitacao <- documento_licitacao_rs %>%
 
 info_compras <- compras_rs %>%
   dplyr::left_join(info_licitacoes %>%
-                     dplyr::select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade,
+                     dplyr::select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, id_estado,
                                    id_licitacao, id_orgao, nm_orgao),
-                   by = c("cd_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade")) %>%
+                   by = c("cd_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade", "id_estado")) %>%
   dplyr::filter(!is.na(id_licitacao)) %>%
   generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade",
                      "nr_contrato", "ano_contrato", "tp_instrumento_contrato"), CONTRATO_ID) %>%
   dplyr::distinct(id_licitacao, id_contrato, .keep_all = TRUE) %>%
-  dplyr::select(id_contrato, id_licitacao, cd_orgao, nr_contrato, ano_contrato, nm_orgao,
+  dplyr::select(id_contrato, id_licitacao, id_orgao, cd_orgao, nr_contrato, ano_contrato, nm_orgao,
                 nr_licitacao, ano_licitacao, cd_tipo_modalidade,
                 dt_inicio_vigencia, vl_contrato,
                 descricao_objeto_contrato = ds_objeto,
