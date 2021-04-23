@@ -246,11 +246,15 @@ info_item_contrato <- itens_contratos_rs %>%
          nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato, 
          nr_item, qt_itens_contrato, vl_item_contrato, vl_total_item_contrato, origem_valor, sigla_estado, id_estado, dt_inicio_vigencia, ds_item, 
          sg_unidade_medida, categoria, language, ds_1, ds_2, ds_3, servico)
-
++
 info_fornecedores_contratos <- bind_rows(fornecedores_contratos_rs,
                                          fornecedores_contratos_pe) %>%
   join_contratos_e_fornecedores(info_contratos %>%
                                   dplyr::select(nr_documento_contratado)) %>%
+  dplyr::distinct(nr_documento, id_estado, .keep_all = TRUE) %>% 
+  dplyr::group_by(nr_documento) %>% 
+  dplyr::mutate(total_de_contratos = sum(total_de_contratos, na.rm = T),
+                data_primeiro_contrato = min(data_primeiro_contrato, na.rm = T)) %>% 
   dplyr::distinct(nr_documento, .keep_all = TRUE) %>%
   dplyr::select(nr_documento, id_estado, nm_pessoa, tp_pessoa, total_de_contratos, data_primeiro_contrato)
 
