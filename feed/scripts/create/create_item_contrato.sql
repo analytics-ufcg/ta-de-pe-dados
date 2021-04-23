@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS "item_contrato" (
     "sigla_estado" VARCHAR(2),
     "id_estado" INTEGER,
     "dt_inicio_vigencia" DATE,
-    "ds_item" VARCHAR(3000),
+    "ds_item" TEXT,
     "sg_unidade_medida" VARCHAR(15),
     "categoria" INTEGER,
     "language" VARCHAR(15),

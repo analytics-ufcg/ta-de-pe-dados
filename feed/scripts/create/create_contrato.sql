@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS "contrato" (
     "nm_orgao" VARCHAR(240),
     "nr_processo" VARCHAR(32),
     "ano_processo" INTEGER,
-    "tp_documento_contratado" VARCHAR(1),
+    "tp_documento_contratado" VARCHAR(10),
     "nr_documento_contratado" VARCHAR(14),
     "dt_inicio_vigencia" DATE,
     "dt_final_vigencia" DATE,

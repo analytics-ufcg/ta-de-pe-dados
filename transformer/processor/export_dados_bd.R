@@ -1,6 +1,7 @@
 library(tidyverse)
 library(here)
 library(magrittr)
+library(futile.logger)
 
 help <- "
 Usage:
@@ -50,92 +51,92 @@ source(here::here("transformer/processor/estados/PE/contratos/processador_itens_
 ## na raiz desse repositório)
 
 # Processamento dos dados
-message("#### Iniciando processamento...")
+flog.info("#### Iniciando processamento...")
 
 #--------------------------------- Processamento das tabelas do Rio Grande do Sul-------------------------------------------
-message("#### Processando infos. do RS...")
+flog.info("#### Processando infos. do RS...")
 
 ## Licitações
-message("#### licitações...")
+flog.info("#### licitações...")
 licitacoes_rs <- processa_licitacoes_rs(anos, filtro)
 
 ## Órgãos --------------------------------------------------------------------------
-message("#### órgãos")
+flog.info("#### órgãos")
 info_orgaos_rs <- processa_orgaos_rs(anos, filtro)
 
 ## Licitantes ----------------------------------------------------------------------
-message("### licitantes...")
+flog.info("### licitantes...")
 licitantes_rs <- processa_licitantes_rs(anos)
 
 ## Itens de licitações -------------------------------------------------------------
-message("#### itens de licitações...")
+flog.info("#### itens de licitações...")
 itens_licitacao_rs <- processa_itens_licitacoes_rs(anos)
 
 ## Documentos de licitações --------------------------------------------------------
-message("#### Documentos de licitações...")
+flog.info("#### Documentos de licitações...")
 tipos_documento_licitacao_rs <- processa_tipos_documentos_licitacoes_rs()
 documento_licitacao_rs <- processa_documentos_licitacoes_rs(anos)
 
 ## Contratos ------------------------------------------------------------------------
-message("#### contratos...")
+flog.info("#### contratos...")
 contratos_rs <- processa_contratos_rs(anos)
 
 ## *Compras* ----------------------------------------------------------------------------
-message("#### licitações encerradas...")
+flog.info("#### licitações encerradas...")
 licitacoes_encerradas_rs <- processa_eventos_licitacoes_rs(anos)
 
-message("#### lotes de licitação...")
+flog.info("#### lotes de licitação...")
 lotes_licitacoes_rs <- processa_lotes_licitacoes_rs(anos)
 
 ### Itens de contratos e licitação -------------------------------------------------------
-message("#### preparando dados de itens de licitação e contratos...")
+flog.info("#### preparando dados de itens de licitação e contratos...")
 itens_contrato <- processa_itens_contrato_rs(anos)
 itens_licitacao <- processa_itens_licitacoes_renamed_columns_rs()
 
-message("#### processando compras...")
+flog.info("#### processando compras...")
 compras_rs <- processa_compras_rs(anos, licitacoes_encerradas_rs, lotes_licitacoes_rs, itens_licitacao, itens_contrato)
 
-message("#### itens com contratos...")
+flog.info("#### itens com contratos...")
 itens_contrato <- processa_itens_contratos_renamed_columns_rs(itens_contrato)
 
-message("#### itens sem contratos...")
+flog.info("#### itens sem contratos...")
 itens_comprados <- processa_item_licitacao_comprados_rs(anos, compras_rs, itens_contrato)
 
-message("#### processando todos os itens comprados...")
+flog.info("#### processando todos os itens comprados...")
 itens_contratos_rs <- processa_todos_itens_comprados(itens_comprados, itens_licitacao_rs %>%
                                                        select("ds_item", "sg_unidade_medida", "cd_orgao", 
                                                               "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", 
                                                               "nr_lote", "nr_item"))
 
 ## Fornecedores nos contratos --------------------------------------------------------------
-message("#### fornecedores (contratos)...")
+flog.info("#### fornecedores (contratos)...")
 fornecedores_contratos_rs <- processa_fornecedores_contrato_rs(anos, contratos_rs, compras_rs)
 
 ## Alterações contratos --------------------------------------------------------------------
-message("#### alterações de contratos...")
+flog.info("#### alterações de contratos...")
 alteracoes_rs <- processa_alteracoes_contratos_rs(anos)
 tipo_operacao_alteracao <- processa_tipos_alteracoes_contratos_rs(anos)
 
 #--------------------------------- Processamento das tabelas de Pernambuco-------------------
-message("#### Processando infos. de PE...")
+flog.info("#### Processando infos. de PE...")
 # Órgãos ------------------------------------------------------------------------------------
-message("#### órgãos...")
+flog.info("#### órgãos...")
 info_orgaos_pe <- processa_orgaos_pe()
 
 # Licitacoes  -------------------------------------------------------------------------------
-message("#### Licitações...")
+flog.info("#### Licitações...")
 licitacoes_pe <- processa_licitacoes_pe(filtro)
 
 # Contratos  --------------------------------------------------------------------------------
-message("#### Contratos...")
+flog.info("#### Contratos...")
 contratos_pe <- processa_contratos_pe()
 
 # Fornecedores contratos  -------------------------------------------------------------------
-message("#### Fornecedores contratos...")
+flog.info("#### Fornecedores contratos...")
 fornecedores_contratos_pe <- processa_fornecedores_contratos_pe(contratos_pe)
 
 # Itens dos contratos  -------------------------------------------------------------------
-message("#### Itens contratos...")
+flog.info("#### Itens contratos...")
 itens_contratos_pe <- processa_itens_contrato_pe(contratos_pe, licitacoes_pe)
 
 #---------------------------------------------- Agregador------------------------------------------------------------
@@ -263,7 +264,7 @@ info_alteracoes_contrato <- alteracoes_rs %>%
 
 
 #----------------------------------------------- # Escrita dos dados-------------------------------------------------
-message("#### escrevendo dados...")
+flog.info("#### escrevendo dados...")
 
 readr::write_csv(info_licitacoes, here("data/bd/info_licitacao.csv"))
 readr::write_csv(info_licitantes, here("data/bd/info_licitante.csv"))
@@ -275,5 +276,5 @@ readr::write_csv(info_item_contrato, here("data/bd/info_item_contrato.csv"))
 readr::write_csv(info_alteracoes_contrato, here("data/bd/info_alteracao_contrato.csv"))
 readr::write_csv(info_orgaos, here("data/bd/info_orgaos.csv"))
 
-message("#### Processamento concluído!")
-message("#### Confira o diretório data/bd")
+flog.info("#### Processamento concluído!")
+flog.info("#### Confira o diretório data/bd")
