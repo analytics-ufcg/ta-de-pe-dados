@@ -35,15 +35,14 @@ adapta_info_licitacoes_pe <- function(licitacoes_df, tipo_filtro) {
     info_licitacoes <- licitacoes_df %>% 
       filter_licitacoes_merenda_pe()
     
+  } else if (tipo_filtro == "covid") {
+    info_licitacoes <- licitacoes_df %>%
+      filter_licitacoes_covid_pe()
+
+  } else {
+    stop("Tipo de filtro não definido. É possível filtrar pelos tipos 'merenda' ou 'covid")
   }
-  # else if (tipo_filtro == "covid") {
-  #   info_licitacoes <- licitacoes_df %>% 
-  #     filter_licitacoes_covid()
-  #   
-  # } else {
-  #   stop("Tipo de filtro não definido. É possível filtrar pelos tipos 'merenda' ou 'covid")
-  # }
-  
+
   
   info_licitacoes <- info_licitacoes %>% 
     janitor::clean_names() %>%
