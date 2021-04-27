@@ -32,7 +32,7 @@ fetch_contratos_pe <- function(tce_bd_con, limite_inferior = 2017, limite_superi
   contratos <- tibble::tibble()
   tryCatch({
     contratos <- DBI::dbGetQuery(tce_bd_con, sprintf(
-      "SELECT * FROM Contratos WHERE AnoContrato >= %d AND AnoContrato <= %d;", limite_inferior, limite_superior))
+      "SELECT * FROM SCA_Contrato WHERE AnoContrato >= %d AND AnoContrato <= %d;", limite_inferior, limite_superior))
   }, 
   error = function(e) print(paste0("Erro ao buscar dados dos contratos (SQL Server): ", e))
   )
