@@ -246,7 +246,7 @@ info_item_contrato <- itens_contratos_rs %>%
          nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato, 
          nr_item, qt_itens_contrato, vl_item_contrato, vl_total_item_contrato, origem_valor, sigla_estado, id_estado, dt_inicio_vigencia, ds_item, 
          sg_unidade_medida, categoria, language, ds_1, ds_2, ds_3, servico)
-+
+
 info_fornecedores_contratos <- bind_rows(fornecedores_contratos_rs,
                                          fornecedores_contratos_pe) %>%
   join_contratos_e_fornecedores(info_contratos %>%

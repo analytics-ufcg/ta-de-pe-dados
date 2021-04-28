@@ -24,15 +24,17 @@ import_contratos_pe <- function() {
 #' contratos <- import_info_contratos(contratos_df)
 #'
 #' Chave primária:
-#' (a ser definida)
+#' (codigo_contrato)
 adapta_info_contratos_pe <- function(contratos_df) {
 
   info_contratos <- contratos_df %>%
     janitor::clean_names() %>%
-    select(codigo_contrato, nr_contrato = numero_contrato, ano_contrato, cd_orgao = codigo_ug, nm_orgao = unidade_gestora,
-           nr_processo = numero_processo, ano_processo, tp_documento_contratado = tipo_documento,
-           nr_documento_contratado = numero_documento, vigencia, vl_contrato = valor_contrato,
-           descricao_objeto_contrato = objeto, nr_licitacao = codigo_pl) %>% 
+    select(codigo_contrato = codigo_contrato_original, nr_contrato = numero_contrato, ano_contrato, 
+           cd_orgao = codigo_uj, nm_orgao = nome_uj,
+           nr_processo = numero_processo, ano_processo, tp_documento_contratado = tipo_documento_contratado,
+           nr_documento_contratado = cpfcnpj_contratado, dt_inicio_vigencia = data_inicio_vigencia, 
+           dt_final_vigencia = data_fim_vigencia, vl_contrato = valor_contrato,
+           descricao_objeto_contrato = especificacao_objeto, nr_licitacao = codigo_pl) %>% 
     dplyr::mutate(nr_documento_contratado = str_replace_all(nr_documento_contratado, "[[:punct:]]", "")) %>% 
     dplyr::mutate(tp_documento_contratado = 
                     dplyr::case_when(
@@ -40,7 +42,5 @@ adapta_info_contratos_pe <- function(contratos_df) {
                       tp_documento_contratado == "CNPJ" ~ "J",
                       TRUE ~ tp_documento_contratado
                     )) %>% 
-    separate(vigencia, c("dt_inicio_vigencia", "dt_final_vigencia"), " a ") %>% 
-    mutate(dt_inicio_vigencia = lubridate::dmy(dt_inicio_vigencia), 
-           dt_final_vigencia = lubridate::dmy(dt_final_vigencia))
+    dplyr::distinct(codigo_contrato, .keep_all = TRUE)
 }
