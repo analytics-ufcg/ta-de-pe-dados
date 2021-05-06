@@ -354,15 +354,14 @@ read_contratos_pe <- function() {
   contratos <- readr::read_csv(paste0(path_tce_pe_fetcher, "contratos.csv"),
                                col_types = list(
                                  .default = readr::col_character(),
-                                 CodigoContrato = readr::col_character(),
+                                 CodigoContratoOriginal = readr::col_character(),
                                  NumeroContrato = readr::col_character(),
                                  AnoContrato = readr::col_integer(),
                                  NumeroProcesso = readr::col_character(),
                                  AnoProcesso = readr::col_integer(),
-                                 CPF_CNPJ = readr::col_character(),
-                                 NumeroDocumento = readr::col_character(),
-                                 NumeroDocumentoAjustado = readr::col_character(),
-                                 Vigencia = readr::col_character(),
+                                 CPFCNPJContratado = readr::col_character(),
+                                 DataInicioVigencia = readr::col_datetime(),
+                                 DataFimVigencia = readr::col_datetime(),
                                  ValorContrato = readr::col_double()
                                ))
   return(contratos)

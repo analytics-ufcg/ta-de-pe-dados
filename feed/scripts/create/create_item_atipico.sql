@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS "item_atipico" (
     "id_alerta" VARCHAR(32),
     "id_item_contrato" VARCHAR(32),
     "id_contrato" VARCHAR(32),
-    "ds_item" VARCHAR(2000),
+    "ds_item" TEXT,
     "total_vendas_item" INTEGER,
     "n_vendas_semelhantes" INTEGER,
     "perc_vendas_semelhantes" REAL,
