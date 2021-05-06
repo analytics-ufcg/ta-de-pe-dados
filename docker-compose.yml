@@ -25,12 +25,13 @@ services:
       - SQLSERVER_TCE_PE_USER=${SQLSERVER_TCE_PE_USER:-SA}
       - SQLSERVER_TCE_PE_PASS=${SQLSERVER_TCE_PE_PASS:-secret}
       - SQLSERVER_TCE_PE_PORT=${SQLSERVER_TCE_PE_PORT:-32027}
+      - PATH_DADOS=${PATH_DADOS:-./data} 
 
 
     volumes:
       - ./transformer:/app/transformer
       - ./fetcher:/app/fetcher
-      - ./data:/app/data
+      - ${PATH_DADOS:-./data}:/app/data
       - ./reports:/app/reports
     ports:
       - 8787:8787
@@ -45,7 +46,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./data:/data
+      - ${PATH_DADOS:-./data}:/data
       - ./feed:/feed
     ports:
       - 7643:7643
@@ -53,6 +54,20 @@ services:
       - postgres
     networks:
       - proxynet
+
+  fetcher-tce-rs:
+    build:
+      context: fetcher/estados/RS/tce/
+    container_name: fetcher-tce-rs-container
+    image: fetcher-tce-rs-image
+    env_file:
+      - .env
+    volumes:
+      - ${PATH_DADOS:-./data}:/code/scripts/data/
+      - ./feed:/feed
+    networks:
+      - proxynet
+   
 
   postgres:
     image: postgres:11.1-alpine
@@ -64,7 +79,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
       - TZ=GMT
     volumes:
-      - postgres_data:/var/lib/postgresql/data/    
+      - postgres_data:/var/lib/postgresql/data/
     ports:
       - 7655:5432
     networks:

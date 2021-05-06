@@ -114,7 +114,6 @@ fornecedores_contratos_rs <- processa_fornecedores_contrato_rs(anos, contratos_r
 
 ## Alterações contratos --------------------------------------------------------------------
 flog.info("#### alterações de contratos...")
-alteracoes_rs <- processa_alteracoes_contratos_rs(anos)
 tipo_operacao_alteracao <- processa_tipos_alteracoes_contratos_rs(anos)
 
 #--------------------------------- Processamento das tabelas de Pernambuco-------------------
@@ -246,7 +245,7 @@ info_item_contrato <- itens_contratos_rs %>%
          nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato, 
          nr_item, qt_itens_contrato, vl_item_contrato, vl_total_item_contrato, origem_valor, sigla_estado, id_estado, dt_inicio_vigencia, ds_item, 
          sg_unidade_medida, categoria, language, ds_1, ds_2, ds_3, servico)
-+
+
 info_fornecedores_contratos <- bind_rows(fornecedores_contratos_rs,
                                          fornecedores_contratos_pe) %>%
   join_contratos_e_fornecedores(info_contratos %>%
@@ -258,27 +257,25 @@ info_fornecedores_contratos <- bind_rows(fornecedores_contratos_rs,
   dplyr::distinct(nr_documento, .keep_all = TRUE) %>%
   dplyr::select(nr_documento, id_estado, nm_pessoa, tp_pessoa, total_de_contratos, data_primeiro_contrato)
 
-info_alteracoes_contrato <- alteracoes_rs %>%
-  left_join(info_orgaos %>% select(id_orgao, cd_orgao, id_estado)) %>% 
-  join_alteracoes_contrato_e_tipo(tipo_operacao_alteracao) %>%
-  join_alteracoes_contrato_e_contrato(info_contratos) %>%
-  generate_hash_id(c("cd_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", "nr_contrato", "ano_contrato",
-                     "tp_instrumento_contrato", "id_evento_contrato", "cd_tipo_operacao"), ALTERACOES_CONTRATO_ID) %>%
-  dplyr::select(id_alteracoes_contrato, id_contrato, id_orgao, dplyr::everything())
 
 
 #----------------------------------------------- # Escrita dos dados-------------------------------------------------
 flog.info("#### escrevendo dados...")
 
-readr::write_csv(info_licitacoes, here("data/bd/info_licitacao.csv"))
-readr::write_csv(info_licitantes, here("data/bd/info_licitante.csv"))
-readr::write_csv(info_item_licitacao, here("data/bd/info_item_licitacao.csv"))
-readr::write_csv(info_documento_licitacao, here("data/bd/info_documento_licitacao.csv"))
-readr::write_csv(info_contratos, here("data/bd/info_contrato.csv"))
-readr::write_csv(info_fornecedores_contratos, here("data/bd/info_fornecedores_contrato.csv"))
-readr::write_csv(info_item_contrato, here("data/bd/info_item_contrato.csv"))
-readr::write_csv(info_alteracoes_contrato, here("data/bd/info_alteracao_contrato.csv"))
-readr::write_csv(info_orgaos, here("data/bd/info_orgaos.csv"))
+output_transformer <- here("data/bd/")
+
+if (!dir.exists(output_transformer)){
+  dir.create(output_transformer, recursive = TRUE)
+}
+
+readr::write_csv(info_licitacoes, paste0(output_transformer, "info_licitacao.csv"))
+readr::write_csv(info_licitantes, paste0(output_transformer, "info_licitante.csv"))
+readr::write_csv(info_item_licitacao, paste0(output_transformer, "info_item_licitacao.csv"))
+readr::write_csv(info_documento_licitacao, paste0(output_transformer, "info_documento_licitacao.csv"))
+readr::write_csv(info_contratos, paste0(output_transformer, "info_contrato.csv"))
+readr::write_csv(info_fornecedores_contratos, paste0(output_transformer, "info_fornecedores_contrato.csv"))
+readr::write_csv(info_item_contrato, paste0(output_transformer, "info_item_contrato.csv"))
+readr::write_csv(info_orgaos, paste0(output_transformer, "info_orgaos.csv"))
 
 flog.info("#### Processamento concluído!")
-flog.info("#### Confira o diretório data/bd")
+flog.info(paste("#### Confira o diretório", output_transformer))

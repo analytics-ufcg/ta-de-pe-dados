@@ -31,12 +31,10 @@ help:
 	@echo "\tfeed-clean-data \t\tRemove as tabelas processadas pelo Tá na Mesa (licitações, contratos e novidades)."
 	@echo "\tfeed-clean-empenho \t\tRemove as tabela de empenho (vinda do TCE) carregada no BD do Tá na Mesa."
 .PHONY: help
-build-fetcher-data-rs:
-	docker build -t fetcher-ta-na-mesa fetcher/estados/RS/tce/
 .PHONY: build-fetcher-data-rs
 fetch-data-rs:
-	docker run --rm -it -v `pwd`/data/:/code/scripts/data/ fetcher-ta-na-mesa python3.6 fetch_orgaos.py ./data
-	docker run --rm -it -v `pwd`/data/:/code/scripts/data/ fetcher-ta-na-mesa python3.6 fetch_all_data.py $(ano) ./data
+	docker-compose run --rm fetcher-tce-rs python3.6 fetch_orgaos.py
+	docker-compose run --rm fetcher-tce-rs python3.6  fetch_all_data.py $(ano) 
 .PHONY: fetch-data-rs
 fetch-data-pe:		
 	docker exec -it r-container sh -c "cd /app/fetcher/estados/PE/tce/ && Rscript fetch_dados_tce_pe.R --data_inicio $(ano_inicial) --data_fim $(ano_final)"

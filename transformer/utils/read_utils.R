@@ -1,8 +1,13 @@
+
+path_tce_pe_fetcher <- here::here("data/tce_pe/")
+path_tce_rs_fetcher <- here::here("data/tce_rs/")
+path_data_transformer <- here::here("data/bd/")
+
 #' Lê arquivo csv de licitações
 #' @param source Ano correspondente ao arquivo para leitura
 #' @return Dataframe de licitações
 read_licitacoes <- function(source) {
-  licitacoes <- readr::read_csv(here::here(paste0("data/licitacoes/", source,"/licitacao.csv")),
+  licitacoes <- readr::read_csv(paste0(path_tce_rs_fetcher, "licitacoes/", source,"/licitacao.csv"),
                                 col_types = list(
                                   .default = readr::col_character(),
                                   NR_LICITACAO = readr::col_character(),
@@ -32,7 +37,7 @@ read_licitacoes <- function(source) {
 #' @param source Ano correspondente ao arquivo para leitura
 #' @return Dataframe de itens de licitações
 read_itens <- function(source) {
-  itens <- readr::read_csv(here::here(paste0("data/licitacoes/", source,"/item.csv")),
+  itens <- readr::read_csv(paste0(path_tce_rs_fetcher, "licitacoes/", source,"/item.csv"),
                            col_types = list(
                              .default = readr::col_character(),
                              NR_LICITACAO = readr::col_character(),
@@ -62,7 +67,7 @@ read_itens <- function(source) {
 #' @param source Ano correspondente ao arquivo para leitura
 #' @return Dataframe de contratos
 read_contratos <- function(source) {
-  contratos <- readr::read_csv(here::here(paste0("data/contratos/", source, "/contrato.csv")),
+  contratos <- readr::read_csv(paste0(path_tce_rs_fetcher, "contratos/", source, "/contrato.csv"),
                                col_types = list(
                                  .default = readr::col_character(),
                                  ANO_LICITACAO = readr::col_integer(),
@@ -85,7 +90,7 @@ read_contratos <- function(source) {
 #' @param source Ano correspondente ao arquivo para leitura
 #' @return Dataframe de itens de contratos
 read_itens_contrato <- function(source) {
-  itens <- readr::read_csv(here::here(paste0("data/contratos/", source, "/item_con.csv")),
+  itens <- readr::read_csv(paste0(path_tce_rs_fetcher, "contratos/", source, "/item_con.csv"),
                            col_types = list(
                              .default = readr::col_character(),
                              ANO_LICITACAO = readr::col_integer(),
@@ -107,7 +112,7 @@ read_itens_contrato <- function(source) {
 #' @param source Ano correspondente ao arquivo para leitura
 #' @return Dataframe de licitantes
 read_licitantes <- function(source) {
-  licitantes <- readr::read_csv(here::here(paste0("data/licitacoes/", source, "/licitante.csv")),
+  licitantes <- readr::read_csv(paste0(path_tce_rs_fetcher, "licitacoes/", source, "/licitante.csv"),
                                 col_types = cols(.default = readr::col_character(),
                                                  NR_LICITACAO = readr::col_character(),
                                                  ANO_LICITACAO = readr::col_integer()))
@@ -119,7 +124,7 @@ read_licitantes <- function(source) {
 #' @param source Ano correspondente ao arquivo para leitura
 #' @return Dataframe de alterações de contratos
 read_alteracoes_contratos <- function(source) {
-  file_path <- here::here(paste0("data/contratos/", source, "/alteracao.csv"))
+  file_path <- readr::read_csv(paste0(path_tce_rs_fetcher, "contratos/", source, "/alteracao.csv"))
 
   alteracoes_contratos <- readr::read_csv(file = readLines(file_path, skipNul = TRUE),
                                           col_types = cols(.default = readr::col_character(),
@@ -136,7 +141,7 @@ read_alteracoes_contratos <- function(source) {
 #' @param source Ano correspondente ao arquivo para leitura
 #' @return Dataframe de fornecedores de contratos
 read_fornecedores_contratos <- function(source) {
-  forencedores <- readr::read_csv(here::here(paste0("data/contratos/", source, "/pessoas.csv")),
+  forencedores <- readr::read_csv(paste0(path_tce_rs_fetcher, "contratos/", source, "/pessoas.csv"),
                                   col_types = list(
                                     .default = readr::col_character())
                                   )
@@ -148,7 +153,7 @@ read_fornecedores_contratos <- function(source) {
 #' @param source Ano correspondente ao arquivo para leitura
 #' @return Dataframe de documentos das licitações
 read_documentos_licitacoes <- function(source) {
-  documentos <- readr::read_csv(here::here(paste0("data/licitacoes/", source, "/documento_lic.csv")),
+  documentos <- readr::read_csv(paste0(path_tce_rs_fetcher, "licitacoes/", source, "/documento_lic.csv"),
                                   col_types = list(.default = readr::col_character(),
                                                    NR_LICITACAO = readr::col_character(),
                                                    ANO_LICITACAO = readr::col_integer())
@@ -161,7 +166,7 @@ read_documentos_licitacoes <- function(source) {
 #' @param source Ano correspondente ao arquivo para leitura
 #' @return Dataframe de eventos das licitações
 read_eventos_licitacoes <- function(source) {
-  eventos <- readr::read_csv(here::here(paste0("data/licitacoes/", source, "/evento_lic.csv")),
+  eventos <- readr::read_csv(paste0(path_tce_rs_fetcher, "licitacoes/", source, "/evento_lic.csv"),
                                 col_types = list(.default = readr::col_character(),
                                                  ANO_LICITACAO = readr::col_integer())
   )
@@ -173,7 +178,7 @@ read_eventos_licitacoes <- function(source) {
 #' @param source Ano correspondente ao arquivo para leitura
 #' @return Dataframe de lotes das licitações
 read_lotes_licitacoes <- function(source) {
-  lotes <- readr::read_csv(here::here(paste0("data/licitacoes/", source, "/lote.csv")),
+  lotes <- readr::read_csv(paste0(path_tce_rs_fetcher, "licitacoes/", source, "/lote.csv"),
                              col_types = list(.default = readr::col_character(),
                                               NR_LOTE = readr::col_integer(),
                                               ANO_LICITACAO = readr::col_integer(),
@@ -185,7 +190,7 @@ read_lotes_licitacoes <- function(source) {
 }
 
 read_orgaos <- function() {
-  orgaos <- readr::read_csv(here::here("data/orgaos/orgaos.csv"),
+  orgaos <- readr::read_csv(paste0(path_tce_rs_fetcher, "orgaos/orgaos.csv"),
                             col_types = list(
                               .default = readr::col_character(),
                               CD_ORGAO = readr::col_integer(),
@@ -197,7 +202,7 @@ read_orgaos <- function() {
 }
 
 read_licitacoes_processadas <- function() {
-  licitacoes_processadas <- readr::read_csv(here::here("./data/bd/info_licitacao.csv"),
+  licitacoes_processadas <- readr::read_csv(paste0(path_data_transformer, "info_licitacao.csv"),
                                 col_types = list(
                                   .default = readr::col_character(),
                                   id_estado = readr::col_number(),
@@ -215,14 +220,13 @@ read_licitacoes_processadas <- function() {
 }
 
 read_orgaos_processados <- function() {
-  orgao_municipio <- readr::read_csv(here::here("./data/bd/info_orgaos.csv"))
+  orgao_municipio <- readr::read_csv(paste0(path_data_transformer, "info_orgaos.csv"))
   return(orgao_municipio)
 }
 
 read_empenhos_processados <- function() {
   empenhos <-
-    readr::read_csv(
-      here::here("./data/bd/info_empenhos.csv"),
+    readr::read_csv(paste0(path_data_transformer, "info_empenhos.csv"),
       col_types = list(
         id_empenho = readr::col_character(),
         cnpj_cpf = readr::col_character(),
@@ -235,7 +239,7 @@ read_empenhos_processados <- function() {
 }
 
 read_contratos_processados <- function() {
-  contratos <- readr::read_csv(here::here("./data/bd/info_contrato.csv"),
+  contratos <- readr::read_csv(paste0(path_data_transformer, "info_contrato.csv"),
                                col_types = list(
                                  .default = readr::col_character(),
                                  id_orgao = readr::col_character(),
@@ -252,14 +256,14 @@ read_contratos_processados <- function() {
 }
 
 read_fornecedores_processados <- function() {
-  fornecedores <- readr::read_csv(here::here("data/bd/info_fornecedores_contrato.csv"),
+  fornecedores <- readr::read_csv(paste0(path_data_transformer, "info_fornecedores_contrato.csv"),
                                   col_types = list(
                                     nr_documento = readr::col_character()
                                   ))
 }
 
 read_dados_cadastrais_processados <- function() {
-  dados_cadastrais <- readr::read_csv(here::here("data/bd/dados_cadastrais.csv"),
+  dados_cadastrais <- readr::read_csv(paste0(path_data_transformer, "dados_cadastrais.csv"),
                                       col_types = list(
                                         cnpj = col_character(),
                                         data_situacao_especial = col_character(),
@@ -267,13 +271,44 @@ read_dados_cadastrais_processados <- function() {
                                         ))
 }
 
+
+read_itens_similares_processados <- function() {
+  itens <- readr::read_csv(paste0(path_data_transformer, "itens_similares.csv"),
+                           col_types = list(
+                             .default = readr::col_character()
+                           ))
+}
+
+
+read_cnaes_processados <- function() {
+  cnaes <- readr::read_csv(paste0(path_data_transformer, "info_cnaes.csv"),
+                                      col_types = list(
+                                        .default = readr::col_character()
+                                      ))
+}
+
+read_cnaes_secundarios_processados <- function() {
+  cnaes <- readr::read_csv(paste0(path_data_transformer, "cnaes_secundarios.csv"),
+                           col_types = list(
+                             .default = readr::col_character()
+                           ))
+}
+
+read_itens_contrato_processados <- function() {
+  cnaes <- readr::read_csv(paste0(path_data_transformer, "info_item_contrato.csv"),
+                           col_types = list(
+                             .default = readr::col_character()
+                           ))
+}
+
+
 #------------------------------------ TCE-PE A PARTIR DAQUI ---------------------------------------------------#
 
 #' Lê arquivo csv de licitações do estado de Pernambuco
 
 #' @return Dataframe de licitações
 read_licitacoes_pe <- function() {
-  licitacoes <- readr::read_csv(here::here("data/tce_pe/licitacoes.csv"),
+  licitacoes <- readr::read_csv(paste0(path_tce_pe_fetcher, "licitacoes.csv"),
                                 col_types = list(
                                   codigoPL = readr::col_character(),
                                   codigoUG = readr::col_character(),
@@ -290,14 +325,14 @@ read_licitacoes_pe <- function() {
 
 
 read_orgaos_estaduais_pe <- function() {
-  orgaos_estaduais <- readr::read_csv(here::here("data/tce_pe/ugs_estaduais.csv"),
+  orgaos_estaduais <- readr::read_csv(paste0(path_tce_pe_fetcher, "ugs_estaduais.csv"),
                                       col_types = list(
                                         CODIGO_TCE = col_character()
                                       ))
 }
 
 read_orgaos_municipais_pe <- function() {
-  orgaos_municipais <- readr::read_csv(here::here("data/tce_pe/ugs_municipais.csv"),
+  orgaos_municipais <- readr::read_csv(paste0(path_tce_pe_fetcher, "ugs_municipais.csv"),
                                        col_types = list(
                                          ID_UNIDADE_GESTORA = col_character(),
                                          NATUREZA_ORGAO  = col_character()
@@ -305,7 +340,7 @@ read_orgaos_municipais_pe <- function() {
 }
 
 read_municipios_pe <- function() {
-  municipios <- readr::read_csv(here::here("data/tce_pe/municipios.csv"),
+  municipios <- readr::read_csv(paste0(path_tce_pe_fetcher, "municipios.csv"),
                                 col_types = list(
                                   CodigoSagres = col_character(),
                                   CodigoIBGE  = col_character()
@@ -316,7 +351,7 @@ read_municipios_pe <- function() {
 
 #' @return Dataframe de contratos
 read_contratos_pe <- function() {
-  contratos <- readr::read_csv(here::here("data/tce_pe/contratos.csv"),
+  contratos <- readr::read_csv(paste0(path_tce_pe_fetcher, "contratos.csv"),
                                col_types = list(
                                  .default = readr::col_character(),
                                  CodigoContrato = readr::col_character(),
@@ -338,7 +373,7 @@ read_contratos_pe <- function() {
 
 #' @return Dataframe de fornecedores de contratos
 read_fornecedores_contratos_pe <- function() {
-  fornecedores <- readr::read_csv(here::here("data/tce_pe/fornecedores.csv"),
+  fornecedores <- readr::read_csv(paste0(path_tce_pe_fetcher, "fornecedores.csv"),
                                   col_types = list(
                                     .default = readr::col_character())
   )
@@ -347,36 +382,9 @@ read_fornecedores_contratos_pe <- function() {
 }
 
 read_itens_contratos_pe <- function() {
-  cnaes <- readr::read_csv(here::here("data/tce_pe/itens.csv"),
+  cnaes <- readr::read_csv(paste0(path_tce_pe_fetcher, "itens.csv"),
                            col_types = list(
                              .default = readr::col_character()
                            ))
 }
   
-read_cnaes_processados <- function() {
-  cnaes <- readr::read_csv(here::here("data/bd/info_cnaes.csv"),
-                                      col_types = list(
-                                        .default = readr::col_character()
-                                      ))
-}
-
-read_cnaes_secundarios_processados <- function() {
-  cnaes <- readr::read_csv(here::here("data/bd/cnaes_secundarios.csv"),
-                           col_types = list(
-                             .default = readr::col_character()
-                           ))
-}
-
-read_itens_contrato_processados <- function() {
-  cnaes <- readr::read_csv(here::here("data/bd/info_item_contrato.csv"),
-                           col_types = list(
-                             .default = readr::col_character()
-                           ))
-}
-
-read_itens_similares_processados <- function() {
-  itens <- readr::read_csv(here::here("data/bd/itens_similares.csv"),
-                           col_types = list(
-                             .default = readr::col_character()
-                           ))
-}
