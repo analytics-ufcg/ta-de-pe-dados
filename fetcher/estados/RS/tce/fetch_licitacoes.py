@@ -5,12 +5,13 @@ import subprocess
 if __name__ == "__main__":
     # Argumentos que o programa deve receber:
     # -1º: Ano que desejar baixar as licitações
-    year = str(sys.argv[1])
-    output_path = './data/tce_rs'
-
+    # -2º: Caminho da pasta de destino
     if len(sys.argv) != 3:
-        utils.print_usage()
+        utils.print_usage("fetch_licitacoes.py")
         exit(1)
+
+    year = str(sys.argv[1])
+    output_path = str(sys.argv[2])
 
     url = 'http://dados.tce.rs.gov.br/dados/licitacon/licitacao/ano/' + year + '.csv.zip'
     path = output_path + '/licitacoes/' + year

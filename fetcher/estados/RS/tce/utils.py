@@ -3,13 +3,14 @@ from colorama import Fore, Style
 from tqdm import tqdm
 import pathlib
 import os
-def print_usage():
+
+def print_usage(file):
     '''
     Função que printa a chamada correta em caso de o usuário passar o número errado
     de argumentos
     '''
 
-    print(Fore.WHITE +'Chamada Correta: ' + Fore.YELLOW +'python3.6 fetch_licitacoes.py <ano>')
+    print(Fore.WHITE +'Chamada Correta: ' + Fore.YELLOW + 'python3.6 ' + file + ' <ano> <path>')
 
 def download_zip(url, file_name):
     '''
