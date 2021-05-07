@@ -64,7 +64,7 @@ services:
       - .env
     volumes:
       - ${PATH_DADOS:-./data}:/code/scripts/data/
-      - ./feed:/feed
+      - ./fetcher/estados/RS/tce:/code/scripts/
     networks:
       - proxynet
    

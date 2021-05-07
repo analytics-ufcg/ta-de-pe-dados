@@ -13,17 +13,17 @@ def call_all_fetch(year, path):
     '''
     Requisita todos os arquivos de baixar dados.
     '''
-    os.system(PYTHON_VERSION + ' fetch_contratos.py ' + year + ' ' + path + 'data/tce_pe/')
-    os.system(PYTHON_VERSION + ' fetch_empenhos.py ' + year + ' ' + path + 'data/tce_pe/')
-    os.system(PYTHON_VERSION + ' fetch_licitacoes.py ' + year + ' ' + path + 'data/tce_pe/')
+    os.system(PYTHON_VERSION + ' fetch_contratos.py ' + year + ' ' + path)
+    os.system(PYTHON_VERSION + ' fetch_empenhos.py ' + year + ' ' + path)
+    os.system(PYTHON_VERSION + ' fetch_licitacoes.py ' + year + ' ' + path)
 
 if __name__ == "__main__":
 
     if len(sys.argv) < 2:
-        utils.print_usage()
+        print('Chamada Correta: python3.6 fetch_all_data.py <ano>')
         exit(1)
 
-    if len(sys.argv) == 4:
+    if len(sys.argv) == 3:
         action = str(sys.argv[2])
     else:
         print('Escolha uma opcao: ')
@@ -35,7 +35,7 @@ if __name__ == "__main__":
         action = input('Digite sua opcao: ')
 
     inp_year = str(sys.argv[1])
-    path = os.environ['PATH_DADOS'] + '/tce_pe'
+    path = os.environ['PATH_DADOS'] + '/tce_rs'
 
     if not os.path.exists(path):
         os.makedirs(path)
