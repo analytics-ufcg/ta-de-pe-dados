@@ -1,14 +1,16 @@
 import requests, zipfile, sys
 from colorama import Fore, Style
 from tqdm import tqdm
+import pathlib
+import os
 
-def print_usage():
+def print_usage(file):
     '''
     Função que printa a chamada correta em caso de o usuário passar o número errado
     de argumentos
     '''
 
-    print(Fore.WHITE +'Chamada Correta: ' + Fore.YELLOW +'python3.6 fetch_licitacoes.py <ano> <diretório de destino>')
+    print(Fore.WHITE +'Chamada Correta: ' + Fore.YELLOW + 'python3.6 ' + file + ' <ano> <path>')
 
 def download_zip(url, file_name):
     '''
@@ -41,3 +43,10 @@ def unzip_file(file, output_path):
         z.extractall(output_path)
     except Exception:
         print_usage()
+
+def create_dirs(directory):
+    try:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+    except OSError:
+        print ('Erro ao criar o diretório: ' +  directory)

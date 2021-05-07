@@ -83,13 +83,6 @@ docker ps
 
 A primeira etapa consiste em baixar os dados brutos, disponíveis na forma de dados abertos, de suas fontes. Assim, baixamos os dados de licitações, contratos e empenhos disponibilizados pelo [TCE-RS](http://dados.tce.rs.gov.br/) e pelo [TCE-PE](https://www.tce.pe.gov.br/internet/index.php/dados-abertos/bases-de-dados-completas), e os dados referentes à informações dos fornecedores disponíveis no Banco da Receita Federal.
 
-### Passo 2.0
-
-Faça o build da imagem docker com as dependências do fetcher
-
-```shell
-make build-fetcher-data-rs
-```
 
 ### Passo 2.1
 

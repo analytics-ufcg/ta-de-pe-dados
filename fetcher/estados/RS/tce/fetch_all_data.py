@@ -19,12 +19,12 @@ def call_all_fetch(year, path):
 
 if __name__ == "__main__":
 
-    if len(sys.argv) < 3:
-        utils.print_usage()
+    if len(sys.argv) < 2:
+        print('Chamada Correta: python3.6 fetch_all_data.py <ano>')
         exit(1)
 
-    if len(sys.argv) == 4:
-        action = str(sys.argv[3])
+    if len(sys.argv) == 3:
+        action = str(sys.argv[2])
     else:
         print('Escolha uma opcao: ')
         print('1 - Baixar contratos')
@@ -35,7 +35,10 @@ if __name__ == "__main__":
         action = input('Digite sua opcao: ')
 
     inp_year = str(sys.argv[1])
-    path = str(sys.argv[2])
+    path = os.environ['PATH_DADOS'] + '/tce_rs'
+
+    if not os.path.exists(path):
+        os.makedirs(path)
 
     if action == '4':
         print("Baixando todos os dados!")

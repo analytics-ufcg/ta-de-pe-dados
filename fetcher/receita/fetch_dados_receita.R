@@ -18,7 +18,9 @@ tryCatch({receita <- DBI::dbConnect(RPostgres::Postgres(),
                                     password = RECEITA_PASSWORD)
 }, error = function(e) print(paste0("Erro ao tentar se conectar ao Banco Receita (Postgres): ", e)))
 
-cnpjs <- readr::read_csv(here::here("data/bd/info_fornecedores_contrato.csv")) %>% 
+output_path <- here::here("data/bd/")
+
+cnpjs <- readr::read_csv(paste0(output_path, "info_fornecedores_contrato.csv")) %>% 
   dplyr::filter(tp_pessoa == "J") %>% 
   pull(nr_documento)
 
@@ -49,8 +51,8 @@ natureza_juridica <- fetch_natureza_juridica_info(receita) %>%
                 codigo_classe_natureza_juridica = cod_natureza_juridica,
                 nome_classe_natureza_juridica = nm_natureza_juridica)
 
-write_csv(dados_cnpjs, here::here("data/bd/dados_cadastrais.csv"))
-write_csv(socios, here::here("data/bd/socios.csv"))
-write_csv(cnaes_info, here::here("data/bd/info_cnaes.csv"))
-write_csv(cnaes_secundarios, here::here("data/bd/cnaes_secundarios.csv"))
-write_csv(natureza_juridica, here::here("data/bd/natureza_juridica.csv"))
+write_csv(dados_cnpjs, paste0(output_path, "dados_cadastrais.csv"))
+write_csv(socios, paste0(output_path, "socios.csv"))
+write_csv(cnaes_info, paste0(output_path, "info_cnaes.csv"))
+write_csv(cnaes_secundarios, paste0(output_path, "cnaes_secundarios.csv"))
+write_csv(natureza_juridica, paste0(output_path, "natureza_juridica.csv"))

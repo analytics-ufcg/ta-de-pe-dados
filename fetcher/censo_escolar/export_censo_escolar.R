@@ -14,7 +14,7 @@ message("Use --help para mais informações\n")
 
 option_list = list(
   
-  make_option(c("-o", "--outCenso"), type="character", default=here::here("data/censo_escolar/censo_escolar_2018.csv"),
+  make_option(c("-o", "--outCenso"), type="character", default=here::here("data/static/censo_escolar/censo_escolar_2018.csv"),
               help="nome do arquivo de saída para os dados do censo escolar [default= %default]", metavar="character")
   )
 
