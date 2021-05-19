@@ -3,19 +3,19 @@ import utils
 
 PYTHON_VERSION = 'python3.6'
         
-def call_fetch(year, call, path):
+def call_fetch(year, call):
     '''
     Requesita arquivo de acao de acordo com o(s) ano(s) solicitado(s).
     '''
-    os.system(PYTHON_VERSION + ' ' + call + ' ' + year + ' ' + path)
+    os.system(PYTHON_VERSION + ' ' + call + ' ' + year)
 
-def call_all_fetch(year, path):
+def call_all_fetch(year):
     '''
     Requisita todos os arquivos de baixar dados.
     '''
-    os.system(PYTHON_VERSION + ' fetch_contratos.py ' + year + ' ' + path)
-    os.system(PYTHON_VERSION + ' fetch_empenhos.py ' + year + ' ' + path)
-    os.system(PYTHON_VERSION + ' fetch_licitacoes.py ' + year + ' ' + path)
+    os.system(PYTHON_VERSION + ' fetch_contratos.py ' + year)
+    os.system(PYTHON_VERSION + ' fetch_empenhos.py ' + year)
+    os.system(PYTHON_VERSION + ' fetch_licitacoes.py ' + year)
 
 if __name__ == "__main__":
 
@@ -35,23 +35,19 @@ if __name__ == "__main__":
         action = input('Digite sua opcao: ')
 
     inp_year = str(sys.argv[1])
-    path = os.environ['PATH_DADOS'] + '/tce_rs'
-
-    if not os.path.exists(path):
-        os.makedirs(path)
 
     if action == '4':
         print("Baixando todos os dados!")
-        call_all_fetch(inp_year, path)
+        call_all_fetch(inp_year)
             
     elif action == '1':
-        call_fetch(inp_year, 'fetch_contratos.py', path)
+        call_fetch(inp_year, 'fetch_contratos.py')
 
     elif action == '2':
-        call_fetch(inp_year, 'fetch_licitacoes.py', path)
+        call_fetch(inp_year, 'fetch_licitacoes.py')
     
     elif action == '3':
-        call_fetch(inp_year, 'fetch_empenhos.py', path)
+        call_fetch(inp_year, 'fetch_empenhos.py')
     
     else:
         print('Opcao incorreta.')

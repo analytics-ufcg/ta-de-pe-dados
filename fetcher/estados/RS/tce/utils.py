@@ -10,7 +10,7 @@ def print_usage(file):
     de argumentos
     '''
 
-    print(Fore.WHITE +'Chamada Correta: ' + Fore.YELLOW + 'python3.6 ' + file + ' <ano> <path>')
+    print(Fore.WHITE +'Chamada Correta: ' + Fore.YELLOW + 'python3.6 ' + file + ' <ano>')
 
 def download_zip(url, file_name):
     '''
