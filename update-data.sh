@@ -237,6 +237,8 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
   make feed-import-alerta
 done
 
+# execução do shell
+# docker-compose -f docker-compose.yml -f deploy/staging.merenda.yml run --rm --no-deps feed python3.6 /feed/manage.py shell
 
 
 pprint "Fim da execução: $(date +%d-%m-%y_%H:%M)"

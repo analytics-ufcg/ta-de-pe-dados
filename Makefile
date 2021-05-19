@@ -62,38 +62,38 @@ process-data-alertas:
 	docker exec -it r-container sh -c "cd /app/transformer/processor/geral/alertas && Rscript export_alertas_bd.R $(anos) $(filtro)"
 .PHONY: process-data-alertas
 feed-create:
-	docker exec -it feed python3.6 /feed/manage.py create
+	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py create
 .PHONY: feed-create
 feed-create-empenho-raw:
-	docker exec -it feed python3.6 /feed/manage.py create-empenho-raw
+	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py create-empenho-raw
 .PHONY: feed-create-empenho-raw
 feed-import-itens-similares-data:
-	docker exec -it feed python3.6 /feed/manage.py import-itens-similares-data
+	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py import-itens-similares-data
 .PHONY: feed-import-itens-similares-data
 feed-import-data:
-	docker exec -it feed python3.6 /feed/manage.py import-data
+	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py import-data
 .PHONY: feed-import-data
 feed-import-empenho:
-	docker exec -it feed python3.6 /feed/manage.py import-empenho
+	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py import-empenho
 .PHONY: feed-import-empenho
 feed-import-empenho-raw:
-	docker exec -it feed python3.6 /feed/manage.py import-empenho-raw
+	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py import-empenho-raw
 .PHONY: feed-import-empenho-raw
 feed-import-novidade:
-	docker exec -it feed python3.6 /feed/manage.py import-novidade
+	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py import-novidade
 .PHONY: feed-import-novidade
 feed-import-alerta:
-	docker exec -it feed python3.6 /feed/manage.py import-alerta
+	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py import-alerta
 .PHONY: feed-import-alerta
 feed-shell:
-	docker exec -it feed python3.6 /feed/manage.py shell
+	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py shell
 .PHONY: feed-shell
 feed-update-fornecedores:
-	docker exec -it feed python3.6 /feed/manage.py update-fornecedores
+	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py update-fornecedores
 .PHONY: feed-update-fornecedores
 feed-clean-data:
-	docker exec -it feed python3.6 /feed/manage.py clean-data
+	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py clean-data
 .PHONY: feed-clean-data
 feed-clean-empenho:
-	docker exec -it feed python3.6 /feed/manage.py clean-empenho
+	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py clean-empenho
 .PHONY: feed-clean-empenho

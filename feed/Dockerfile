@@ -10,4 +10,4 @@ RUN set -ex && \
     python -m pip --no-cache install -U pip && \
     python -m pip --no-cache install -r /code/scripts/requirements.txt
 
-CMD tail -f /dev/null
+CMD echo "Imagem do feed atualizada"
