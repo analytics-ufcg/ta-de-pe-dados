@@ -30,6 +30,8 @@ filter_licitacoes_covid <- function(licitacoes_df) {
 #' 
 filter_licitacoes_covid_pe <- function(licitacoes_df) {
   
+  FUNDAMENTO_LEGAL_COMPRAS_EMERGENCIAIS <- c(79, 80)
+
   licitacoes_filtradas <- licitacoes_df %>% 
     dplyr::mutate(DS_OBJETO_PROCESSED = iconv(ObjetoConformeEdital, 
                                               from="UTF-8", 
@@ -40,7 +42,8 @@ filter_licitacoes_covid_pe <- function(licitacoes_df) {
         tolower(DS_OBJETO_PROCESSED)
       )
     ) %>%
-    dplyr::filter(isCompraEmergencial) %>%
+    dplyr::filter(AnoProcesso >= 2020) %>% 
+    dplyr::filter(isCompraEmergencial | (FundamentoLegal %in% FUNDAMENTO_LEGAL_COMPRAS_EMERGENCIAIS)) %>%
     dplyr::mutate(assunto = "covid")
 
   return(licitacoes_filtradas)
