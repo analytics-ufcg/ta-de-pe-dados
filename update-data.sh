@@ -11,8 +11,8 @@
 inicio=$(date +%d-%m-%y_%H:%M)
 
 # Carrega variáveis de ambiente
+source .env
 source .env.update
-
 # Escreve em arquivo de log
 PATH=$PATH:/usr/local/bin
 mkdir -p $LOG_FOLDERPATH
@@ -25,11 +25,11 @@ usage() {
   echo ""
   echo "Formato: $0 --tipo <tipo> --contexto <contexto> --ano-inicio <ano inicial> --ano-fim <ano final>"
   echo -e "\t-t  --tipo        corresponde aos tipos de aplicações (covid e/ou merenda) que serão processadas."
-  echo -e "\t-c  --contexto    corresponde ao contexto de destino (remoto ou local)."
+  echo -e "\t-c  --contexto    corresponde ao contexto de destino (production, staging ou development)."
   echo -e "\t-i  --data_inicio corresponde ao ano de início do processamento."
   echo -e "\t-f  --data_fim    corresponde ao ano final do processamento."
   echo ""
-  echo "Ex. de uso: $0 --tipo covid,merenda --contexto local --ano-inicio 2017 --ano-fim 2019"
+  echo "Ex. de uso: $0 --tipo covid,merenda --contexto development --ano-inicio 2017 --ano-fim 2019"
   exit
 }
 
@@ -108,6 +108,11 @@ concatYears() {
   echo ${anos::-1}
 }
 
+# exporta arquivo csv
+export_csv () {
+  zip -r -j $1 $2
+}
+
 # ==============================================================
 #                           FETCHER
 # ==============================================================
@@ -167,6 +172,105 @@ process_data_receita_federal() {
   make fetch-process-receita
 }
 
+# Processa os dados de empenhos
+process_data_empenhos(){
+  echo ""
+  printWithTime "> Executando o processamento dos empenhos"
+  echo ""
+  make process-data-empenhos
+}
+
+# Processa os dados de novidades
+process_data_novidades(){
+  echo ""
+  printWithTime "> Executando o processamento das novidades"
+  echo ""
+  make process-data-novidades
+}
+
+# Processa os dados de alertas referentes a produtos atípicos
+process_data_itens_similares (){
+  echo ""
+  printWithTime "> Executando o processamento de itens similares"
+  echo ""
+  make process-data-itens-similares
+}
+
+# Processa os dados de alertas referentes a fornecedores contratados logo após a abertura da empresa:
+process_data_alertas(){
+  echo ""
+  printWithTime "> Executando o processamento de alertas"
+  echo ""
+  make process-data-alertas anos=$1 filtro=$2
+}   
+
+# ==============================================================
+#                             FEED
+# ==============================================================
+
+# cria tabelas
+feed_create() {
+  echo ""
+  printWithTime "> Criando tabelas"
+  echo ""
+  docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py create
+}
+
+# Importa dados para as tabelas
+feed_import_data() {
+  echo ""
+  printWithTime "> Importando dados para as tabelas"
+  echo ""
+  docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py import-data
+} 
+  
+# Importa os dados de empenhos (vindos diretamento do TCE)
+feed_import_empenhos_raw() {
+  echo ""
+  printWithTime "> Importando os dados de empenhos (vindos diretamente do TCE)"
+  echo ""
+  make feed-import-empenho-raw
+}  
+
+# Importa os dados de empenhos processados para o BD
+feed_import_empenho () {
+  echo ""
+  printWithTime "> Importando os dados de empenhos"
+  echo ""
+  docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py import-empenho
+}
+
+# Importa os dados de novidades para o BD
+feed_import_novidade () {
+  echo ""
+  printWithTime "> Importando os dados de novidades"
+  echo ""
+  docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py import-alerta
+}
+
+# Importa para o BD os dados de alertas sobre produtos atípicos:
+feed_import_itens_similares_data () {
+  echo ""
+  printWithTime "> Importando os dados de itens similares"
+  echo ""
+  docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py import-itens-similares-data
+}
+
+# Importa para o BD os dados de alertas sobre fornecedores contratados logo após a abertura da empresa
+feed_import_alerta () {
+  echo ""
+  printWithTime "> Importando os dados de alertas"
+  echo ""
+  docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py import-alerta
+}
+
+feed_clean_data () {
+  echo ""
+  printWithTime "> Limpando dados (exceto empenhos)"
+  echo ""
+  make feed-clean-data
+}
+
 # ==============================================================
 #                           EXECUÇÃO
 # ==============================================================
@@ -181,8 +285,8 @@ echo -e "- Tipo(s) de aplicação: $TIPO_APLICACAO"
 echo -e "- Contexto: $CONTEXTO"
 echo -e "- Período: $ANO_INICIO até $ANO_FIM \n"
 
-# Realiza o fetcher dos dados do RS e de PE
-# fetcher_data
+# # Realiza o fetcher dos dados do RS e de PE
+fetcher_data
 
 # Processa os dados de cada estado e cada tipo de aplicação
 # entradas dos tipos de aplicação
@@ -192,6 +296,11 @@ anosConcatenados=$(concatYears)
 
 # iteração para cada tipo de aplicação
 for tipoAplicacao in "${tiposAplicacao[@]}"; do
+
+  # remove processamento anterior
+  rm -R $PATH_DADOS/bd
+  feed_clean_data
+
   # processa os dados gerais
   process_data $anosConcatenados "$tipoAplicacao"
   
@@ -200,46 +309,57 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
   
   # Adiciona dados oriundos da RF aos fornecedores
   process_data_receita_federal
-  
-  # VERIFICA/ALTERA DOCKER AQUI?
 
   # cria tabelas
-  make feed-create
+  feed_create
   
-  #Importa dados para as tabelas
-  make feed-import-data
+  # Importa dados para as tabelas
+  feed_import_data
 
-  #Importa os dados de empenhos (vindos diretamento do TCE)
-  make feed-import-empenho-raw
+  # Importa os dados de empenhos (vindos diretamento do TCE)
+  feed_import_empenho_raw
 
   # Processa os dados de empenhos
-  make process-data-empenhos
+  process_data_empenhos
 
   # Processa os dados de novidades
-  make process-data-novidades
+  process_data_novidades
 
   # Processa os dados de alertas referentes a produtos atípicos
-  make process-data-itens-similares
+  process_data_itens_similares
 
   # Processa os dados de alertas referentes a fornecedores contratados logo após a abertura da empresa:
-  make process-data-alertas anos=2018,2019,2020,2021 filtro=merenda
+  process-data-alertas $anosConcatenados "$tipoAplicacao"
 
   # Importa os dados de empenhos processados para o BD
-  make feed-import-empenho
+  feed_import_empenho
 
   # Importa os dados de novidades para o BD
-  make feed-import-novidade
+  feed_import_novidade
 
   # Importa para o BD os dados de alertas sobre produtos atípicos:
-  make feed-import-itens-similares-data
+  feed_import_itens_similares_data
 
   # Importa para o BD os dados de alertas sobre fornecedores contratados logo após a abertura da empresa
-  make feed-import-alerta
+  feed_import_alerta
+
+
+  if [[ $CONTEXTO == "production" ]] || [[ $CONTEXTO == "staging" ]]
+  then
+    cfgVarAmbiente="-f docker-compose.yml -f deploy/$CONTEXTO.$tipoAplicacao.yml"
+    
+    feed_create "$cfgVarAmbiente"
+    feed_import_data "$cfgVarAmbiente"
+    feed_import_empenho "$cfgVarAmbiente"
+    feed_import_novidade "$cfgVarAmbiente"
+    feed_import_itens_similares_data "$cfgVarAmbiente"
+    feed_import_alerta "$cfgVarAmbiente"
+  fi
+
+  # exporta os dados processados para um arquivo .csv
+  export_csv "$PATH_DADOS/$tipoAplicacao-bd-$(date +%d-%m-%y_%H:%M).zip" "$PATH_DADOS/bd"
+
 done
-
-# execução do shell
-# docker-compose -f docker-compose.yml -f deploy/staging.merenda.yml run --rm --no-deps feed python3.6 /feed/manage.py shell
-
 
 pprint "Fim da execução: $(date +%d-%m-%y_%H:%M)"
 
