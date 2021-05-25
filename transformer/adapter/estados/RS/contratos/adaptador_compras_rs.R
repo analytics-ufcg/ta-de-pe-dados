@@ -132,7 +132,7 @@ adapta_compras_itens <- function(licitacoes_df, licitacoes_encerradas_df, lotes_
                   tipo_instrumento_contrato = "Compra") %>%
     dplyr::mutate(nr_contrato = dplyr::if_else(is.na(nr_fornecedor),
                                                "1",
-                                               nr_fornecedor))
+                                               paste0(nr_licitacao, nr_fornecedor)))
   
   compras_vl_contrato <- compras %>% 
     dplyr::mutate(vl_total_item = dplyr::if_else(is.na(vl_total_homologado) | vl_unitario_homologado == 0, vl_total_estimado, vl_total_homologado)) %>% 
