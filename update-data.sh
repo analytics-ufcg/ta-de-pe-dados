@@ -122,7 +122,7 @@ fetcher_tce_rs() {
   echo ""
   printWithTime "> Executando o download dos dados de $1 do Rio Grande do Sul"
   echo ""
-  make fetch-data-rs ano="$1"
+  make fetch-data-rs-all ano="$1"
 }
 
 # Recupera os dados de Pernambuco
@@ -225,7 +225,7 @@ feed_import_data() {
 } 
   
 # Importa os dados de empenhos (vindos diretamento do TCE)
-feed_import_empenhos_raw() {
+feed_import_empenho_raw() {
   echo ""
   printWithTime "> Importando os dados de empenhos (vindos diretamente do TCE)"
   echo ""
@@ -304,7 +304,7 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
   # processa os dados gerais
   process_data $anosConcatenados "$tipoAplicacao"
   
-  # Processa dos dos fornecedores
+  # Processa dos fornecedores
   process_data_fornecedores $anosConcatenados
   
   # Adiciona dados oriundos da RF aos fornecedores
@@ -329,7 +329,7 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
   process_data_itens_similares
 
   # Processa os dados de alertas referentes a fornecedores contratados logo após a abertura da empresa:
-  process-data-alertas $anosConcatenados "$tipoAplicacao"
+  process_data_alertas $anosConcatenados "$tipoAplicacao"
 
   # Importa os dados de empenhos processados para o BD
   feed_import_empenho
@@ -342,7 +342,6 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
 
   # Importa para o BD os dados de alertas sobre fornecedores contratados logo após a abertura da empresa
   feed_import_alerta
-
 
   if [[ $CONTEXTO == "production" ]] || [[ $CONTEXTO == "staging" ]]
   then

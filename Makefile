@@ -36,6 +36,10 @@ fetch-data-rs:
 	docker-compose run --rm fetcher-tce-rs python3.6 fetch_orgaos.py
 	docker-compose run --rm fetcher-tce-rs python3.6  fetch_all_data.py $(ano) 
 .PHONY: fetch-data-rs
+fetch-data-rs-all:
+	docker-compose run --rm fetcher-tce-rs python3.6 fetch_orgaos.py
+	docker-compose run --rm fetcher-tce-rs python3.6  fetch_all_data.py $(ano) 4 
+.PHONY: fetch-data-rs-all
 fetch-data-pe:		
 	docker exec -it r-container sh -c "cd /app/fetcher/estados/PE/tce/ && Rscript fetch_dados_tce_pe.R --data_inicio $(ano_inicial) --data_fim $(ano_final)"
 .PHONY: fetch-data-pe
@@ -55,7 +59,7 @@ fetch-process-receita:
 	docker exec -it r-container sh -c "cd /app/fetcher/receita &&  Rscript fetch_dados_receita.R"
 .PHONY: fetch-process-receita
 process-data-itens-similares:
-	docker exec -it feed python3.6 /feed/manage.py process-itens-similares
+	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py process-itens-similares
 	docker exec -it r-container sh -c "cd /app/transformer/processor/geral/alertas && Rscript export_itens_similares.R"
 .PHONY: process-data-itens-similares
 process-data-alertas:
