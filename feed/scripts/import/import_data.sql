@@ -23,7 +23,8 @@ UPDATE orgao SET language = 'portuguese';
 
 
 CREATE MATERIALIZED VIEW item_search AS 
-SELECT o.nome_municipio, i.ano_licitacao, i.id_item_contrato, i.id_contrato, i.nr_contrato, i.dt_inicio_vigencia, i.id_licitacao, 
+SELECT o.nome_municipio, i.ano_licitacao, i.id_item_contrato, i.id_contrato, i.nr_contrato, 
+    i.dt_inicio_vigencia, i.id_licitacao, c.tipo_instrumento_contrato, i.nr_licitacao,
     i.qt_itens_contrato, i.vl_item_contrato, i.vl_total_item_contrato, ds_item, i.sg_unidade_medida, i.servico, i.id_estado, i.sigla_estado,
     setweight(to_tsvector(i.language :: regconfig,i.ds_1),'A') || 
     setweight(to_tsvector(i.language :: regconfig,i.ds_2),'C') || 
@@ -31,7 +32,9 @@ SELECT o.nome_municipio, i.ano_licitacao, i.id_item_contrato, i.id_contrato, i.n
     setweight(to_tsvector(i.language :: regconfig,i.ds_item),'D') AS document 
 FROM item_contrato AS i
 LEFT JOIN orgao AS o
-ON i.id_orgao = o.id_orgao;
+ON i.id_orgao = o.id_orgao
+LEFT JOIN contrato as c
+ON i.id_contrato = c.id_contrato;
 
 CREATE INDEX idx_item_search ON item_search USING gin(document);
 
