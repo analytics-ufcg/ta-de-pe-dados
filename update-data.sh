@@ -245,7 +245,7 @@ feed_import_novidade () {
   echo ""
   printWithTime "> Importando os dados de novidades"
   echo ""
-  docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py import-alerta
+  docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py import-novidade
 }
 
 # Importa para o BD os dados de alertas sobre produtos atípicos:
@@ -266,7 +266,7 @@ feed_import_alerta () {
 
 feed_clean_data () {
   echo ""
-  printWithTime "> Limpando dados (exceto empenhos)"
+  printWithTime "> Limpando dados (exceto empenhos raw)"
   echo ""
   make feed-clean-data
 }
@@ -294,6 +294,9 @@ IFS=',' read -r -a tiposAplicacao <<<"$TIPO_APLICACAO"
 # anos concatenados por vírgula
 anosConcatenados=$(concatYears)
 
+# Importa os dados de empenhos (vindos diretamento do TCE)
+feed_import_empenho_raw
+
 # iteração para cada tipo de aplicação
 for tipoAplicacao in "${tiposAplicacao[@]}"; do
 
@@ -315,9 +318,6 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
   
   # Importa dados para as tabelas
   feed_import_data
-
-  # Importa os dados de empenhos (vindos diretamento do TCE)
-  feed_import_empenho_raw
 
   # Processa os dados de empenhos
   process_data_empenhos
