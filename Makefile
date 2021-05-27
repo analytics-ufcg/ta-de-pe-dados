@@ -41,29 +41,29 @@ fetch-data-rs-all:
 	docker-compose run --rm fetcher-tce-rs python3.6  fetch_all_data.py $(ano) 4 
 .PHONY: fetch-data-rs-all
 fetch-data-pe:		
-	docker exec -it r-container sh -c "cd /app/fetcher/estados/PE/tce/ && Rscript fetch_dados_tce_pe.R --data_inicio $(ano_inicial) --data_fim $(ano_final)"
+	docker exec r-container sh -c "cd /app/fetcher/estados/PE/tce/ && Rscript fetch_dados_tce_pe.R --data_inicio $(ano_inicial) --data_fim $(ano_final)"
 .PHONY: fetch-data-pe
 process-data:
-	docker exec -it r-container sh -c "cd /app/transformer/processor && Rscript export_dados_bd.R $(anos) $(filtro)"
+	docker exec r-container sh -c "cd /app/transformer/processor && Rscript export_dados_bd.R $(anos) $(filtro)"
 .PHONY: process-data
 process-data-empenhos:
-	docker exec -it r-container sh -c "cd /app/transformer/processor/estados/RS/empenhos && Rscript export_empenhos_bd.R"
+	docker exec r-container sh -c "cd /app/transformer/processor/estados/RS/empenhos && Rscript export_empenhos_bd.R"
 .PHONY: process-data-empenhos
 process-data-novidades:
-	docker exec -it r-container sh -c "cd /app/transformer/processor/geral/novidades && Rscript export_novidades_bd.R"
+	docker exec r-container sh -c "cd /app/transformer/processor/geral/novidades && Rscript export_novidades_bd.R"
 .PHONY: process-data-novidades
 process-data-fornecedores:
-	docker exec -it r-container sh -c "cd /app/transformer/processor && Rscript export_fornecedores_bd.R $(anos)"
+	docker exec r-container sh -c "cd /app/transformer/processor && Rscript export_fornecedores_bd.R $(anos)"
 .PHONY: process-data-fornecedores
 fetch-process-receita:
-	docker exec -it r-container sh -c "cd /app/fetcher/receita &&  Rscript fetch_dados_receita.R"
+	docker exec r-container sh -c "cd /app/fetcher/receita &&  Rscript fetch_dados_receita.R"
 .PHONY: fetch-process-receita
 process-data-itens-similares:
 	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py process-itens-similares
-	docker exec -it r-container sh -c "cd /app/transformer/processor/geral/alertas && Rscript export_itens_similares.R"
+	docker exec r-container sh -c "cd /app/transformer/processor/geral/alertas && Rscript export_itens_similares.R"
 .PHONY: process-data-itens-similares
 process-data-alertas:
-	docker exec -it r-container sh -c "cd /app/transformer/processor/geral/alertas && Rscript export_alertas_bd.R $(anos) $(filtro)"
+	docker exec r-container sh -c "cd /app/transformer/processor/geral/alertas && Rscript export_alertas_bd.R $(anos) $(filtro)"
 .PHONY: process-data-alertas
 feed-create:
 	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py create
