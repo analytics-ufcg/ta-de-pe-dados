@@ -5,13 +5,12 @@ import subprocess
 if __name__ == "__main__":
     # Argumentos que o programa deve receber:
     # -1º: Ano que desejar baixar dos empenhos
-    # -2º: Caminho da pasta de destino
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 2:
         utils.print_usage("fetch_empenhos.py")
         exit(1)
 
     year = str(sys.argv[1])
-    output_path = str(sys.argv[2])
+    output_path = './data/tce_rs'
 
     url = 'http://dados.tce.rs.gov.br/dados/municipal/empenhos/' + year + '.csv.zip'
     path = output_path + '/empenhos/' + year

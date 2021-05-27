@@ -48,8 +48,6 @@ services:
     volumes:
       - ${PATH_DADOS:-./data}:/data
       - ./feed:/feed
-    ports:
-      - 7643:7643
     depends_on:
       - postgres
     networks:
