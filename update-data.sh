@@ -264,11 +264,12 @@ feed_import_alerta () {
   docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py import-alerta
 }
 
-feed_clean_data () {
+# dropa tabelas
+feed_clean_data() {
   echo ""
-  printWithTime "> Limpando dados (exceto empenhos raw)"
+  printWithTime "> Dropando tabelas (exceto empenhos raw)"
   echo ""
-  make feed-clean-data
+  docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py clean-data
 }
 
 # ==============================================================
@@ -347,6 +348,7 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
   then
     cfgVarAmbiente="-f docker-compose.yml -f deploy/$CONTEXTO.$tipoAplicacao.yml"
     
+    feed_clean_data "$cfgVarAmbiente"
     feed_create "$cfgVarAmbiente"
     feed_import_data "$cfgVarAmbiente"
     feed_import_empenho "$cfgVarAmbiente"
