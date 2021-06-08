@@ -302,7 +302,7 @@ feed_import_empenho_raw
 for tipoAplicacao in "${tiposAplicacao[@]}"; do
 
   # remove processamento anterior
-  rm -R $PATH_DADOS/bd
+  rm -R $PATH_VOLUME_DADOS/bd
   feed_clean_data
 
   # processa os dados gerais
