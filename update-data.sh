@@ -267,7 +267,7 @@ feed_import_alerta () {
 # dropa tabelas
 feed_clean_data() {
   echo ""
-  printWithTime "> Dropando tabelas (exceto empenhos raw)"
+  printWithTime "> Removendo tabelas (exceto empenhos raw)"
   echo ""
   docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py clean-data
 }
