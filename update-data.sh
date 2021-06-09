@@ -264,11 +264,12 @@ feed_import_alerta () {
   docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py import-alerta
 }
 
-feed_clean_data () {
+# dropa tabelas
+feed_clean_data() {
   echo ""
-  printWithTime "> Limpando dados (exceto empenhos raw)"
+  printWithTime "> Removendo tabelas (exceto empenhos raw)"
   echo ""
-  make feed-clean-data
+  docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py clean-data
 }
 
 # ==============================================================
@@ -301,7 +302,7 @@ feed_import_empenho_raw
 for tipoAplicacao in "${tiposAplicacao[@]}"; do
 
   # remove processamento anterior
-  rm -R $PATH_DADOS/bd
+  rm -R $PATH_VOLUME_DADOS/bd
   feed_clean_data
 
   # processa os dados gerais
@@ -347,6 +348,7 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
   then
     cfgVarAmbiente="-f docker-compose.yml -f deploy/$CONTEXTO.$tipoAplicacao.yml"
     
+    feed_clean_data "$cfgVarAmbiente"
     feed_create "$cfgVarAmbiente"
     feed_import_data "$cfgVarAmbiente"
     feed_import_empenho "$cfgVarAmbiente"
@@ -356,7 +358,7 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
   fi
 
   # exporta os dados processados para um arquivo .csv
-  export_csv "$PATH_DADOS/$tipoAplicacao-bd-$(date +%d-%m-%y_%H:%M).zip" "$PATH_DADOS/bd"
+  export_csv "$PATH_VOLUME_DADOS/$tipoAplicacao-bd-$(date +%d-%m-%y__%H_%M).zip" "$PATH_VOLUME_DADOS/bd"
 
 done
 

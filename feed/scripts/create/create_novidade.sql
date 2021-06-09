@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS "novidade" (
     "data" DATE,
     "id_original" VARCHAR(32),
     "nome_municipio" VARCHAR(30),
-    "texto_novidade" VARCHAR(20),
+    "texto_novidade" VARCHAR(200),
     "id_contrato" VARCHAR(32),
     PRIMARY KEY("id_novidade"),
     FOREIGN KEY("id_licitacao") REFERENCES licitacao("id_licitacao") ON DELETE CASCADE ON UPDATE CASCADE,
