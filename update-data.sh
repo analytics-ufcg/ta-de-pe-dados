@@ -223,6 +223,14 @@ feed_import_data() {
   echo ""
   docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py import-data
 } 
+
+# Cria tabela de empenhos raw (vindos diretamento do TCE)
+feed_create_empenho_raw() {
+  echo ""
+  printWithTime "> Criando tabela de empenhos (vindos diretamente do TCE)"
+  echo ""
+  make feed-create-empenho-raw
+}  
   
 # Importa os dados de empenhos (vindos diretamento do TCE)
 feed_import_empenho_raw() {
@@ -296,6 +304,7 @@ IFS=',' read -r -a tiposAplicacao <<<"$TIPO_APLICACAO"
 anosConcatenados=$(concatYears)
 
 # Importa os dados de empenhos (vindos diretamento do TCE)
+feed_create_empenho_raw
 feed_import_empenho_raw
 
 # iteração para cada tipo de aplicação
