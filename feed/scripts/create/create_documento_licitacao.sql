@@ -3,7 +3,8 @@ DROP TABLE IF EXISTS documento_licitacao;
 CREATE TABLE IF NOT EXISTS "documento_licitacao" (
     "id_documento_licitacao" VARCHAR(32),
     "id_licitacao" VARCHAR(32),
-    "id_orgao" INTEGER,
+    "id_orgao" VARCHAR(32),
+    "cd_orgao" INTEGER,
     "nr_licitacao" VARCHAR(20),
     "ano_licitacao" INTEGER,
     "cd_tipo_modalidade" VARCHAR(3),
@@ -15,6 +16,8 @@ CREATE TABLE IF NOT EXISTS "documento_licitacao" (
     "nr_documento" VARCHAR(20),
     "arquivo_timestamp" VARCHAR(14),
     "arquivo_url_download" VARCHAR(80),
+    "sigla_estado" VARCHAR(2),
+    "id_estado" INTEGER,
     "descricao_tipo_documento" VARCHAR(60),
     PRIMARY KEY("id_documento_licitacao"),
     CONSTRAINT documento_licitacao_key UNIQUE (id_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, cd_tipo_documento, nome_arquivo_documento, cd_tipo_fase, id_evento_licitacao, tp_documento, nr_documento),

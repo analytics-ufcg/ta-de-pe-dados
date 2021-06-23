@@ -4,7 +4,7 @@ services:
 
   rbase:
     build: 
-      context: code/
+      context: .
     container_name: r-container
     restart: always
     environment:
@@ -20,11 +20,18 @@ services:
       - RECEITA_PORT=${RECEITA_PORT:-32024}
       - RECEITA_USER=${RECEITA_USER:-postgres}
       - RECEITA_PASSWORD=${RECEITA_PASSWORD:-secret}
+      - SQLSERVER_TCE_PE_HOST=${SQLSERVER_TCE_PE_HOST:-sqlserver}
+      - SQLSERVER_TCE_PE_DATABASE=${SQLSERVER_TCE_PE_DATABASE:-TOMECONTA}
+      - SQLSERVER_TCE_PE_USER=${SQLSERVER_TCE_PE_USER:-SA}
+      - SQLSERVER_TCE_PE_PASS=${SQLSERVER_TCE_PE_PASS:-secret}
+      - SQLSERVER_TCE_PE_PORT=${SQLSERVER_TCE_PE_PORT:-32027}
+      - PATH_DADOS=${PATH_DADOS:-./data} 
 
 
     volumes:
-      - ./code:/app/code
-      - ./data:/app/data
+      - ./transformer:/app/transformer
+      - ./fetcher:/app/fetcher
+      - ${PATH_DADOS:-./data}:/app/data
       - ./reports:/app/reports
     ports:
       - 8787:8787
@@ -39,14 +46,26 @@ services:
     env_file:
       - .env
     volumes:
-      - ./data:/data
+      - ${PATH_DADOS:-./data}:/data
       - ./feed:/feed
-    ports:
-      - 7643:7643
     depends_on:
       - postgres
     networks:
       - proxynet
+
+  fetcher-tce-rs:
+    build:
+      context: fetcher/estados/RS/tce/
+    container_name: fetcher-tce-rs-container
+    image: fetcher-tce-rs-image
+    env_file:
+      - .env
+    volumes:
+      - ${PATH_DADOS:-./data}:/code/scripts/data/
+      - ./fetcher/estados/RS/tce:/code/scripts/
+    networks:
+      - proxynet
+   
 
   postgres:
     image: postgres:11.1-alpine
@@ -58,7 +77,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
       - TZ=GMT
     volumes:
-      - postgres_data:/var/lib/postgresql/data/    
+      - postgres_data:/var/lib/postgresql/data/
     ports:
       - 7655:5432
     networks:
