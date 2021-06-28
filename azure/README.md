@@ -28,7 +28,7 @@ APP_TENANT é o Directory (tenant) ID
 APP_PASSWORD é o segredo da autenticação do service principal.
 RESOURCE_GROUP é o nome do grupo de recursos ao qual a VM pertence
 VM_NAME é o nome da VM a qual se deseja parar (dealocação).
-
+LOG_FOLDERPATH é o diretório para salvar os logs da execução.
 
 4. Por fim, execute o comando que irá parar (dealocar) a VM
 ```
