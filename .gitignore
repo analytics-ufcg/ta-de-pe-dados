@@ -9,3 +9,5 @@ logs/
 # macOS files
 .DS_Store
 
+azure/.env
+

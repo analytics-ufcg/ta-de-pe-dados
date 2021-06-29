@@ -12,7 +12,6 @@ inicio=$(date +%d-%m-%y_%H:%M)
 
 # Carrega variáveis de ambiente
 source .env
-source .env.update
 # Escreve em arquivo de log
 PATH=$PATH:/usr/local/bin
 mkdir -p $LOG_FOLDERPATH
