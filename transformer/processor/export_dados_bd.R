@@ -146,6 +146,10 @@ info_orgaos <- bind_rows(info_orgaos_rs,
                    O_ID) %>%
   dplyr::select(id_orgao, dplyr::everything())
 
+info_municipios_monitorados <- info_orgaos %>% 
+  select(cd_municipio_ibge, nome_municipio, id_estado, sigla_estado) %>% 
+  distinct()
+
 licitacoes_falsos_positivos <- readr::read_csv(here::here("transformer/utils/files/licitacoes_falsos_positivos.csv"))
 
 info_licitacoes <- bind_rows(licitacoes_rs,
@@ -276,6 +280,7 @@ readr::write_csv(info_contratos, paste0(output_transformer, "info_contrato.csv")
 readr::write_csv(info_fornecedores_contratos, paste0(output_transformer, "info_fornecedores_contrato.csv"))
 readr::write_csv(info_item_contrato, paste0(output_transformer, "info_item_contrato.csv"))
 readr::write_csv(info_orgaos, paste0(output_transformer, "info_orgaos.csv"))
+readr::write_csv(info_municipios_monitorados, paste0(output_transformer, "info_municipios_monitorados.csv"))
 
 flog.info("#### Processamento concluído!")
 flog.info(paste("#### Confira o diretório", output_transformer))
