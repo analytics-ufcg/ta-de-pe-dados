@@ -23,18 +23,22 @@ chmod +x stop_azure_vm.sh
 ```
 2. Faça uma cópia do arquivo `.env.sample` para um arquivo `.env`
 3. Preencha com os dados correspondentes ao seu contexto.
-APP_ID é o Application (client) ID
-APP_TENANT é o Directory (tenant) ID
-APP_PASSWORD é o segredo da autenticação do service principal.
-RESOURCE_GROUP é o nome do grupo de recursos ao qual a VM pertence
-VM_NAME é o nome da VM a qual se deseja parar (dealocação).
-LOG_FOLDERPATH é o diretório para salvar os logs da execução.
+
+|variável|explicação|
+|---|---|
+|APP_ID|Application (client) ID do service principal|
+|APP_TENANT|é o Directory (tenant) ID do service principal|
+|APP_PASSWORD|é o segredo da autenticação do service principal|
+|RESOURCE_GROUP|é o nome do grupo de recursos ao qual a VM pertence|
+|VM_NAME|é o nome da VM a qual se deseja parar (dealocação)|
+|LOG_FOLDERPATH|é o diretório para salvar os logs da execução (deve conter o / no final.|
+
 
 4. Por fim, execute o comando que irá parar (dealocar) a VM
 ```
 ./stop_azure_vm.sh
 ```
 
-Você pode explorar esse script:
+Você pode explorar o uso desse script:
 1. Mudando qual grupo de recurso ou qual VM você deseja parar.
 2. Mudando o comando do azure cli para ao invés de parar realizar outra operação desejada (tome cuidado!).
