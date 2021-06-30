@@ -367,6 +367,7 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
 
   # exporta os dados processados para um arquivo .csv
   export_csv "$PATH_VOLUME_DADOS/$tipoAplicacao-bd-$(date +%d-%m-%y__%H_%M).zip" "$PATH_VOLUME_DADOS/bd"
+  cp "$PATH_VOLUME_DADOS/$tipoAplicacao-bd-$(date +%d-%m-%y__%H_%M).zip" ./data
 
 done
 
