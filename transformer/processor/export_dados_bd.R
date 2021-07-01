@@ -144,11 +144,18 @@ info_orgaos <- bind_rows(info_orgaos_rs,
                          info_orgaos_pe) %>%
   generate_hash_id(c("cd_orgao", "id_estado"),
                    O_ID) %>%
+  dplyr::mutate(cd_municipio_ibge = dplyr::if_else(stringr::str_detect(nome_municipio, "ESTADO"), 
+                                            id_estado,
+                                            cd_municipio_ibge)) %>% 
   dplyr::select(id_orgao, dplyr::everything())
 
 info_municipios_monitorados <- info_orgaos %>% 
-  select(cd_municipio_ibge, nome_municipio, id_estado, sigla_estado) %>% 
-  distinct()
+  dplyr::select(cd_municipio_ibge, nome_municipio, id_estado, sigla_estado) %>% 
+  dplyr::mutate(slug_municipio = tolower(paste0(sigla_estado, "-", 
+                                 gsub(" ", "-", iconv(nome_municipio,from="UTF-8",to="ASCII//TRANSLIT"))
+                                 ))) %>%
+  dplyr::mutate(nome_municipio = stringr::str_to_title(nome_municipio)) %>% 
+  dplyr::distinct(cd_municipio_ibge, .keep_all = TRUE)
 
 licitacoes_falsos_positivos <- readr::read_csv(here::here("transformer/utils/files/licitacoes_falsos_positivos.csv"))
 

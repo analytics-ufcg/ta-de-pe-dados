@@ -12,5 +12,6 @@ CREATE TABLE IF NOT EXISTS "orgao" (
     "nome_entidade" VARCHAR(30),
     "sigla_estado" VARCHAR(2),
     "id_estado" INTEGER,
-    PRIMARY KEY("id_orgao")
+    PRIMARY KEY("id_orgao"),
+    FOREIGN KEY("cd_municipio_ibge") REFERENCES municipio("cd_municipio_ibge") ON DELETE CASCADE ON UPDATE CASCADE
 );
