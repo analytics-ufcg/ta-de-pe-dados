@@ -295,7 +295,7 @@ Caso algum pacote novo tenha que ser adicionado ao r-container, basta adicionar 
 
 Nesta seção iremos explorar como realizar a atualização dos dados usando o script de update: `update-data.sh`
 
-Obs: O arquivo update-data.sh faz uso de um arquivo de variáveis de ambiente: `env.update`. Neste arquivo é possível alterar o local de escrita do arquivo de log de execução do update-data.sh.
+Obs: O arquivo update-data.sh faz uso de um arquivo de variáveis de ambiente: `.env`. Neste arquivo é possível alterar o local de escrita do arquivo de log de execução do update-data.sh.
 
 Primeiro é preciso dar permissão de execução ao script:
 
@@ -306,30 +306,16 @@ chmod +x update-data.sh
 É possível verificar quais os comandos possíveis de serem executados pelo helper:
 
 ```
-./update.sh -help
+./update-data.sh -help
 ```
 
 ### Para baixar, processar, e importar os dados com um único comando, execute:
 
 ```
-./update.sh -run-full-update
+./update-data.sh --tipo merenda --contexto development --ano-inicio 2019 --ano-fim 2020
 ```
 
 Este processo pode demorar bastante dependendo da sua conexão e da capacidade de processamento da sua máquina. Seu banco de dados local já estará pronto para uso.
-
-### Atualizando o Banco de dados Remoto com os dados já processados
-
-Será preciso configurar as variáveis de ambiente necessárias para o serviço executar:
-
-a) Crie uma cópia do arquivo .env.sample no **diretório raiz desse repositório** e renomeie para `.env.prod` (deve também estar no diretório raiz desse repositório)
-
-b) Preencha as variáveis contidas no .env.sample também para o `.env.prod`. Altere os valores para o banco de dados remoto que você deseja atualizar.
-
-```
-./update.sh -run-update-db-remote
-```
-
-Seus dados serão atualizados remotamente.
 
 ### Configure a atualização periodicamente
 
@@ -342,7 +328,13 @@ crontab -e
 
 Adicione a seguinte linha (modifique o caminho de acordo com sua máquina):
 ```
-0 7 2 * * cd <caminho_para_repositorio>; /bin/bash <caminho_para_repositorio>/update-data.sh -run-full-update; /bin/bash <caminho_para_repositorio>/update-data.sh -run-update-db-remote
+0 7 2 * * cd <caminho_para_repositorio>; /bin/bash <caminho_para_repositorio>/update-data.sh --tipo merenda --contexto development --ano-inicio 2019 --ano-fim 2020
 ```
 
 No dia 2 de cada mês o script de atualização irá se iniciar às 7 horas da manhã.
+
+### Azure
+
+Este repositório tem um módulo dedicado a configurar a conexão e gerenciar a VM no Azure onde o ta-de-pe-dados pode estar executando em produção.
+
+Para mais detalhes acesse [aqui](azure/README.md).
