@@ -20,4 +20,5 @@ DROP TABLE IF EXISTS "item";
 DROP TABLE IF EXISTS "documento_licitacao";
 DROP TABLE IF EXISTS "licitacao";
 DROP TABLE IF EXISTS "orgao";
+DROP TABLE IF EXISTS "municipio";
 DROP MATERIALIZED VIEW IF EXISTS unique_lexeme;
