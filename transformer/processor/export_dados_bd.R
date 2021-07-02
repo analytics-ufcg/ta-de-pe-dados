@@ -151,9 +151,10 @@ info_orgaos <- bind_rows(info_orgaos_rs,
 
 info_municipios_monitorados <- info_orgaos %>% 
   dplyr::select(cd_municipio_ibge, nome_municipio, id_estado, sigla_estado) %>% 
-  dplyr::mutate(slug_municipio = tolower(paste0(sigla_estado, "-", 
-                                 gsub(" ", "-", iconv(nome_municipio,from="UTF-8",to="ASCII//TRANSLIT"))
-                                 ))) %>%
+  dplyr::mutate(slug_municipio = tolower(paste0(gsub(" ", "-", iconv(nome_municipio,from="UTF-8",to="ASCII//TRANSLIT")),
+                                                "-",
+                                                sigla_estado
+                                                ))) %>%
   dplyr::mutate(nome_municipio = stringr::str_to_title(nome_municipio)) %>% 
   dplyr::distinct(cd_municipio_ibge, .keep_all = TRUE)
 
