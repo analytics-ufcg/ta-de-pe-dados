@@ -37,7 +37,7 @@ processa_alerta_inidoneas <- function() {
     mutate(id_tipo = 3,
            id_contrato = NA_character_,
            info = str_glue("Este fornecedor foi encontrado no cadastro do {fonte} (nº de sanções: {n_sancoes}). ", 
-                           "A última sanção tem o período do vigência entre {data_inicio} e {data_fim}.")) %>% 
+                           "A última sanção tem o período de vigência entre {data_inicio} e {data_fim}.")) %>% 
     arrange(nr_documento, desc(data_inicio)) %>% 
     distinct(nr_documento, .keep_all = TRUE) %>% 
     select(nr_documento, id_contrato, id_tipo, info)
