@@ -9,7 +9,7 @@ help:
 	@echo "\thelp \t\t\t\tMostra esta mensagem de ajuda"
 	@echo "\tbuild-fetcher-data-rs \t\t\tRealiza o build da imagem com as dependência do fetcher do tá na mesa"
 	@echo "\tfetch-data-rs ano=<ano> \t\tExecuta a cli do fetcher para o ano passado como parâmetro. (2019 é o default)"
-	@echo "\tfetch-data-pe \t\t\tRecupera dados do TCE-PE."
+	@echo "\tfetch-data-pe ano_inicial=<ano> ano_final=<ano> \t\t\tRecupera dados do TCE-PE."
 	@echo "\tfetch-process-receita \t\tCaptura os dados da Receita Federal para os fornecedores processados."
 	@echo "\tfetch-inidoneos \t\tCaptura os dados de empresas inidoneas (CEIS e CNEP)."
 	@echo "\tprocess-data anos=<ano1,ano2> filtro=<merenda> \tExecuta o módulo de processamento de dados brutos para o formato usado na aplicação."
