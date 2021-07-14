@@ -36,7 +36,7 @@ tipos_alerta <- create_tipo_alertas()
 
 alertas_data <- processa_alertas_data_abertura_contrato(anos)
 alertas_cnae_atipico_item <- processa_alertas_cnaes_atipicos_itens(filtro)
-alertas_empresas_inidoneas <- processa_alerta_inidoneas()
+alertas_empresas_inidoneas <- processa_alerta_inidoneas(anos)
 
 alertas <- bind_rows(alertas_data, 
                      alertas_cnae_atipico_item, 
