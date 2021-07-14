@@ -9,8 +9,9 @@ help:
 	@echo "\thelp \t\t\t\tMostra esta mensagem de ajuda"
 	@echo "\tbuild-fetcher-data-rs \t\t\tRealiza o build da imagem com as dependência do fetcher do tá na mesa"
 	@echo "\tfetch-data-rs ano=<ano> \t\tExecuta a cli do fetcher para o ano passado como parâmetro. (2019 é o default)"
-	@echo "\tfetch-data-pe \t\t\tRecupera dados do TCE-PE."
+	@echo "\tfetch-data-pe ano_inicial=<ano> ano_final=<ano> \t\t\tRecupera dados do TCE-PE."
 	@echo "\tfetch-process-receita \t\tCaptura os dados da Receita Federal para os fornecedores processados."
+	@echo "\tfetch-inidoneos \t\tCaptura os dados de empresas inidoneas (CEIS e CNEP)."
 	@echo "\tprocess-data anos=<ano1,ano2> filtro=<merenda> \tExecuta o módulo de processamento de dados brutos para o formato usado na aplicação."
 	@echo "\t\t\t\t\tAssume um ou mais anos separados por vírgula. Assume que os dados foram baixados."
 	@echo "\tprocess-data-empenhos \t\tExecuta o processamento de dados de empenhos."
@@ -43,6 +44,9 @@ fetch-data-rs-all:
 fetch-data-pe:		
 	docker exec r-container sh -c "cd /app/fetcher/estados/PE/tce/ && Rscript fetch_dados_tce_pe.R --data_inicio $(ano_inicial) --data_fim $(ano_final)"
 .PHONY: fetch-data-pe
+fetch-inidoneos:		
+	docker exec r-container sh -c "cd /app/fetcher/inidoneos && Rscript export_cadastro_inidoneos.R"
+.PHONY: fetch-inidoneos
 process-data:
 	docker exec r-container sh -c "cd /app/transformer/processor && Rscript export_dados_bd.R $(anos) $(filtro)"
 .PHONY: process-data

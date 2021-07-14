@@ -143,6 +143,11 @@ fetcher_data() {
   fetcher_tce_pe "$ANO_INICIO" "$ANO_FIM"
 }
 
+# Recupera os dados de empresas inidoneas
+fetcher_data_inidoneas() {
+  make fetch-inidoneos
+}
+
 # ==============================================================
 #                          PROCESSADOR
 # ==============================================================
@@ -293,8 +298,11 @@ echo -e "- Tipo(s) de aplicação: $TIPO_APLICACAO"
 echo -e "- Contexto: $CONTEXTO"
 echo -e "- Período: $ANO_INICIO até $ANO_FIM \n"
 
-# # Realiza o fetcher dos dados do RS e de PE
+# Realiza o fetcher dos dados do RS e de PE
 fetcher_data
+
+# Realiza o fetcher dos dados de empresas inidoneas
+fetcher_data_inidoneas
 
 # Processa os dados de cada estado e cada tipo de aplicação
 # entradas dos tipos de aplicação
