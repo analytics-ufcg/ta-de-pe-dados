@@ -13,12 +13,12 @@ processa_alerta_inidoneas <- function(anos) {
   flog.info("Processando alertas de empresas inidôneas...")
   
   ceis <- read_csv(here::here("data/inidoneos/ceis.csv"), col_types = cols(.default = col_character())) %>% 
-    mutate(fonte = "CEIS")
+    mutate(fonte = "Cadastro Nacional de Empresas Inidôneas e Suspensas (CEIS)")
   
   cnep <- read_csv(here::here("data/inidoneos/cnep.csv"), 
                    col_types = cols(.default = col_character(),
                                     `VALOR DA MULTA` = col_double())) %>% 
-    mutate(fonte = "CNEP")
+    mutate(fonte = "Cadastro Nacional das Empresas Punidas (CNEP)")
   
   cadastros <- ceis %>% 
     bind_rows(cnep)
@@ -45,8 +45,8 @@ processa_alerta_inidoneas <- function(anos) {
     ungroup() %>% 
     filter((data_inicio <= dt_inicio_vigencia) & (dt_inicio_vigencia <= data_fim)) %>% 
     mutate(id_tipo = 3,
-           info = str_glue("O fornecedor estava presente no {fonte} com uma sanção vigente durante o início do contrato. ", 
-                           "A sanção tem o período de vigência de {format(data_inicio, '%d/%m/%Y')} a {format(data_fim, '%d/%m/%Y')}.")) %>% 
+           info = str_glue("Fornecedor com sanção vigente no {fonte} no momento da contratação. ", 
+                           "Vigência da sanção: {format(data_inicio, '%d/%m/%Y')} a {format(data_fim, '%d/%m/%Y')}.")) %>% 
     arrange(nr_documento, desc(data_inicio)) %>% 
     distinct(nr_documento, id_contrato, .keep_all = TRUE) %>% 
     select(nr_documento, id_contrato, id_tipo, info)

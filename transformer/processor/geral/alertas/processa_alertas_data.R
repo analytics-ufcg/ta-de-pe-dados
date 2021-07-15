@@ -17,7 +17,7 @@ source(here::here("transformer/processor/aggregator/agrega_contratos.R"))
 #' alertas <- create_tipo_alertas()
 create_tipo_alertas <- function() {
   id_tipo <- c(1, 2, 3)
-  titulo <- c("Contratado logo após a abertura", "Produtos atípicos", "Inidôneos")
+  titulo <- c("Contratado logo após a abertura", "Produtos atípicos", "Contratado inidôneo")
   
   tipos_alertas <- data.frame(id_tipo, titulo)
   flog.info(str_glue("{tipos_alertas %>% nrow()} tipos de alertas gerados"))
