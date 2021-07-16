@@ -17,7 +17,7 @@ source(here::here("transformer/processor/aggregator/agrega_contratos.R"))
 #' alertas <- create_tipo_alertas()
 create_tipo_alertas <- function() {
   id_tipo <- c(1, 2, 3)
-  titulo <- c("Contratado logo após a abertura", "Produtos atípicos", "Inidôneos")
+  titulo <- c("Contratado logo após a abertura", "Produtos atípicos", "Contratado inidôneo")
   
   tipos_alertas <- data.frame(id_tipo, titulo)
   flog.info(str_glue("{tipos_alertas %>% nrow()} tipos de alertas gerados"))
@@ -113,7 +113,7 @@ processa_alertas_data_abertura_contrato <- function(anos) {
   
   flog.info(str_glue("{fornecedores %>% nrow()} fornecedores com o alerta!"))
   
-  contratos_merge <- .processa_contratos_info(anos)
+  contratos_merge <- processa_contratos_info(anos)
   flog.info(str_glue("Pesquisa feita em {contratos_merge %>% nrow()} contratos de {contratos_merge %>% count(id_estado) %>% nrow()} estados."))
   
   fornecedores_contratos <- fornecedores %>% 
@@ -138,8 +138,8 @@ processa_alertas_data_abertura_contrato <- function(anos) {
 #' @return Dataframe com alertas para a diferença de daras
 #' 
 #' @examples 
-#' contratos_merge <- .processa_contratos_info(c(2018, 2019, 2020))
-.processa_contratos_info <- function(anos) {
+#' contratos_merge <- processa_contratos_info(c(2018, 2019, 2020))
+processa_contratos_info <- function(anos) {
   contratos_processados <- read_contratos_processados() %>% 
     mutate(id_orgao = as.character(id_orgao)) %>% 
     select(id_contrato, id_estado, id_orgao, cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, 
