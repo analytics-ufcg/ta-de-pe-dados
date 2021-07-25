@@ -31,6 +31,7 @@ source(here::here("transformer/processor/geral/alertas/functions/processa_tipos_
 source(here::here("transformer/processor/geral/alertas/functions/processa_alerta_data_abertura.R"))
 source(here::here("transformer/processor/geral/alertas/functions/processa_alerta_cnae_atipico.R"))
 source(here::here("transformer/processor/geral/alertas/functions/processa_alerta_inidoneas.R"))
+source(here::here("transformer/processor/geral/alertas/functions/processa_alerta_faturamento_suspeito.R"))
 
 flog.info("Criando alertas...")
 
@@ -39,13 +40,17 @@ tipos_alerta <- create_tipo_alertas()
 alertas_data <- processa_alertas_data_abertura_contrato(anos)
 alertas_cnae_atipico_item <- processa_alerta_cnae_atipico(filtro)
 alertas_empresas_inidoneas <- processa_alerta_inidoneas(anos)
+alertas_faturamento_suspeito <- processa_alerta_faturamento_suspeito()
 
 alertas <- bind_rows(alertas_data, 
                      alertas_cnae_atipico_item, 
-                     alertas_empresas_inidoneas)
+                     alertas_empresas_inidoneas,
+                     alertas_faturamento_suspeito)
 
 alertas_bd <- alertas %>% 
   generate_hash_id(c("id_tipo", "nr_documento", "id_contrato"), ALERTA_ID) %>% 
+  # Trata caso especial de alerta não ligado ao contrato e sim ao fornecedor.
+  dplyr::mutate(id_contrato = if_else(id_tipo == 4, NA_character_, id_contrato)) %>%
   dplyr::select(id_alerta, dplyr::everything())
 
 flog.info("Escrevendo dados em csv...")

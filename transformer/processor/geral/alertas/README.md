@@ -32,6 +32,7 @@ Cada função que calcula/processa um alerta deve retornar um dataframe com as s
 1. Contratado logo após a abertura: Fornecedores que foram contratados pouco depois da data de abertura da empresa na Receita Federal
 2. Produtos atípicos: Fornecedores que foram contratados para o abastecimento de produtos que são atípicos considerando o CNAE desses fornecedores.
 3. Contratado inidôneo: Fornecedores que foram contratados enquanto estavam com sanções vigentes no CEIS ou no CNEP.
+4. Faturamento alto: Fornecedores com valor contratado acima do limite de faturamento definido para seu porte cadastrado na Receita Federal.
 
 ## Como gerar um novo alerta?
 
