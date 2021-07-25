@@ -27,15 +27,17 @@ filtro <- args[2]
 source(here::here("transformer/utils/utils.R"))
 source(here::here("transformer/utils/read_utils.R"))
 source(here::here("transformer/utils/constants.R"))
-source(here::here("transformer/processor/geral/alertas/processa_alertas_data.R"))
-source(here::here("transformer/processor/geral/alertas/processa_alerta_inidoneas.R"))
+source(here::here("transformer/processor/geral/alertas/functions/processa_tipos_alerta.R"))
+source(here::here("transformer/processor/geral/alertas/functions/processa_alerta_data_abertura.R"))
+source(here::here("transformer/processor/geral/alertas/functions/processa_alerta_cnae_atipico.R"))
+source(here::here("transformer/processor/geral/alertas/functions/processa_alerta_inidoneas.R"))
 
 flog.info("Criando alertas...")
 
 tipos_alerta <- create_tipo_alertas()
 
 alertas_data <- processa_alertas_data_abertura_contrato(anos)
-alertas_cnae_atipico_item <- processa_alertas_cnaes_atipicos_itens(filtro)
+alertas_cnae_atipico_item <- processa_alerta_cnae_atipico(filtro)
 alertas_empresas_inidoneas <- processa_alerta_inidoneas(anos)
 
 alertas <- bind_rows(alertas_data, 

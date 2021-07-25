@@ -1,4 +1,5 @@
 library(tidyverse)
+source(here::here("transformer/utils/utils.R"))
 source(here::here("transformer/processor/estados/PE/contratos/processador_contratos_pe.R"))
 source(here::here("transformer/processor/estados/RS/contratos/processador_contratos_rs.R"))
 
