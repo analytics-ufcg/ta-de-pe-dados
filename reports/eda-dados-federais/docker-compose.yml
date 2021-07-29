@@ -19,6 +19,8 @@ services:
   metabase-dados-federais:
     image: metabase/metabase
     container_name: metabase-dados-federais
+    # environment:
+      # - MB_DB_FILE=/metabase-data/metabase.db
     volumes:
       - ./metabase-data:/metabase-data
     ports:
