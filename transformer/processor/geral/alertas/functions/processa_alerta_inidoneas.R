@@ -2,7 +2,7 @@ library(tidyverse)
 library(futile.logger)
 
 source(here::here("transformer/utils/read_utils.R"))
-source(here::here("transformer/processor/geral/alertas/processa_alertas_data.R"))
+source(here::here("transformer/processor/geral/alertas/functions/helpers/processa_contratos_info.R"))
 
 #' @title Gera alertas para empresas inidoneas
 #' @description Gera alertas para empresas inidoneas que estão presentes na lista de fornecedores
