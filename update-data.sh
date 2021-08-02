@@ -12,7 +12,6 @@ inicio=$(date +%d-%m-%y_%H:%M)
 
 # Carrega variáveis de ambiente
 source .env
-source .env.update
 # Escreve em arquivo de log
 PATH=$PATH:/usr/local/bin
 mkdir -p $LOG_FOLDERPATH
@@ -144,6 +143,11 @@ fetcher_data() {
   fetcher_tce_pe "$ANO_INICIO" "$ANO_FIM"
 }
 
+# Recupera os dados de empresas inidoneas
+fetcher_data_inidoneas() {
+  make fetch-inidoneos
+}
+
 # ==============================================================
 #                          PROCESSADOR
 # ==============================================================
@@ -223,6 +227,14 @@ feed_import_data() {
   echo ""
   docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py import-data
 } 
+
+# Cria tabela de empenhos raw (vindos diretamento do TCE)
+feed_create_empenho_raw() {
+  echo ""
+  printWithTime "> Criando tabela de empenhos (vindos diretamente do TCE)"
+  echo ""
+  make feed-create-empenho-raw
+}  
   
 # Importa os dados de empenhos (vindos diretamento do TCE)
 feed_import_empenho_raw() {
@@ -286,8 +298,11 @@ echo -e "- Tipo(s) de aplicação: $TIPO_APLICACAO"
 echo -e "- Contexto: $CONTEXTO"
 echo -e "- Período: $ANO_INICIO até $ANO_FIM \n"
 
-# # Realiza o fetcher dos dados do RS e de PE
+# Realiza o fetcher dos dados do RS e de PE
 fetcher_data
+
+# Realiza o fetcher dos dados de empresas inidoneas
+fetcher_data_inidoneas
 
 # Processa os dados de cada estado e cada tipo de aplicação
 # entradas dos tipos de aplicação
@@ -296,6 +311,7 @@ IFS=',' read -r -a tiposAplicacao <<<"$TIPO_APLICACAO"
 anosConcatenados=$(concatYears)
 
 # Importa os dados de empenhos (vindos diretamento do TCE)
+feed_create_empenho_raw
 feed_import_empenho_raw
 
 # iteração para cada tipo de aplicação
@@ -359,6 +375,7 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
 
   # exporta os dados processados para um arquivo .csv
   export_csv "$PATH_VOLUME_DADOS/$tipoAplicacao-bd-$(date +%d-%m-%y__%H_%M).zip" "$PATH_VOLUME_DADOS/bd"
+  cp "$PATH_VOLUME_DADOS/$tipoAplicacao-bd-$(date +%d-%m-%y__%H_%M).zip" ./data
 
 done
 

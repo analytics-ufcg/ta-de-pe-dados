@@ -1,6 +1,7 @@
 SET datestyle = ymd;
 CREATE EXTENSION pg_trgm;
 
+\copy municipio FROM '/data/bd/info_municipios_monitorados.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
 \copy orgao FROM '/data/bd/info_orgaos.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
 \copy licitacao FROM '/data/bd/info_licitacao.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;
 \copy documento_licitacao FROM '/data/bd/info_documento_licitacao.csv' WITH NULL AS 'NA' DELIMITER ',' CSV HEADER;

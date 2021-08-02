@@ -8,19 +8,22 @@ library(httr)
 #' @param n_itens Número de itens que serão usados na pesquisa
 #' @return Dataframe com os itens similares retornados
 #' @example 
-#' res <- processa_itens_similares(url = "http://ta-na-mesa_backend_1:5000/api/itensContrato/similares", n_itens = 20000)
-processa_itens_similares <- function(url = "http://ta-na-mesa_backend_1:5000/api/itensContrato/similares", 
-                                     n_itens = 20000) {
-  itens_contrato <- read_csv(here::here("data/bd/info_item_contrato.csv"))
+#' res <- processa_itens_similares(url = "http://ta-de-pe_backend_1:5000/api/itensContrato/similares", n_itens = 20)
+processa_itens_similares <- function(url = "http://ta-de-pe_backend_1:5000/api/itensContrato/similares", 
+                                     n_itens = 2000) {
+  itens_contrato <- read_csv(here::here("data/bd/info_item_contrato.csv"), 
+                             col_types = cols(nr_contrato = col_character()))
   
   set.seed(123)
   itens_contrato_alt <- itens_contrato %>% 
-    sample_n(n_itens) %>% 
+    sample_n(n_itens) %>%
     ungroup() %>% 
     mutate(ds1 = ds_1,
            ds2 = gsub(" ", " & ", ds_2),
            ds3 = gsub(" ", " & ", ds_3)) %>% 
-    dplyr::select(id_item_contrato, ds_item, ds1, ds2, ds3, dt_inicio_vigencia, sg_unidade_medida)
+    dplyr::select(id_item_contrato, ds_item, ds1, ds2, ds3, dt_inicio_vigencia, sg_unidade_medida, id_estado) %>% 
+    tibble::rowid_to_column(var = "row") %>% 
+    mutate(total = nrow(itens_contrato))
   
   itens_similares <- purrr::pmap_df(
     list(
@@ -29,9 +32,12 @@ processa_itens_similares <- function(url = "http://ta-na-mesa_backend_1:5000/api
       itens_contrato_alt$ds2,
       itens_contrato_alt$ds3,
       itens_contrato_alt$dt_inicio_vigencia,
-      itens_contrato_alt$sg_unidade_medida
+      itens_contrato_alt$sg_unidade_medida,
+      itens_contrato_alt$id_estado,
+      itens_contrato_alt$row,
+      itens_contrato_alt$total
     ),
-    ~ recupera_itens_similares(..1, ..2, ..3, ..4, ..5, ..6, url = url)
+    ~ recupera_itens_similares(..1, ..2, ..3, ..4, ..5, ..6, ..7, ..8, ..9, url = url)
   )
   
   itens_similares_merge <- itens_similares %>% 
@@ -68,11 +74,12 @@ processa_itens_similares <- function(url = "http://ta-na-mesa_backend_1:5000/api
 #' @return Dataframe com os itens similares ao item passado como parâmetro
 #' @example res <- recupera_itens_similares("FEIJAO", "FEIJAO & PRETO", "FEIJAO & PRETO & TIPO", "2019-06-01")
 recupera_itens_similares <-
-  function(item_pesquisa_param, ds1, ds2, ds3, data, unidade_medida,
-           url = "http://ta-na-mesa_backend_1:5000/api/itensContrato/similares") {
-  print(paste("Recuperando itens similares", ds1, ds2, ds3, data))
+  function(item_pesquisa_param, ds1, ds2, ds3, data, unidade_medida, estado, row, total,
+           url = "http://ta-de-pe_backend_1:5000/api/itensContrato/similares") {
+  print(paste("Recuperando itens similares", ds1, ds2, ds3, data, estado))
+  print(paste("Progresso: ", round((row/total)*100, 4), " ", row, "/", total))
   
-  req_body = list(termo = c(ds1, ds2, ds3), data = data, unidade = unidade_medida)
+  req_body = list(termo = c(ds1, ds2, ds3), data = data, unidade = unidade_medida, id_estado = estado)
   
   req <- POST(
     url,
@@ -100,22 +107,24 @@ recupera_itens_similares <-
              unidade_medida_item_similar = sg_unidade_medida,
              dt_inicio_vigencia_item_similar = dt_inicio_vigencia,
              nome_municipio_item_similar = nome_municipio,
+             id_estado_item_similar = id_estado,
              similaridade = rel)
   }, error = function(cond) {
     message(cond)
     return(
-      tribble(
-        ~id_item_pesquisado,
-        ~id_item_similar,
-        ~id_contrato_item_similar,
-        ~id_licitacao_item_similar,
-        ~vl_item_similar,
-        ~vl_total_item_similar,
-        ~ds_item_similar,
-        ~unidade_medida_item_similar,
-        ~dt_inicio_vigencia_item_similar,
-        ~nome_municipio_item_similar,
-        ~similaridade
+      tibble(
+        id_item_pesquisado = character(),
+        id_item_similar = character(),
+        id_contrato_item_similar = character(),
+        id_licitacao_item_similar = character(),
+        vl_item_similar = numeric(),
+        vl_total_item_similar = numeric(),
+        ds_item_similar = character(),
+        unidade_medida_item_similar = character(),
+        dt_inicio_vigencia_item_similar = character(),
+        nome_municipio_item_similar = character(),
+        id_estado_item_similar = numeric(),
+        similaridade = numeric()
       )
     )
   })
