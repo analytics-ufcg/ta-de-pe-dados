@@ -1,0 +1,27 @@
+version: "3.5"
+
+services:
+  db-dados-federais:
+    image: postgres:11.1-alpine
+    container_name: postgres-dados-federais
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-dadosfederais}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
+      - TZ=GMT
+    volumes:
+      - ./bd:/var/lib/postgresql/data/
+      - ./data:/data/
+      - ./load:/load/
+    ports:
+      - 7656:5432
+
+  metabase-dados-federais:
+    image: metabase/metabase
+    container_name: metabase-dados-federais
+    # environment:
+      # - MB_DB_FILE=/metabase-data/metabase.db
+    volumes:
+      - ./metabase-data:/metabase-data
+    ports:
+      - 3009:3000
