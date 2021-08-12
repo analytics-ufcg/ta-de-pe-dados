@@ -25,13 +25,11 @@ services:
       - SQLSERVER_TCE_PE_USER=${SQLSERVER_TCE_PE_USER:-SA}
       - SQLSERVER_TCE_PE_PASS=${SQLSERVER_TCE_PE_PASS:-secret}
       - SQLSERVER_TCE_PE_PORT=${SQLSERVER_TCE_PE_PORT:-32027}
-      - PATH_DADOS=${PATH_DADOS:-./data} 
-
-
+      - PATH_DADOS=${PATH_DADOS:-./data}
     volumes:
       - ./transformer:/app/transformer
       - ./fetcher:/app/fetcher
-      - ${PATH_DADOS:-./data}:/app/data
+      - ${PATH_VOLUME_DADOS:-./data}:/app/data
       - ./reports:/app/reports
     ports:
       - 8787:8787
@@ -46,7 +44,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ${PATH_DADOS:-./data}:/data
+      - ${PATH_VOLUME_DADOS:-./data}:/data
       - ./feed:/feed
     depends_on:
       - postgres
@@ -61,7 +59,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ${PATH_DADOS:-./data}:/code/scripts/data/
+      - ${PATH_VOLUME_DADOS:-./data}:/code/scripts/data/
       - ./fetcher/estados/RS/tce:/code/scripts/
     networks:
       - proxynet
@@ -77,7 +75,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
       - TZ=GMT
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - ${PATH_VOLUME_DADOS}:/var/lib/postgresql/data/
     ports:
       - 7655:5432
     networks:
@@ -86,7 +84,4 @@ services:
 networks:
   proxynet:
     name: ta_na_mesa_network
-      
-volumes:
-  postgres_data:
   
