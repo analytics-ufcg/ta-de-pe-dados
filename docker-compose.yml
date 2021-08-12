@@ -75,7 +75,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
       - TZ=GMT
     volumes:
-      - ${PATH_VOLUME_DADOS}:/var/lib/postgresql/data/
+      - ${PATH_VOLUME_DADOS_BD}:/var/lib/postgresql/data/
     ports:
       - 7655:5432
     networks:
