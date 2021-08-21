@@ -1,4 +1,5 @@
 source(here::here("transformer/adapter/estados/RS/orgaos/adaptador_orgaos_rs.R"))
+source(here::here("transformer/adapter/estados/RS/licitacoes/adaptador_licitacoes_rs.R"))
 
 #' Processa dados dos órgãos do estado do Rio Grande do Sul para um conjunto de filtros
 #' 
@@ -14,6 +15,6 @@ processa_orgaos_rs <- function(anos, filtro) {
     adapta_info_orgaos(import_licitacoes(anos) %>%
                          adapta_info_licitacoes(tipo_filtro = filtro)) %>% 
     add_info_estado(sigla_estado = "RS", id_estado = "43")
-  
+
   return(info_orgaos_rs)
 }

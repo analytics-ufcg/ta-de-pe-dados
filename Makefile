@@ -12,7 +12,7 @@ help:
 	@echo "\tfetch-data-pe ano_inicial=<ano> ano_final=<ano> \t\t\tRecupera dados do TCE-PE."
 	@echo "\tfetch-process-receita \t\tCaptura os dados da Receita Federal para os fornecedores processados."
 	@echo "\tfetch-inidoneos \t\tCaptura os dados de empresas inidoneas (CEIS e CNEP)."
-	@echo "\tprocess-data anos=<ano1,ano2> filtro=<merenda> \tExecuta o módulo de processamento de dados brutos para o formato usado na aplicação."
+	@echo "\tprocess-data anos=<ano1,ano2> filtro=<merenda> estados=<PE,RS> \tExecuta o módulo de processamento de dados brutos para o formato usado na aplicação."
 	@echo "\t\t\t\t\tAssume um ou mais anos separados por vírgula. Assume que os dados foram baixados."
 	@echo "\tprocess-data-empenhos \t\tExecuta o processamento de dados de empenhos."
 	@echo "\tprocess-data-novidades \t\tExecuta o processamento de dados de novidades."
@@ -48,7 +48,7 @@ fetch-inidoneos:
 	docker exec r-container sh -c "cd /app/fetcher/inidoneos && Rscript export_cadastro_inidoneos.R"
 .PHONY: fetch-inidoneos
 process-data:
-	docker exec r-container sh -c "cd /app/transformer/processor && Rscript export_dados_bd.R $(anos) $(filtro)"
+	docker exec r-container sh -c "cd /app/transformer/processor && Rscript export_dados_bd.R $(anos) $(filtro) $(estados)"
 .PHONY: process-data
 process-data-empenhos:
 	docker exec r-container sh -c "cd /app/transformer/processor/estados/RS/empenhos && Rscript export_empenhos_bd.R"

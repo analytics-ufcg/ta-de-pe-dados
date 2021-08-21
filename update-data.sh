@@ -27,8 +27,9 @@ usage() {
   echo -e "\t-c  --contexto    corresponde ao contexto de destino (production, staging ou development)."
   echo -e "\t-i  --data_inicio corresponde ao ano de início do processamento."
   echo -e "\t-f  --data_fim    corresponde ao ano final do processamento."
+  echo -e "\t-f  --estados    corresponde a lista de estados para processamento."
   echo ""
-  echo "Ex. de uso: $0 --tipo covid,merenda --contexto development --ano-inicio 2017 --ano-fim 2019"
+  echo "Ex. de uso: $0 --tipo covid,merenda --contexto development --ano-inicio 2017 --ano-fim 2019 --estados RS,PE"
   exit
 }
 
@@ -50,6 +51,10 @@ while [ $# -gt 0 ]; do
   --ano-fim* | -f*)
     if [[ "$1" != *=* ]]; then shift; fi
     ANO_FIM="${1#*=}"
+    ;;
+  --estados* | -f*)
+    if [[ "$1" != *=* ]]; then shift; fi
+    ESTADOS="${1#*=}"
     ;;
   --help | -h)
     usage
@@ -156,7 +161,7 @@ process_data(){
   echo ""
   printWithTime "> Executando o processamento dos dados gerais"
   echo ""
-  make process-data anos=$1 filtro=$2
+  make process-data anos=$1 filtro=$2 estados=$3
 }
 
 # Processa as informações de fornecedores (como data do primeiro 
@@ -322,7 +327,7 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
   feed_clean_data
 
   # processa os dados gerais
-  process_data $anosConcatenados "$tipoAplicacao"
+  process_data $anosConcatenados "$tipoAplicacao" "$ESTADOS"
   
   # Processa dos fornecedores
   process_data_fornecedores $anosConcatenados
