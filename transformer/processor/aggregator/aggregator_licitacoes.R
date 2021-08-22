@@ -58,7 +58,10 @@ aggregator_licitacoes <- function(anos, filtro, administracao = c("PE", "RS")) {
     distinct() %>% 
     generate_hash_id(c("id_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade"),
                      L_ID) %>%
-    dplyr::select(id_licitacao, id_estado, id_orgao, dplyr::everything()) %>%
+    dplyr::select(id_licitacao, id_estado, id_orgao, cd_orgao, nm_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade,
+                  permite_subcontratacao, tp_fornecimento, descricao_objeto, vl_estimado_licitacao, data_abertura, 
+                  data_homologacao, data_adjudicacao, vl_homologado, tp_licitacao, assunto, tipo_licitacao, 
+                  tipo_modalidade_licitacao, sigla_estado) %>%
     dplyr::filter(!id_licitacao %in% (licitacoes_falsos_positivos %>% pull(id_licitacao)))
   
   return(info_licitacoes)

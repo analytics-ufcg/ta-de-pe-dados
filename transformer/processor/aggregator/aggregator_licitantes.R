@@ -39,13 +39,24 @@ aggregator_licitantes <- function(anos, administracao, info_licitacoes) {
   
   # TODO: Dados de licitantes para PE
   
-  info_licitantes <- join_licitante_e_licitacao(
-    licitantes_rs,
-    info_licitacoes %>%
-      dplyr::select(id_estado, id_orgao, cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, id_licitacao)
-  ) %>%
-    generate_hash_id(c("id_licitacao", "tp_documento_licitante", "nr_documento_licitante"), LICITANTE_ID) %>%
-    dplyr::select(id_licitante, id_estado, id_orgao, id_licitacao, dplyr::everything())
+  if (nrow(licitantes_rs) == 0) {
+    flog.warn("Nenhum dado de licitante para agregar")
+    return(tibble())
+  }
+  
+  info_licitantes <- tryCatch({
+    join_licitante_e_licitacao(
+      licitantes_rs,
+      info_licitacoes %>%
+        dplyr::select(id_estado, id_orgao, cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, id_licitacao)
+    ) %>%
+      generate_hash_id(c("id_licitacao", "tp_documento_licitante", "nr_documento_licitante"), LICITANTE_ID) %>%
+      dplyr::select(id_licitante, id_estado, id_orgao, id_licitacao, dplyr::everything())
+  }, error = function(e) {
+    flog.error("Ocorreu um erro ao agregar os dados de licitantes")
+    flog.error(e)
+    return(tibble())
+  })
   
   return(info_licitantes)
 }

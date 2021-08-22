@@ -37,7 +37,13 @@ aggregator_itens_licitacao <- function(anos, administracao = c("PE", "RS"), info
     itens_licitacao_rs <- tibble()
   }
   
+  
   # TODO: processar dados de itens de licitação em PE (Não disponível ainda no Tome Conta)
+  
+  if (nrow(itens_licitacao_rs) == 0) { ## Remover quando outros dados de itens de licitação estiverem disponíveis
+    flog.warn("Nenhum dado de itens de licitação para agregar")
+    return(tibble())
+  }
   
   info_item_licitacao <- itens_licitacao_rs %>%
     join_licitacoes_e_itens(info_licitacoes) %>%

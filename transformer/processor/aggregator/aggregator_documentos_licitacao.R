@@ -41,6 +41,12 @@ aggregator_documentos_licitacao <- function(anos, administracao = c("PE", "RS"),
   
   # TODO: dados de documentos de licitação em Pernambuco ainda não foram processados.
   
+  if (nrow(documento_licitacao_rs) == 0) { ## Remover quando outros dados de itens de licitação estiverem disponíveis
+    flog.warn("Nenhum dado de documento de licitação para agregar")
+    return(tibble())
+  }
+  
+  
   info_documento_licitacao <- documento_licitacao_rs %>%
     join_licitacoes_e_documentos(info_licitacoes) %>%
     generate_hash_id(c("cd_orgao", "id_estado"),

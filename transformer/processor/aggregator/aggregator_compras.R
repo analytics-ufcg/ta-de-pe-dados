@@ -56,6 +56,11 @@ aggregator_compras <- function(anos, administracao = c("PE", "RS"), info_licitac
   
   # TODO: Compras para PE não pode ser acessada ainda pela falta de itens de licitação na base do Tome Conta
   
+  if (nrow(compras_rs) == 0) { ## Remover quando outros dados de itens de licitação estiverem disponíveis
+    flog.warn("Nenhum dado de compras para agregar")
+    return(tibble())
+  }
+  
   info_compras <- compras_rs %>%
     dplyr::left_join(info_licitacoes %>%
                        dplyr::select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, id_estado,

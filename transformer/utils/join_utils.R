@@ -24,15 +24,33 @@ join_contratos_e_itens <- function(itens_contrato_df, contratos_df) {
 
 join_contrato_e_licitacao <- function(contrato_df, licitacao_df) {
   
-  contratos_pe <- contrato_df %>% filter(id_estado == "26") %>% 
-    dplyr::select(-ano_licitacao, -cd_tipo_modalidade) %>% 
+  contratos_pe <- contrato_df %>% filter(id_estado == "26")
+  
+  if ("ano_licitacao" %in% names(contratos_pe) && 
+      "cd_tipo_modalidade" %in% names(contratos_pe)) {
+    contratos_pe <- contratos_pe %>% 
+      dplyr::select(-ano_licitacao, -cd_tipo_modalidade)
+  }
+
+  contratos_pe <- contratos_pe %>% 
     dplyr::inner_join(licitacao_df, by = c("cd_orgao", "nr_licitacao", "id_estado"))
   
-  contratos_rs <- contrato_df %>% filter(id_estado == "43") %>% 
-    dplyr::inner_join(licitacao_df, by = c("cd_orgao", "nr_licitacao",
-                                           "ano_licitacao", "cd_tipo_modalidade", 
-                                           "id_estado"))
   
+  contratos_rs <- contrato_df %>% filter(id_estado == "43")
+  
+  if (nrow(contratos_rs) > 0) {
+    contratos_rs <- contratos_rs %>%
+      dplyr::inner_join(
+        licitacao_df,
+        by = c(
+          "cd_orgao",
+          "nr_licitacao",
+          "ano_licitacao",
+          "cd_tipo_modalidade",
+          "id_estado"
+        )
+      )
+  }
   contratos <- bind_rows(contratos_pe, contratos_rs)
   
 }
@@ -74,6 +92,9 @@ join_contrato_e_orgao <- function(contratos, orgao_municipio) {
 }
 
 join_itens_contratos_e_licitacoes <- function(itens_contratos, itens_licitacoes) {
+  if (nrow(itens_licitacoes) == 0) {
+    return(itens_contratos %>% mutate(id_item_licitacao = NA_character_))
+  }
   itens_licitacoes %<>% dplyr::select(id_licitacao, id_item_licitacao = id_item, 
                                       nr_lote, nr_item) 
   itens_contratos %<>% dplyr::left_join(itens_licitacoes, c("id_licitacao", "nr_lote", "nr_item"))

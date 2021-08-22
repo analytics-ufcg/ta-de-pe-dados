@@ -62,7 +62,12 @@ aggregator_contratos <- function(anos, administracao = c("PE", "RS"), info_licit
                                               id_estado)) %>% 
     generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade",
                        "nr_contrato", "ano_contrato", "tp_instrumento_contrato"), CONTRATO_ID) %>%
-    dplyr::select(id_contrato, id_estado, id_orgao, id_licitacao, dplyr::everything())
+    dplyr::select(id_contrato, id_estado, id_orgao, id_licitacao, codigo_contrato, nr_contrato,
+                  ano_contrato, cd_orgao, nm_orgao, nr_processo, ano_processo, tp_documento_contratado,
+                  nr_documento_contratado, dt_inicio_vigencia, dt_final_vigencia, vl_contrato,
+                  descricao_objeto_contrato, nr_licitacao, sigla_estado, tp_instrumento_contrato, contrato_possui_garantia,
+                  vigencia_original_do_contrato, justificativa_contratacao, obs_contrato, tipo_instrumento_contrato, 
+                  ano_licitacao, cd_tipo_modalidade)
   
   return(info_contratos)
 }
