@@ -9,6 +9,7 @@ source(here::here("transformer/utils/constants.R"))
 
 source(here::here("transformer/processor/estados/RS/licitacoes/processador_licitacoes_rs.R"))
 source(here::here("transformer/processor/estados/PE/licitacoes/processador_licitacoes_pe.R"))
+source(here::here("transformer/processor/estados/Federal/licitacoes/processador_licitacoes_federal.R"))
 
 #' Agrupa dados de licitações monitoradas pelo Tá de pé
 #'
@@ -48,11 +49,25 @@ aggregator_licitacoes <- function(anos, filtro, administracao = c("PE", "RS")) {
   } else {
     licitacoes_pe <- tibble()
   }
+
+  if ("FE" %in% administracao) {
+    licitacoes_federais <- tryCatch({
+      flog.info("processando licitações do Governo Federal (FE)...")
+      processa_licitacoes_federal(filtro)
+    }, error = function(e) {
+      flog.error("Ocorreu um erro ao processar os dados de licitações do Governo Federal (FE)")
+      flog.error(e)
+      return(tibble())
+    })
+  } else {
+    licitacoes_federais <- tibble()
+  }
   
   licitacoes_falsos_positivos <- readr::read_csv(here::here("transformer/utils/files/licitacoes_falsos_positivos.csv"))
   
   info_licitacoes <- bind_rows(licitacoes_rs,
-                               licitacoes_pe)  %>% 
+                               licitacoes_pe,
+                               licitacoes_federais)  %>% 
     generate_hash_id(c("cd_orgao", "id_estado"),
                      O_ID) %>% 
     distinct() %>% 

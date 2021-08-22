@@ -50,8 +50,15 @@ aggregator_contratos <- function(anos, administracao = c("PE", "RS"), info_licit
   } else {
     contratos_pe <- tibble()
   }
+
+  info_contratos <- bind_rows(contratos_pe, contratos_rs)
+
+  if (nrow(info_contratos) == 0) {
+    flog.warn("Nenhum dado de contrato para agregar!")
+    return(info_contratos)
+  }
   
-  info_contratos <- bind_rows(contratos_pe, contratos_rs) %>% 
+  info_contratos <- info_contratos %>% 
     join_contrato_e_licitacao(info_licitacoes %>%
                                 dplyr::select(cd_orgao,
                                               nr_licitacao,

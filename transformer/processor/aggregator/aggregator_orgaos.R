@@ -8,6 +8,7 @@ source(here::here("transformer/utils/constants.R"))
 
 source(here::here("transformer/processor/estados/RS/orgaos/processador_orgaos_rs.R"))
 source(here::here("transformer/processor/estados/PE/orgaos/processador_orgaos_pe.R"))
+source(here::here("transformer/processor/estados/Federal/orgaos/processador_orgaos_federal.R"))
 
 #' Agrupa dados de órgãos monitorados pelo Tá de pé
 #'
@@ -47,15 +48,29 @@ aggregator_orgaos <- function(anos, filtro, administracao = c("PE", "RS")) {
   } else {
     orgaos_pe <- tibble()
   }
+
+  if ("FE" %in% administracao) {
+    orgaos_federais <- tryCatch({
+      flog.info("processando órgãos do Governo Federal (FE)...")
+      processa_orgaos_federal()
+    }, error = function(e) {
+      flog.error("Ocorreu um erro ao processar os dados de órgãos do Governo Federal (FE)")
+      flog.error(e)
+      return(tibble())
+    })
+  } else {
+    orgaos_federais <- tibble()
+  }
   
   info_orgaos <- bind_rows(orgaos_rs,
-                           orgaos_pe) %>%
+                           orgaos_pe,
+                           orgaos_federais) %>%
     generate_hash_id(c("cd_orgao", "id_estado"),
                      O_ID) %>%
-    dplyr::mutate(cd_municipio_ibge = dplyr::if_else(stringr::str_detect(nome_municipio, "ESTADO"), 
+    dplyr::mutate(cd_municipio_ibge = ifelse(stringr::str_detect(nome_municipio, "ESTADO") & esfera != "FEDERAL", 
                                                      id_estado,
                                                      cd_municipio_ibge)) %>% 
-    dplyr::select(id_orgao, dplyr::everything())
-  
+    dplyr::select(id_orgao, cd_orgao, nm_orgao, sigla_orgao, esfera, home_page, nome_municipio, cd_municipio_ibge,
+                  nome_entidade, sigla_estado, id_estado)
   return(info_orgaos)
 }

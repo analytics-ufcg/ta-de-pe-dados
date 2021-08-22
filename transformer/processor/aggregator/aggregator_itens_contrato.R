@@ -112,6 +112,11 @@ aggregator_itens_contrato <-
   } else {
     itens_contratos_pe <- tibble()
   }
+    
+  if (dplyr::bind_rows(itens_contratos_rs, itens_contratos_pe) %>% nrow() == 0) {
+    flog.warn("Nenhum dado de item de contrato para agregar!")
+    return(tibble())
+  }
 
   tryCatch({
     info_item_contrato <- dplyr::bind_rows(itens_contratos_rs, itens_contratos_pe) %>%
