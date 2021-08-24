@@ -57,13 +57,18 @@ adapta_info_licitacoes_pe <- function(licitacoes_df, tipo_filtro) {
                                          valor_orcamento_estimativo, total_adjudicado_licitacao),
                   dt_adjudicacao = as.Date(data_publicacao_homologacao, format="%Y-%m-%d"),
                   vl_homologado = as.numeric(vl_homologado),
-                  vl_licitacao = as.numeric(valor_orcamento_estimativo)) %>%
+                  vl_licitacao = as.numeric(valor_orcamento_estimativo),
+                  permite_subcontratacao = NA_character_,
+                  tp_fornecimento = NA_character_,
+                  tp_licitacao = NA_character_,
+                  tipo_licitacao = NA_character_) %>%
     dplyr::select(id_estado, cd_orgao = codigo_ug, nm_orgao = ug, nr_licitacao = codigo_pl, 
-                  ano_licitacao = ano_processo, cd_tipo_modalidade = codigo_modalidade, 
+                  ano_licitacao = ano_processo, cd_tipo_modalidade = codigo_modalidade,
+                  permite_subcontratacao, tp_fornecimento,
                   descricao_objeto = objeto_conforme_edital, vl_estimado_licitacao = vl_licitacao, 
                   data_abertura = data_emissao_edital, data_homologacao = dt_adjudicacao,
-                  data_adjudicacao = dt_adjudicacao, vl_homologado, assunto, 
-                  tipo_modalidade_licitacao = nome_modalidade) %>% 
+                  data_adjudicacao = dt_adjudicacao, vl_homologado, tp_licitacao, assunto, 
+                  tipo_licitacao, tipo_modalidade_licitacao = nome_modalidade) %>% 
     dplyr::distinct()
   
   return(info_licitacoes)
