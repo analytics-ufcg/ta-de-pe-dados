@@ -392,5 +392,14 @@ read_itens_contratos_pe <- function() {
 #' Lê arquivo csv de licitações do Governo Federal
 #' @return Dataframe de licitações do Governo Federal
 read_licitacoes_federal <- function() {
-  licitacoes <- readr::read_csv(paste0(path_dados_federais_fetcher, "licitacoes-portal.csv"))
+  licitacoes <-
+    readr::read_csv(
+      paste0(path_dados_federais_fetcher, "licitacoes-portal.csv"),
+      col_types = list(
+        codigo_ug = readr::col_character(),
+        codigo_orgao = readr::col_character(),
+        codigo_modalidade_compra = readr::col_character()
+      )
+    )
+  return(licitacoes)
 }
