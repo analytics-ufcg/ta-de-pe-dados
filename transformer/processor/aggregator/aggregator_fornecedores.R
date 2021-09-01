@@ -80,7 +80,14 @@ aggregator_fornecedores <- function(anos, administracao = c("PE", "RS"), info_co
   }
   
   info_fornecedores_contratos <- bind_rows(fornecedores_contratos_rs,
-                                           fornecedores_contratos_pe) %>%
+                                           fornecedores_contratos_pe)
+  
+  if (nrow(info_fornecedores_contratos) == 0) {
+    flog.warn("Nenhum dado de fornecedor para agregar!")
+    return(tibble())
+  }
+  
+  info_fornecedores_contratos <- info_fornecedores_contratos %>%
     join_contratos_e_fornecedores(info_contratos %>%
                                     dplyr::select(nr_documento_contratado)) %>%
     dplyr::distinct(nr_documento, id_estado, .keep_all = TRUE) %>% 

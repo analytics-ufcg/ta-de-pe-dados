@@ -76,9 +76,15 @@ info_compras <- aggregator_compras(anos, administracoes, info_licitacoes)
 gc()
 
 info_contratos <- info_contratos %>%
-  dplyr::bind_rows(info_compras) %>%
-  dplyr::mutate(language = 'portuguese') %>% 
-  distinct(id_contrato, .keep_all = TRUE)
+  dplyr::bind_rows(info_compras)
+
+if (nrow(info_contratos) > 0) {
+  info_contratos <- info_contratos %>% 
+    dplyr::mutate(language = 'portuguese') %>% 
+    distinct(id_contrato, .keep_all = TRUE)
+} else {
+  flog.warn("Nenhum dado de contrato foi processado!")
+}
 
 info_item_contrato <- aggregator_itens_contrato(anos, filtro, administracoes, info_licitacoes, info_contratos, info_orgaos, info_item_licitacao)
 gc()
