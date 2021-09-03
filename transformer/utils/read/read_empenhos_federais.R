@@ -28,6 +28,6 @@ con <- DBI::dbConnect(RPostgres::Postgres(),
                       user = user,
                       password = 'secret')
 
-res <- DBI::dbGetQuery(con, "SELECT * FROM empenhos_raw_federais;")
+res <- DBI::dbGetQuery(con, "SELECT * FROM empenhos_raw_federais WHERE especie <> 'ANULAÇÃO' AND especie <> 'REFORÇO';")
 
 return(res)
