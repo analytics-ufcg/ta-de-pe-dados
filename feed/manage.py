@@ -80,6 +80,11 @@ def import_empenho_raw():
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_empenho_raw.sql'])
 
 @click.command()
+def import_empenho_raw_gov_federal():
+    """Importa dados (licitações e contratos) para as tabelas do Banco de dados"""
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_empenhos_federais.sql'])
+
+@click.command()
 def import_empenho():
     """Importa dados de empenhos para as tabelas do Banco de dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_empenho.sql'])
@@ -122,6 +127,7 @@ def process_itens_similares():
 cli.add_command(create)
 cli.add_command(create_empenho_raw)
 cli.add_command(create_empenho_raw_gov_federal)
+cli.add_command(import_empenho_raw_gov_federal)
 cli.add_command(update_data)
 cli.add_command(update_fornecedores)
 cli.add_command(import_data)
