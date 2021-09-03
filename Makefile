@@ -93,7 +93,7 @@ feed-import-empenho-raw:
 .PHONY: feed-import-empenho-raw
 feed-import-empenho-raw-gov-federal:
 	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py import-empenho-raw-gov-federal
-.PHONY: feed-import-empenho-raw
+.PHONY: feed-import-empenho-raw-gov-federal
 feed-import-novidade:
 	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py import-novidade
 .PHONY: feed-import-novidade
