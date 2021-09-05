@@ -28,6 +28,6 @@ con <- DBI::dbConnect(RPostgres::Postgres(),
                       user = user,
                       password = 'secret')
 
-res <- DBI::dbGetQuery(con, "SELECT * FROM empenhos_raw_federais WHERE especie <> 'ANULAÇÃO' AND especie <> 'REFORÇO';")
+res <- DBI::dbGetQuery(con, "SELECT * FROM empenhos_raw_federais WHERE acao NOT IN ('00S4', '00S5', '00S7', '00S8', '00S9', '00SF', '00SH', '21C0', '21C1', '21C2', '00SI', '21C0')")
 
 return(res)
