@@ -9,7 +9,7 @@ source(here::here("transformer/adapter/estados/Federal/orgaos/adaptador_orgaos_f
 processa_orgaos_federal <- function() {
   orgaos_federais <- import_orgaos_federal() %>% 
     adapta_info_orgaos_federal() %>%
-    add_info_estado(sigla_estado = "FE", id_estado = "99") 
+    add_info_estado(sigla_estado = "BR", id_estado = "99") 
   
   return(orgaos_federais)
 }
