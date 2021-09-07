@@ -3,11 +3,13 @@ source(here::here("transformer/adapter/estados/PE/licitacoes/adaptador_licitacoe
 
 #' Processa dados dos órgãos do estado de Pernambuco
 #' 
+#' @param filtro Filtro para licitaçoes de PE
+#' 
 #' @return Dataframe com informações processadas dos órgãos
 #' 
 #' @examples 
 #' info_orgaos_pe <- processa_orgaos_pe()
-processa_orgaos_pe <- function() {
+processa_orgaos_pe <- function(filtro) {
   licitacoes_pe_orgaos <- import_licitacoes_pe() %>%
     adapta_info_licitacoes_pe(tipo_filtro = filtro) %>%
     add_info_estado(sigla_estado = "PE", id_estado = "26") %>% 

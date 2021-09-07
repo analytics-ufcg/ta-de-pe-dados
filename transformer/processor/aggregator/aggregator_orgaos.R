@@ -39,7 +39,7 @@ aggregator_orgaos <- function(anos, filtro, administracao = c("PE", "RS")) {
   if ("PE" %in% administracao) {
     orgaos_pe <- tryCatch({
       flog.info("processando órgãos do PE...")
-      processa_orgaos_pe()
+      processa_orgaos_pe(filtro)
     }, error = function(e) {
       flog.error("Ocorreu um erro ao processar os dados de órgãos do PE")
       flog.error(e)
