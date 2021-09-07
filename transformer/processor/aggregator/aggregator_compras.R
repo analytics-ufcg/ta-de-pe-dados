@@ -21,6 +21,7 @@ source(here::here("transformer/processor/estados/Federal/contratos/processador_c
 #' contratos associados mas que tiveram fornecimento realizado.
 #'
 #' @param anos Array com os anos para processamento.
+#' @param filtro Filtro usado para processamento.
 #' @param administracao Array com a lista de estados/administrações para processar.
 #' @param info_licitacoes Dados agregados de licitações (aggregator_licitacoes 
 #' transformer/processor/aggregator/aggregator_licitacoes.R)
@@ -33,7 +34,7 @@ source(here::here("transformer/processor/estados/Federal/contratos/processador_c
 #' aggregator_compras(c(2020), c("PE", "RS"), 
 #' info_licitacoes = aggregator_licitacoes(c(2020), "covid", c("PE", "RS")),
 #' info_orgaos = aggregator_orgaos(c(2020), "covid", c("PE", "RS")))
-aggregator_compras <- function(anos, administracao = c("PE", "RS"), info_licitacoes, info_orgaos) {
+aggregator_compras <- function(anos, filtro, administracao = c("PE", "RS"), info_licitacoes, info_orgaos) {
   
   flog.info("#### Processando agregador de compras...")
   
@@ -69,7 +70,7 @@ aggregator_compras <- function(anos, administracao = c("PE", "RS"), info_licitac
   if ("FE" %in% administracao) {
     compras_federal <- tryCatch({
       flog.info("# processando compras do Governo Federal...")
-      processa_compras_federal()
+      processa_compras_federal(filtro)
     }, error = function(e) {
       flog.error("Ocorreu um erro ao processar os dados de compras do Governo Federal")
       flog.error(e)

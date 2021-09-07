@@ -1,4 +1,5 @@
 library(tidyverse)
+library(futile.logger)
 source(here::here("transformer/utils/read/read_empenhos_federais.R"))
 source(here::here("transformer/utils/read_utils.R"))
 
@@ -15,11 +16,11 @@ import_empenhos_federal <- function() {
   message(paste0("Importando empenhos de Governo Federal"))
   source(here::here("transformer/utils/bd_constants.R"))
   
-  POSTGRES_HOST = 'postgres'
-  POSTGRES_USER = 'postgres'
-  POSTGRES_DB = 'tanamesa'
-  POSTGRES_PORT = 5432
-  POSTGRES_PASSWORD = 'secret'
+  # POSTGRES_HOST = 'postgres'
+  # POSTGRES_USER = 'postgres'
+  # POSTGRES_DB = 'tanamesa'
+  # POSTGRES_PORT = 5432
+  # POSTGRES_PASSWORD = 'secret'
 
   empenhos <-
     read_empenhos_federais_covid(POSTGRES_HOST,
@@ -57,7 +58,16 @@ import_empenhos_licitacao_federal <- function() {
 #'
 #' O codigo_favorecido para pessoas físicas pode causar repetições em conjuntos maiores de dados.
 #' Já que é composto apenas por parte do CPF.
-adapta_info_compras_federal <- function(empenho_df, empenhos_licitacao_df) {
+adapta_info_compras_federal <- function(empenho_df, empenhos_licitacao_df, filtro) {
+  
+  if (filtro == 'covid') {
+    flog.info("Aplicando filtro de covid para as compras do Governo Federal")
+  } else if (filtro == 'merenda') {
+    flog.info("Filtro de merenda não está pronto para o Gov Federal")
+    return(tibble())
+  } else {
+    stop("Tipo de filtro não definido. É possível filtrar pelos tipos 'merenda' ou 'covid")
+  }
   
   empenhos_licitacao_df <- empenhos_licitacao_df %>% 
     distinct(codigo_empenho, numero_licitacao, codigo_modalidade_compra, .keep_all = TRUE) %>% 
