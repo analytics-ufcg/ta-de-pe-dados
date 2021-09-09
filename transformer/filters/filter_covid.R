@@ -17,6 +17,27 @@ filter_licitacoes_covid <- function(licitacoes_df) {
   return(licitacoes_filtradas)
 }
 
+filter_licitacoes_federais_covid <- function(empenhos_df) {
+  library(dplyr)
+  source(here::here("transformer/utils/read_utils.R"))
+  
+  lics_f <- read_licitacoes_federal()
+  
+  les = left_join(
+    lics_f,
+    empenhos_df,
+    by = c(
+      "numero_licitacao",
+      "codigo_modalidade_compra",
+      "modalidade_compra",
+      "numero_processo"
+    ),
+    copy = TRUE
+  )
+  
+  return(les)
+}
+
 
 #' Carrega licitações do TCE-PE relacionadas a Pandemia do COVID-19
 #'
