@@ -42,8 +42,12 @@ adapta_info_licitacoes_federal <- function(licitacoes_df, tipo_filtro) {
   } else {
     stop("Tipo de filtro não definido. É possível filtrar pelos tipos 'merenda' ou 'covid")
   }
-
-  info_licitacoes <- info_licitacoes %>% 
+  
+  info_licitacoes_filtrados <- info_licitacoes %>% 
+    filter(as.numeric(codigo_orgao_superior) %% 1000 == 0, 
+           as.numeric(codigo_orgao_superior) > 2e4, as.numeric(codigo_orgao_superior) < 9e4)
+  
+  info_licitacoes <- info_licitacoes_filtrados %>% 
     janitor::clean_names() %>%
     dplyr::mutate(id_estado = "99",
                   ano_data_abertura = lubridate::year(data_abertura),
