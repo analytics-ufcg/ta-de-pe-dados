@@ -14,8 +14,8 @@ processa_orgaos_federal <- function() {
   orgaos_federais <- import_orgaos_federal() %>% 
     adapta_info_orgaos_federal() %>%
     bind_rows(orgaos_empenhos_federais) %>%
-    dplyr::distinct(cd_orgao, .keep_all = TRUE) %>% 
-    add_info_estado(sigla_estado = "FE", id_estado = "99") 
+    dplyr::distinct(cd_orgao, .keep_all = TRUE) %>%
+    add_info_estado(sigla_estado = "BR", id_estado = "99") 
   
   return(orgaos_federais)
 }
