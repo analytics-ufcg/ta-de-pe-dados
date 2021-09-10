@@ -8,6 +8,9 @@
 #' @examples 
 #' licitacoes <- filter_licitacoes_covid(import_licitacoes(2020))
 #' 
+
+library(tidyverse)
+
 filter_licitacoes_covid <- function(licitacoes_df) {
   
   licitacoes_filtradas <- licitacoes_df %>% 
@@ -17,9 +20,7 @@ filter_licitacoes_covid <- function(licitacoes_df) {
   return(licitacoes_filtradas)
 }
 
-filter_licitacoes_federais_covid <- function(empenhos_df) {
-  library(dplyr)
-  source(here::here("transformer/utils/read_utils.R"))
+filter_licitacoes_federais_covid <- function(empenhos_df, lics_f) {
   
   lics_f <- read_licitacoes_federal()
   
@@ -29,7 +30,6 @@ filter_licitacoes_federais_covid <- function(empenhos_df) {
     by = c(
       "numero_licitacao",
       "codigo_modalidade_compra",
-      "modalidade_compra",
       "numero_processo"
     ),
     copy = TRUE
