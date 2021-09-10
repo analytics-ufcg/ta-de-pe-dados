@@ -10,7 +10,7 @@ source(here::here("transformer/adapter/estados/Federal/licitacoes/adaptador_lici
 processa_licitacoes_federal <- function(filtro) {
   licitacoes_federais <- import_licitacoes_federal() %>% 
     adapta_info_licitacoes_federal(filtro) %>%
-    add_info_estado(sigla_estado = "FE", id_estado = "99") 
+    add_info_estado(sigla_estado = "BR", id_estado = "99") 
   
   return(licitacoes_federais)
 }

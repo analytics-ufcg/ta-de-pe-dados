@@ -49,12 +49,12 @@ aggregator_orgaos <- function(anos, filtro, administracao = c("PE", "RS")) {
     orgaos_pe <- tibble()
   }
 
-  if ("FE" %in% administracao) {
+  if ("BR" %in% administracao) {
     orgaos_federais <- tryCatch({
-      flog.info("processando órgãos do Governo Federal (FE)...")
+      flog.info("processando órgãos do Governo Federal (BR)...")
       processa_orgaos_federal()
     }, error = function(e) {
-      flog.error("Ocorreu um erro ao processar os dados de órgãos do Governo Federal (FE)")
+      flog.error("Ocorreu um erro ao processar os dados de órgãos do Governo Federal (BR)")
       flog.error(e)
       return(tibble())
     })
