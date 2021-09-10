@@ -45,6 +45,12 @@ def create_empenho_raw():
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_empenho_raw.sql'])
 
 @click.command()
+def create_empenho_raw_gov_federal():
+    """Cria as tabelas de empenhos do Governo Federal raw do Banco de dados"""
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_empenhos_raw_federais.sql'])
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_itens_empenhos_raw_federais.sql'])
+
+@click.command()
 def update_data():
     """Atualiza as tabelas do Banco de Dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/update/update_orgao.sql'])
@@ -72,6 +78,11 @@ def import_data():
 def import_empenho_raw():
     """Importa dados (licitações e contratos) para as tabelas do Banco de dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_empenho_raw.sql'])
+
+@click.command()
+def import_empenho_raw_gov_federal():
+    """Importa dados (licitações e contratos) para as tabelas do Banco de dados"""
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_empenhos_federais.sql'])
 
 @click.command()
 def import_empenho():
@@ -115,6 +126,8 @@ def process_itens_similares():
 
 cli.add_command(create)
 cli.add_command(create_empenho_raw)
+cli.add_command(create_empenho_raw_gov_federal)
+cli.add_command(import_empenho_raw_gov_federal)
 cli.add_command(update_data)
 cli.add_command(update_fornecedores)
 cli.add_command(import_data)

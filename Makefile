@@ -21,6 +21,8 @@ help:
 	@echo "\tprocess-data-alertas anos=<ano1,ano2> filtro=<merenda> \t\tExecuta o processamento de dados dos Alertas."
 	@echo "\tfeed-create \t\t\tCria as tabelas usadas no Tá na Mesa no Banco de Dados."
 	@echo "\tfeed-create-empenho-raw \t\t\tCria a tabela de empenho raw usada para processamento de empenhos."
+	@echo "\tfeed-create-empenho-raw-gov-federal \t\t\tCria as tabelas de empenho e itens de empenhos usada para processamento de empenhos do Governo Federal."
+	@echo "\tfeed-import-empenho-raw-gov-federal \t\t\tImporta os dados do csvs de empenhos do governo federal (empenhos e itens de empenhos)."
 	@echo "\tfeed-import-data \t\tImporta dados dos CSV's (licitações e contratos) para o Banco de dados."
 	@echo "\tfeed-import-empenho \t\tImporta dados do CSV processado de empenhos para o Banco de dados."
 	@echo "\tfeed-import-empenho-raw \tImporta dados do CSV de dados brutos vindos do TCE."
@@ -75,6 +77,9 @@ feed-create:
 feed-create-empenho-raw:
 	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py create-empenho-raw
 .PHONY: feed-create-empenho-raw
+feed-create-empenho-raw-gov-federal:
+	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py create-empenho-raw-gov-federal
+.PHONY: feed-create-empenho-raw-gov-federal
 feed-import-itens-similares-data:
 	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py import-itens-similares-data
 .PHONY: feed-import-itens-similares-data
@@ -87,6 +92,9 @@ feed-import-empenho:
 feed-import-empenho-raw:
 	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py import-empenho-raw
 .PHONY: feed-import-empenho-raw
+feed-import-empenho-raw-gov-federal:
+	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py import-empenho-raw-gov-federal
+.PHONY: feed-import-empenho-raw-gov-federal
 feed-import-novidade:
 	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py import-novidade
 .PHONY: feed-import-novidade
