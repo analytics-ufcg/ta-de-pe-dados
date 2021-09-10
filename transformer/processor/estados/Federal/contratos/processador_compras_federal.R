@@ -14,7 +14,7 @@ processa_compras_federal <- function(filtro = 'covid') {
 
   compras_federais <- import_empenhos_federal() %>% 
     adapta_info_compras_federal(empenhos_relacionados, filtro) %>%
-    add_info_estado(sigla_estado = "FE", id_estado = "99") 
+    add_info_estado(sigla_estado = "BR", id_estado = "99") 
   
   return(compras_federais)
 }

@@ -67,7 +67,7 @@ aggregator_compras <- function(anos, filtro, administracao = c("PE", "RS"), info
     compras_rs <- tibble()
   }
   
-  if ("FE" %in% administracao) {
+  if ("BR" %in% administracao) {
     compras_federal <- tryCatch({
       flog.info("# processando compras do Governo Federal...")
       processa_compras_federal(filtro)

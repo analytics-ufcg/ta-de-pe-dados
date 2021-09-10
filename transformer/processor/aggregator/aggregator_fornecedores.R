@@ -78,7 +78,7 @@ aggregator_fornecedores <- function(anos, administracao = c("PE", "RS"), info_co
     fornecedores_contratos_pe <- tibble()
   }
 
-  if ("FE" %in% administracao) {
+  if ("BR" %in% administracao) {
     fornecedores_contratos_federal <- tryCatch({
       flog.info("# processando fornecedores do Governo Federal...")
       

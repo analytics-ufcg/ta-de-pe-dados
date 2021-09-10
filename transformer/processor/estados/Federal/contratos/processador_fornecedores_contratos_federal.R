@@ -11,7 +11,7 @@ source(here::here("transformer/adapter/estados/Federal/contratos/adaptador_forne
 processa_fornecedores_contratos_federal <- function(contratos_federal) {
   fornecedores_contratos_federal <- import_fornecedores_federal() %>%
     adapta_info_fornecedores_federal(contratos_federal) %>%
-    add_info_estado(sigla_estado = "FE", id_estado = "99")
+    add_info_estado(sigla_estado = "BR", id_estado = "99")
   
   return(fornecedores_contratos_federal)
 }
