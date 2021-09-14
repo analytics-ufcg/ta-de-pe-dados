@@ -21,4 +21,6 @@ DROP TABLE IF EXISTS "documento_licitacao";
 DROP TABLE IF EXISTS "licitacao";
 DROP TABLE IF EXISTS "orgao";
 DROP TABLE IF EXISTS "municipio";
+DROP TABLE IF EXISTS "itens_empenhos_raw_federais";
+DROP TABLE IF EXISTS "empenhos_raw_federais";
 DROP MATERIALIZED VIEW IF EXISTS unique_lexeme;
