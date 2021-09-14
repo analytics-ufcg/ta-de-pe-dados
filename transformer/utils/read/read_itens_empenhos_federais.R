@@ -37,5 +37,9 @@ read_itens_empenhos_federais_covid <- function(host, user, database, port, passw
     )
   )
   
-  return(res)
+  filtered_res <- res %>% 
+    filter(as.numeric(codigo_orgao_superior) %% 1000 == 0, 
+           as.numeric(codigo_orgao_superior) > 2e4, as.numeric(codigo_orgao_superior) < 9e4)
+  
+  return(filtered_res)
 }
