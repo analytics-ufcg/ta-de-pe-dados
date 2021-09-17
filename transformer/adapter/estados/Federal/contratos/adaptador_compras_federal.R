@@ -49,12 +49,14 @@ import_empenhos_licitacao_federal <- function() {
 #' Processa dados para tabela de informações das compras Do governo federal
 #' As compras do governo federal são extraídas dos empenhos (notas de empenho)
 #'
-#' @param empenho_df Dataframe de empenhos para adaptação
+#' @param empenho_df Dataframe de empenhos para adaptação. Pode ser gerado a partir da função import_empenhos_federal()
+#' @param empenhos_licitacao_df Dataframe que liga empenhos à licitações. Pode ser gerado a partir da função import_empenhos_licitacao_federal()
+#' @param filtro Tipo de filtro para aplicação nos dados. Apenas 'covid' está disponível.
 #'
 #' @return Dataframe com informações das compras do governo federal
 #'
 #' @examples
-#' compras_BR <- adapta_info_compras_federal(empenho_df)
+#' compras_BR <- adapta_info_compras_federal(empenho_df, empenhos_licitacao_df, filtro)
 #'
 #' O codigo_favorecido para pessoas físicas pode causar repetições em conjuntos maiores de dados.
 #' Já que é composto apenas por parte do CPF.
