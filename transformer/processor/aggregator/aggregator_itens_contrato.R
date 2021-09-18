@@ -7,6 +7,7 @@ source(here::here("transformer/utils/utils.R"))
 source(here::here("transformer/utils/join_utils.R"))
 source(here::here("transformer/utils/constants.R"))
 
+source(here::here("transformer/processor/estados/Federal/contratos/processador_itens_compras_federal.R"))
 source(here::here("transformer/processor/estados/RS/licitacoes/processador_eventos_licitacoes_rs.R"))
 source(here::here("transformer/processor/estados/RS/licitacoes/processador_lotes_licitacoes_rs.R"))
 source(here::here("transformer/processor/estados/RS/licitacoes/processador_itens_licitacoes_rs.R"))
