@@ -50,12 +50,12 @@ aggregator_licitacoes <- function(anos, filtro, administracao = c("PE", "RS")) {
     licitacoes_pe <- tibble()
   }
 
-  if ("FE" %in% administracao) {
+  if ("BR" %in% administracao) {
     licitacoes_federais <- tryCatch({
-      flog.info("processando licitações do Governo Federal (FE)...")
+      flog.info("processando licitações do Governo Federal (BR)...")
       processa_licitacoes_federal(filtro)
     }, error = function(e) {
-      flog.error("Ocorreu um erro ao processar os dados de licitações do Governo Federal (FE)")
+      flog.error("Ocorreu um erro ao processar os dados de licitações do Governo Federal (BR)")
       flog.error(e)
       return(tibble())
     })

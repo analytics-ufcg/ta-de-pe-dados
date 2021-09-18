@@ -22,5 +22,6 @@ CREATE TABLE IF NOT EXISTS "itens_empenhos_raw_federais" (
 	unidade TEXT,
 	item TEXT,
 	marca TEXT,
-	item_processo TEXT
+	item_processo TEXT,
+	FOREIGN KEY (id_empenho) REFERENCES empenhos_raw_federais(id)
 );

@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS "empenhos_raw_federais" (
-    id BIGINT,
+	id BIGINT PRIMARY KEY,
 	codigo TEXT,
 	codigo_resumido TEXT,
 	data_emissao TEXT,
