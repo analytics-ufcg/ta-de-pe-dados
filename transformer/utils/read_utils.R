@@ -403,3 +403,13 @@ read_licitacoes_federal <- function() {
     )
   return(licitacoes)
 }
+
+#' Lê arquivo csv de ligação entre empenhos e licitações no Governo Federal
+#' @return Dataframe da ligação entre empenhos e licitações do Governo Federal
+read_empenhos_licitacoes_federal <- function() {
+  emp_lic <-
+    readr::read_csv(
+      paste0(path_dados_federais_fetcher, "empenhosrelacionados-portal.csv")
+    )
+  return(emp_lic)
+}

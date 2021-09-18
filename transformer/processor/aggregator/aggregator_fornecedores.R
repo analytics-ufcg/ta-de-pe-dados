@@ -14,6 +14,8 @@ source(here::here("transformer/processor/estados/RS/licitacoes/processador_lotes
 source(here::here("transformer/processor/estados/RS/contratos/processador_itens_contratos_rs.R"))
 source(here::here("transformer/processor/estados/RS/contratos/processador_compras_rs.R"))
 source(here::here("transformer/processor/estados/RS/licitacoes/processador_itens_licitacoes_rs.R"))
+source(here::here("transformer/processor/estados/Federal/contratos/processador_compras_federal.R"))
+source(here::here("transformer/processor/estados/Federal/contratos/processador_fornecedores_contratos_federal.R"))
 
 #' Agrupa dados de fornecedores monitorados pelo Tá de pé
 #'
@@ -49,9 +51,6 @@ aggregator_fornecedores <- function(anos, administracao = c("PE", "RS"), info_co
       flog.info("processando contratos do RS...")
       contratos_rs <- processa_contratos_rs(anos)
 
-      flog.info("processando contratos do RS...")
-      contratos_rs <- processa_contratos_rs(anos)
-
       processa_fornecedores_contrato_rs(anos, contratos_rs, compras_rs)
     }, error = function(e) {
       flog.error("Ocorreu um erro ao processar os dados de fornecedores do RS")
@@ -66,7 +65,7 @@ aggregator_fornecedores <- function(anos, administracao = c("PE", "RS"), info_co
     fornecedores_contratos_pe <- tryCatch({
       flog.info("# processando fornecedores do PE...")
       
-      flog.info("contratos de PE...")
+      flog.info("processando contratos de PE...")
       contratos_pe <- processa_contratos_pe()
       
       processa_fornecedores_contratos_pe(contratos_pe)
@@ -78,9 +77,27 @@ aggregator_fornecedores <- function(anos, administracao = c("PE", "RS"), info_co
   } else {
     fornecedores_contratos_pe <- tibble()
   }
+
+  if ("BR" %in% administracao) {
+    fornecedores_contratos_federal <- tryCatch({
+      flog.info("# processando fornecedores do Governo Federal...")
+      
+      flog.info("processando compras/contratos do Governo Federal...")
+      compras_federais <- processa_compras_federal()
+      
+      processa_fornecedores_contratos_federal(compras_federais)
+    }, error = function(e) {
+      flog.error("Ocorreu um erro ao processar os dados de fornecedores do Governo Federal")
+      flog.error(e)
+      return(tibble())
+    })
+  } else {
+    fornecedores_contratos_federal <- tibble()
+  }
   
   info_fornecedores_contratos <- bind_rows(fornecedores_contratos_rs,
-                                           fornecedores_contratos_pe)
+                                           fornecedores_contratos_pe,
+                                           fornecedores_contratos_federal)
   
   if (nrow(info_fornecedores_contratos) == 0) {
     flog.warn("Nenhum dado de fornecedor para agregar!")

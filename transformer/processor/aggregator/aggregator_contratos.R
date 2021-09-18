@@ -55,7 +55,36 @@ aggregator_contratos <- function(anos, administracao = c("PE", "RS"), info_licit
 
   if (nrow(info_contratos) == 0) {
     flog.warn("Nenhum dado de contrato para agregar!")
-    return(info_contratos)
+    empty_info_contrato <- tibble(
+      id_contrato = character(),
+      id_estado = character(),
+      id_orgao = character(),
+      id_licitacao = character(),
+      codigo_contrato = character(),
+      nr_contrato = character(),
+      ano_contrato = integer(),
+      cd_orgao = character(),
+      nm_orgao = character(),
+      nr_processo = character(),
+      ano_processo = character(),
+      tp_documento_contratado = character(),
+      nr_documento_contratado = character(),
+      dt_inicio_vigencia = as.Date(character()),
+      dt_final_vigencia = as.Date(character()),
+      vl_contrato = numeric(),
+      descricao_objeto_contrato = character(),
+      nr_licitacao = character(),
+      sigla_estado = character(),
+      tp_instrumento_contrato = character(),
+      contrato_possui_garantia = character(),
+      vigencia_original_do_contrato = integer(),
+      justificativa_contratacao = character(),
+      obs_contrato = character(),
+      tipo_instrumento_contrato = character(),
+      ano_licitacao = integer(),
+      cd_tipo_modalidade = character()
+    )
+    return(empty_info_contrato)
   }
   
   info_contratos <- info_contratos %>% 
