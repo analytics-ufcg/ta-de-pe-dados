@@ -15,6 +15,12 @@ Pelo terminal
 docker exec r-container sh -c "cd /app/ && R -e 'testthat::test_file(\"tests/testthat/test_example.R\")'"
 ```
 
+### Como executar todos os tests?
+Pelo terminal
+```
+docker exec r-container sh -c "cd /app/ && R -e 'testthat::test_dir(\"tests/testthat/\")'"
+```
+
 ### Onde criar um teste?
 
 Crie um arquivo de teste em: `tests/testthat/`.
