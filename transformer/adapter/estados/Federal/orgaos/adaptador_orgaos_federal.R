@@ -1,3 +1,4 @@
+library(tidyverse)
 source(here::here("transformer/utils/read_utils.R"))
 
 #' Importa dados dos órgãos federais
@@ -18,8 +19,8 @@ import_orgaos_federal <- function() {
 #' orgaos <- adapta_info_orgaos_federal()
 #' 
 adapta_info_orgaos_federal <- function(orgaos_df) {
-  library(tidyverse)
   
+  ## Filtro para remover órgãos fora do contexto do Governo Federal
   orgaos_fed <- orgaos_df %>% 
     filter(as.numeric(codigo_orgao_superior) %% 1000 == 0, 
            as.numeric(codigo_orgao_superior) > 2e4, as.numeric(codigo_orgao_superior) < 9e4)

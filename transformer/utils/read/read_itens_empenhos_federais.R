@@ -36,7 +36,8 @@ read_itens_empenhos_federais_covid <- function(host, user, database, port, passw
       "('00S4', '00S5', '00S7', '00S8', '00S9', '00SF', '00SH', '21C0', '21C1', '21C2', '00SI', '21C0')"
     )
   )
-  
+
+  ## Filtro para remover órgãos fora do contexto do Governo Federal
   filtered_res <- res %>% 
     filter(as.numeric(codigo_orgao_superior) %% 1000 == 0, 
            as.numeric(codigo_orgao_superior) > 2e4, as.numeric(codigo_orgao_superior) < 9e4)
