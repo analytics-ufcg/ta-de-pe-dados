@@ -31,6 +31,7 @@ services:
       - ./fetcher:/app/fetcher
       - ${PATH_VOLUME_DADOS:-./data}:/app/data
       - ./reports:/app/reports
+      - ./tests:/app/tests
     ports:
       - 8787:8787
     networks:
