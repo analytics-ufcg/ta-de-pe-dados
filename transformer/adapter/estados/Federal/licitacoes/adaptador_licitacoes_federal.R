@@ -39,7 +39,8 @@ adapta_info_licitacoes_federal <- function(licitacoes_df, tipo_filtro) {
     info_licitacoes <- licitacoes_df
   } else if (tipo_filtro == "covid") {
     # TODO: aplicar filtro de covid
-    info_licitacoes <- filter_licitacoes_federais_covid(read_empenhos_federais(), licitacoes_df)
+    info_licitacoes <- licitacoes_df %>% 
+      filter_licitacoes_federais_covid()
   } else {
     stop("Tipo de filtro não definido. É possível filtrar pelos tipos 'merenda' ou 'covid")
   }
