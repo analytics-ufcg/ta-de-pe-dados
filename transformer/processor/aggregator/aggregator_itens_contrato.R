@@ -33,15 +33,15 @@ source(here::here("transformer/processor/estados/PE/contratos/processador_contra
 #' 
 #' @examples 
 #' itens_contrato_agregado <- 
-#' aggregator_itens_contrato(c(2020), "covid", c("PE", "RS"), 
-#' info_licitacoes = aggregator_licitacoes(c(2020), "covid", c("PE", "RS")),
-#' info_contratos = aggregator_contratos(c(2020), c("PE", "RS"), info_licitacoes = aggregator_licitacoes(c(2020), "covid", c("PE", "RS"))),
-#' info_orgaos = aggregator_orgaos(c(2020), "covid", c("PE", "RS")),
-#' info_item_licitacao = aggregator_itens_licitacao(c(2020), c("PE", "RS"), info_licitacoes = aggregator_licitacoes(c(2020), "covid", c("PE", "RS"))))
+#' aggregator_itens_contrato(c(2020), "covid", c("PE", "RS", "BR"), 
+#' info_licitacoes = aggregator_licitacoes(c(2020), "covid", c("PE", "RS", "BR")),
+#' info_contratos = aggregator_contratos(c(2020), c("PE", "RS", "BR"), info_licitacoes = aggregator_licitacoes(c(2020), "covid", c("PE", "RS", "BR"))),
+#' info_orgaos = aggregator_orgaos(c(2020), "covid", c("PE", "RS", "BR")),
+#' info_item_licitacao = aggregator_itens_licitacao(c(2020), c("PE", "RS", "BR"), info_licitacoes = aggregator_licitacoes(c(2020), "covid", c("PE", "RS", "BR"))))
 aggregator_itens_contrato <-
   function(anos,
            filtro,
-           administracao = c("PE", "RS"),
+           administracao = c("PE", "RS", "BR"),
            info_licitacoes,
            info_contratos,
            info_orgaos,
@@ -112,14 +112,27 @@ aggregator_itens_contrato <-
   } else {
     itens_contratos_pe <- tibble()
   }
+
+  if ("BR" %in% administracao) {
+    itens_contratos_br <- tryCatch({
+      flog.info("# processando itens de contrato do Governo Federal(BR)...")
+      processa_itens_compras_federal()
+    }, error = function(e) {
+      flog.error("Ocorreu um erro ao processar os dados de itens de contrato do Governo Federal(BR)")
+      flog.error(e)
+      return(tibble())
+    })
+  } else {
+    itens_contratos_br <- tibble()
+  }
     
-  if (dplyr::bind_rows(itens_contratos_rs, itens_contratos_pe) %>% nrow() == 0) {
+  if (dplyr::bind_rows(itens_contratos_rs, itens_contratos_pe, itens_contratos_br) %>% nrow() == 0) {
     flog.warn("Nenhum dado de item de contrato para agregar!")
     return(tibble())
   }
 
   tryCatch({
-    info_item_contrato <- dplyr::bind_rows(itens_contratos_rs, itens_contratos_pe) %>%
+    info_item_contrato <- dplyr::bind_rows(itens_contratos_rs, itens_contratos_pe, itens_contratos_br) %>%
       left_join(info_orgaos %>% select(id_orgao, cd_orgao, id_estado),
                 by = c("cd_orgao", "id_estado")) %>% 
       join_contratos_e_itens(info_contratos %>%
