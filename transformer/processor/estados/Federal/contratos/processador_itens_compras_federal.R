@@ -9,11 +9,11 @@ source(here::here("transformer/utils/utils.R"))
 #' 
 #' @examples 
 #' itens_compras_federal <- processa_itens_compras_federal()
-processa_itens_compras_federal <- function(empenhos_licitacao_df, filtro = 'covid') {
-  empenhos_relacionados <- import_empenhos_licitacao_federal() %>% adapta_info_compras_federal(empenhos_licitacao_df, filtro)
+processa_itens_compras_federal <- function(filtro = 'covid') {
+  compras_federais <- processa_compras_federal()
 
   itens_compras_federais <- import_itens_compras_federais() %>% 
-    adapta_info_itens_compras_federal(empenhos_relacionados, filtro) %>%
+    adapta_info_itens_compras_federal(compras_federais, filtro) %>%
     add_info_estado(sigla_estado = "BR", id_estado = "99") 
 
   return(itens_compras_federais)
