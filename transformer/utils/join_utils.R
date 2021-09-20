@@ -174,7 +174,7 @@ join_compras_e_licitacoes <- function(compras_df, licitacoes_df) {
         licitacoes_df %>%
           dplyr::select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, id_estado,
                         id_licitacao) %>% 
-          filter(id_estado == 99),
+          filter(id_estado == "99"),
         by = c(
           "cd_orgao_lic" = "cd_orgao",
           "nr_licitacao",

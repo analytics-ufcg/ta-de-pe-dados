@@ -115,10 +115,10 @@ Obs: É preciso ter feito o download dos dados para os anos de interesse, confor
 Execute o script de processamento dos dados gerais vindos do TCE:
 
 ```shell
-make process-data anos=2018,2019,2020,2021 filtro=merenda estados=RS,PE
+make process-data anos=2018,2019,2020,2021 filtro=merenda estados=RS,PE,BR
 ```
 
-Obs: o parâmetro anos pode conter um ou mais anos (estes separados por vírgula). O paraâmetro filtro pode ser 'merenda' ou 'covid'.
+Obs: o parâmetro anos pode conter um ou mais anos (estes separados por vírgula). O parâmetro filtro pode ser 'merenda' ou 'covid'.
 
 Os dados processados estarão disponíveis no diretório `data/bd`.
 
