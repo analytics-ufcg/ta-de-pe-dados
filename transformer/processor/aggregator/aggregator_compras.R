@@ -31,7 +31,7 @@ source(here::here("transformer/processor/estados/Federal/contratos/processador_c
 #' 
 #' @examples 
 #' compras_agregadas <- 
-#' aggregator_compras(c(2020), c("PE", "RS"), 
+#' aggregator_compras(c(2020), "covid", c("PE", "RS"), 
 #' info_licitacoes = aggregator_licitacoes(c(2020), "covid", c("PE", "RS")),
 #' info_orgaos = aggregator_orgaos(c(2020), "covid", c("PE", "RS")))
 aggregator_compras <- function(anos, filtro, administracao = c("PE", "RS"), info_licitacoes, info_orgaos) {
@@ -93,17 +93,29 @@ aggregator_compras <- function(anos, filtro, administracao = c("PE", "RS"), info
     generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade",
                        "nr_contrato", "ano_contrato", "tp_instrumento_contrato"), CONTRATO_ID) %>%
     dplyr::distinct(id_licitacao, id_contrato, .keep_all = TRUE) %>%
-    dplyr::select(id_contrato, id_licitacao, id_orgao, cd_orgao, nr_contrato, ano_contrato, nm_orgao,
-                  nr_licitacao, ano_licitacao, cd_tipo_modalidade,
-                  dt_inicio_vigencia, vl_contrato,
-                  descricao_objeto_contrato,
-                  tp_instrumento_contrato,
-                  dt_inicio_vigencia,
-                  tipo_instrumento_contrato,
-                  tp_documento_contratado,
-                  nr_documento_contratado,
-                  sigla_estado,
-                  id_estado)
+    dplyr::select(
+      id_contrato,
+      id_licitacao,
+      id_orgao,
+      cd_orgao,
+      codigo_contrato,
+      nr_contrato,
+      ano_contrato,
+      nm_orgao,
+      nr_licitacao,
+      ano_licitacao,
+      cd_tipo_modalidade,
+      dt_inicio_vigencia,
+      vl_contrato,
+      descricao_objeto_contrato,
+      tp_instrumento_contrato,
+      dt_inicio_vigencia,
+      tipo_instrumento_contrato,
+      tp_documento_contratado,
+      nr_documento_contratado,
+      sigla_estado,
+      id_estado
+    )
   
   flog.info(str_glue('{info_compras %>% filter(is.na(id_licitacao)) %>% nrow} compras não tem licitações relacionadas.'))
 
