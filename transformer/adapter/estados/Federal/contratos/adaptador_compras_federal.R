@@ -88,6 +88,7 @@ adapta_info_compras_federal <- function(empenho_df, empenhos_licitacao_df, filtr
            justificativa_contratacao = NA_character_,
            data = as.Date(data_emissao, format = "%d/%m/%Y"),
            ano_contrato = lubridate::year(data),
+           ano_processo = ano_contrato,
            codigo_favorecido = str_replace_all(codigo_favorecido, "[[.-]]", "")) %>%
     mutate(tp_documento_contratado = case_when(
       nchar(codigo_favorecido) == 11 ~ 'F',
@@ -101,7 +102,7 @@ adapta_info_compras_federal <- function(empenho_df, empenhos_licitacao_df, filtr
       cd_orgao = codigo_unidade_gestora,
       nm_orgao = unidade_gestora,
       nr_processo = processo,
-      ano_processo = ano_contrato,
+      ano_processo,
       tp_documento_contratado,
       nr_documento_contratado = codigo_favorecido,
       dt_inicio_vigencia = data,
