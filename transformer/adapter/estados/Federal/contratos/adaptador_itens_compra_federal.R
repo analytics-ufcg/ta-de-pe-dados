@@ -9,13 +9,13 @@ source(here::here("transformer/utils/read/read_itens_empenhos_federais.R"))
 #' 
 import_itens_compras_federais <- function() {
   message("Importando itens das compras do governo Federal")
-  source(here::here("transformer/utils/bd_constants.R"))
+  # source(here::here("transformer/utils/bd_constants.R"))
   
-  # POSTGRES_HOST = 'postgres'
-  # POSTGRES_USER = 'postgres'
-  # POSTGRES_DB = 'tanamesa'
-  # POSTGRES_PORT = 5432
-  # POSTGRES_PASSWORD = 'secret'
+  POSTGRES_HOST = 'postgres'
+  POSTGRES_USER = 'postgres'
+  POSTGRES_DB = 'tanamesa'
+  POSTGRES_PORT = 5432
+  POSTGRES_PASSWORD = 'secret'
 
   itens_compra_federais <- read_itens_empenhos_federais_covid(POSTGRES_HOST,
                                                                 POSTGRES_USER,
@@ -30,14 +30,14 @@ import_itens_compras_federais <- function() {
 #' As compras do governo federal são extraídas dos empenhos (notas de empenho)
 #'
 #' @param itens_compra_federal_df Dataframe de itens de empenho para adaptação. Pode ser gerado a partir da função import_itens_compras_federais()
-#' @param empenhos_licitacao_df Dataframe que liga empenhos à licitações. Pode ser gerado a partir da função import_empenhos_licitacao_federal()
+#' @param empenhos_relacionados_df Dataframe adaptado que liga empenhos à licitações. Pode ser gerado a partir da função processa_compras_federal()
 #' @param filtro Tipo de filtro para aplicação nos dados. Apenas 'covid' está disponível.
 #'
 #' @return Dataframe com informações dos itens das compras do governo federal
 #'
 #' @examples
-#' itens_compras_BR <- adapta_info_itens_compras_federal(itens_compra_federal_df, empenhos_licitacao_df, filtro)
-adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_licitacao_df, filtro) {
+#' itens_compras_BR <- adapta_info_itens_compras_federal(itens_compra_federal_df, empenhos_relacionados_df, filtro)
+adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_relacionados_df, filtro) {
   if (filtro == 'covid') {
     flog.info("Aplicando filtro de covid para as compras do Governo Federal")
   } else if (filtro == 'merenda') {
@@ -61,7 +61,7 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
       sg_unidade_medida = unidade,
       cd_tipo_modalidade = modalidade_aplicacao
     ) %>%
-    left_join(empenhos_licitacao_df %>% select(codigo_contrato,
+    left_join(empenhos_relacionados_df %>% select(codigo_contrato,
                                          cd_orgao,  
                                          nr_licitacao,
                                          nr_contrato,
