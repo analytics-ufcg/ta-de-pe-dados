@@ -21,6 +21,8 @@ source(here::here("transformer/adapter/estados/RS/contratos/adaptador_contratos_
 source(here::here("transformer/adapter/estados/RS/contratos/adaptador_fornecedores_contratos_rs.R"))
 source(here::here("transformer/processor/estados/PE/contratos/processador_contratos_pe.R"))
 source(here::here("transformer/processor/estados/PE/contratos/processador_fornecedores_contratos_pe.R"))
+source(here::here("transformer/processor/estados/Federal/contratos/processador_compras_federal.R"))
+source(here::here("transformer/processor/estados/Federal/contratos/processador_fornecedores_contratos_federal.R"))
 source(here::here("transformer/utils/utils.R"))
 source(here::here("transformer/utils/read_utils.R"))
 source(here::here("transformer/utils/join_utils.R"))
@@ -42,9 +44,15 @@ contratos_pe <- processa_contratos_pe()
 
 fornecedores_contratos_pe <- processa_fornecedores_contratos_pe(contratos_pe)
 
+flog.info("#### Atualizando dados de fornecedores do Governo Federal...")
+compras_federais <- processa_compras_federal()
+
+fornecedores_contratos_federais <- processa_fornecedores_contratos_federal(compras_federais)
+
 flog.info("#### Agregando dados de fornecedores")
 info_fornecedores_contratos <- bind_rows(fornecedores_contratos_rs,
-                                         fornecedores_contratos_pe) %>% 
+                                         fornecedores_contratos_pe,
+                                         fornecedores_contratos_federais) %>% 
   join_contratos_e_fornecedores(contratos_processados_df %>% 
                                   dplyr::select(nr_documento_contratado)) %>% 
   dplyr::distinct(nr_documento, id_estado, .keep_all = TRUE) %>% 

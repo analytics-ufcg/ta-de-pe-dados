@@ -150,3 +150,80 @@ join_itens_contratos_e_licitacoes_encerradas <- function(itens_contratos_df, lic
     )
 }
 
+join_compras_e_licitacoes <- function(compras_df, licitacoes_df) {
+  compras_rs <- compras_df %>% filter(id_estado == "43")
+  
+  if (nrow(compras_rs) > 0) {
+  compras_rs <- compras_rs %>% 
+    dplyr::inner_join(licitacoes_df %>%
+                       dplyr::select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, id_estado,
+                                     id_licitacao),
+                     by = c("cd_orgao", "nr_licitacao", "ano_licitacao", "cd_tipo_modalidade", "id_estado"))
+  }
+
+  compras_federal <- compras_df %>% filter(id_estado == "99")
+  
+  if ("ano_licitacao" %in% names(compras_federal)) {
+    compras_federal <- compras_federal %>% 
+      dplyr::select(-ano_licitacao)
+  }
+  
+  if (nrow(compras_federal) > 0) {
+    compras_federal <- compras_federal %>%
+      dplyr::left_join(
+        licitacoes_df %>%
+          dplyr::select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, id_estado,
+                        id_licitacao) %>% 
+          filter(id_estado == "99"),
+        by = c(
+          "cd_orgao_lic" = "cd_orgao",
+          "nr_licitacao",
+          "cd_tipo_modalidade",
+          "id_estado"
+        )
+      )
+  }
+  
+  compras <- bind_rows(compras_rs, compras_federal)
+
+  return(compras)
+}
+
+join_compras_e_orgaos <- function(compras_df, orgaos_df) {
+  compras_rs <- compras_df %>% filter(id_estado == "43")
+  
+  if ("nm_orgao" %in% names(compras_rs)) {
+    compras_rs <- compras_rs %>% 
+      dplyr::select(-nm_orgao)
+  }
+  
+  if (nrow(compras_rs) > 0) {
+  compras_rs <- compras_rs %>% 
+    dplyr::inner_join(orgaos_df %>%
+                        dplyr::select(cd_orgao, id_estado, id_orgao, nm_orgao),
+                      by = c("cd_orgao", "id_estado"))
+  }
+  
+  compras_federal <- compras_df %>% filter(id_estado == "99")
+  
+  if ("nm_orgao" %in% names(compras_federal)) {
+    compras_federal <- compras_federal %>% 
+      dplyr::select(-nm_orgao)
+  }
+
+  if (nrow(compras_federal) > 0) {
+    compras_federal <- compras_federal %>%
+      dplyr::left_join(
+        orgaos_df %>%
+          dplyr::select(cd_orgao, id_estado, id_orgao, nm_orgao),
+        by = c(
+          "cd_orgao",
+          "id_estado"
+        )
+      )
+  }
+  
+  compras <- bind_rows(compras_rs, compras_federal)
+  
+  return(compras)
+}

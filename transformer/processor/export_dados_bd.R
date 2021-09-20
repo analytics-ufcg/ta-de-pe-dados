@@ -72,7 +72,7 @@ gc()
 info_documento_licitacao <- aggregator_documentos_licitacao(anos, administracoes, info_licitacoes)
 gc()
 
-info_compras <- aggregator_compras(anos, administracoes, info_licitacoes)
+info_compras <- aggregator_compras(anos, filtro, administracoes, info_licitacoes, info_orgaos)
 gc()
 
 info_contratos <- info_contratos %>%
