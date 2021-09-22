@@ -17,7 +17,8 @@ import_itens_contrato_pe <- function() {
 #' Processa dados para a tabela de informações dos itens dos contratos de PE
 #' 
 #' @param itens_contrato_pe_df Dataframe de itens de contrato
-#'
+#' @param contratos_pe_df Dataframe de contratos adaptados de PE
+#' @param licitacoes_pe_df Dataframe de licitações adaptadas de PE
 #' @return Dataframe com informações dos itens dos contratos
 #'   
 #' @examples 
@@ -52,7 +53,24 @@ adapta_info_itens_contratos_pe <- function(itens_contrato_pe_df, contratos_pe_df
       qt_itens_contrato = as.double(qt_itens_contrato),
       vl_item_contrato = as.double(vl_item_contrato),
       vl_total_item_contrato = as.double(vl_total_item_contrato)
-    )
+    ) %>%
+    select(nr_item,
+           codigo_contrato,
+           ds_item,
+           qt_itens_contrato,
+           sg_unidade_medida,
+           vl_item_contrato,
+           vl_total_item_contrato,
+           nr_lote,
+           cd_orgao,
+           nr_licitacao,
+           nr_contrato,
+           ano_contrato,
+           tp_instrumento_contrato,
+           ano_licitacao,
+           cd_tipo_modalidade,
+           origem_valor
+          )
   
   #faltaram:
   #nr_lote
