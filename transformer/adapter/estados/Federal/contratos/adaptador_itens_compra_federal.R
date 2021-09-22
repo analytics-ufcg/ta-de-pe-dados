@@ -38,10 +38,7 @@ import_itens_compras_federais <- function() {
 #'
 #' @examples
 #' itens_compras_BR <- adapta_info_itens_compras_federal(itens_compra_federal_df, empenhos_relacionados_df, filtro)
-adapta_info_itens_compras_federal <-
-  function(itens_compra_federal_df,
-           empenhos_relacionados_df,
-           filtro) {
+adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_relacionados_df, filtro) {
     if (filtro == 'covid') {
       flog.info("Aplicando filtro de covid para as compras do Governo Federal")
     } else if (filtro == 'merenda') {
