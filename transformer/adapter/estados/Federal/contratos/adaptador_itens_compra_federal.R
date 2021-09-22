@@ -9,13 +9,13 @@ source(here::here("transformer/utils/read/read_itens_empenhos_federais.R"))
 #' 
 import_itens_compras_federais <- function() {
   message("Importando itens das compras do governo Federal")
-  # source(here::here("transformer/utils/bd_constants.R"))
+  source(here::here("transformer/utils/bd_constants.R"))
   
-  POSTGRES_HOST = 'postgres'
-  POSTGRES_USER = 'postgres'
-  POSTGRES_DB = 'tanamesa'
-  POSTGRES_PORT = 5432
-  POSTGRES_PASSWORD = 'secret'
+  # POSTGRES_HOST = 'postgres'
+  # POSTGRES_USER = 'postgres'
+  # POSTGRES_DB = 'tanamesa'
+  # POSTGRES_PORT = 5432
+  # POSTGRES_PASSWORD = 'secret'
 
   itens_compra_federais <- read_itens_empenhos_federais_covid(POSTGRES_HOST,
                                                                 POSTGRES_USER,
@@ -68,15 +68,28 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
                                          ano_contrato,
                                          tp_instrumento_contrato),
               by = c("codigo_contrato")) %>% 
-    left_join(itens_compra_federal_df %>% select(nr_licitacao,
-                                          ano_licitacao,
-                                          cd_tipo_modalidade),
-              by = c("nr_licitacao")) %>%
     dplyr::mutate(origem_valor = 'empenho')  %>%
     mutate(nr_item = as.integer(nr_item),
       qt_itens_contrato = as.double(qt_itens_contrato),
       vl_item_contrato = as.double(vl_item_contrato),
       vl_total_item_contrato = as.double(vl_total_item_contrato)
+    )%>%
+    select(nr_item,
+           codigo_contrato,
+           ds_item,
+           qt_itens_contrato,
+           sg_unidade_medida,
+           vl_item_contrato,
+           vl_total_item_contrato,
+           nr_lote,
+           cd_orgao,
+           nr_licitacao,
+           nr_contrato,
+           ano_contrato,
+           tp_instrumento_contrato,
+           ano_licitacao,
+           cd_tipo_modalidade,
+           origem_valor
     )
 
     return(info_itens_compras_federal)
