@@ -169,8 +169,9 @@ join_compras_e_licitacoes <- function(compras_df, licitacoes_df) {
   }
   
   if (nrow(compras_federal) > 0) {
+    flog.info(str_glue("Foram encontradas {compras_federal %>% nrow()} compras federais."))
     compras_federal <- compras_federal %>%
-      dplyr::left_join(
+      dplyr::inner_join(
         licitacoes_df %>%
           dplyr::select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, id_estado,
                         id_licitacao) %>% 
@@ -182,6 +183,7 @@ join_compras_e_licitacoes <- function(compras_df, licitacoes_df) {
           "id_estado"
         )
       )
+    flog.info(str_glue("{compras_federal %>% nrow()} tem licitações associadas e estão presentes nos dados processados."))
   }
   
   compras <- bind_rows(compras_rs, compras_federal)

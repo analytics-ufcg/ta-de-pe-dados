@@ -1,4 +1,5 @@
-source(here::here("transformer/adapter/estados/Federal/contratos/adaptador_compras_federal.R"))
+source(here::here("transformer/processor/estados/Federal/contratos/processador_compras_federal.R"))
+source(here::here("transformer/adapter/estados/Federal/contratos/adaptador_itens_compra_federal.R"))
 source(here::here("transformer/utils/utils.R"))
 
 #' Processa dados dos itens das compras do governo federal
