@@ -50,6 +50,9 @@ adapta_info_licitacoes_federal <- function(licitacoes_df, tipo_filtro) {
     filter(as.numeric(codigo_orgao_superior) %% 1000 == 0, 
            as.numeric(codigo_orgao_superior) > 2e4, as.numeric(codigo_orgao_superior) < 9e4)
   
+  flog.info(str_glue("{info_licitacoes %>% nrow() - info_licitacoes_filtrados %>% nrow()} licitação(ões) foi/foram removida(s)",
+                     " pois pertence(m) a órgãos que não são de interesse de monitoramento."))
+  
   info_licitacoes <- info_licitacoes_filtrados %>% 
     janitor::clean_names() %>%
     dplyr::mutate(id_estado = "99",

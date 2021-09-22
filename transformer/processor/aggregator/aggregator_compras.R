@@ -117,7 +117,48 @@ aggregator_compras <- function(anos, filtro, administracao = c("PE", "RS"), info
       id_estado
     )
   
-  flog.info(str_glue('{info_compras %>% filter(is.na(id_licitacao)) %>% nrow} compras não tem licitações relacionadas.'))
+  compras_nao_relacionadas <- .check_compras_nao_ligadas(compras_federal, info_licitacoes)
 
   return(info_compras)
+}
+
+#' Checa se alguma compra está relacionada a uma licitação que não está presente nos dados 
+#' processados/agregados de licitações
+#' 
+#' Dentre os motivos para isso ocorrer estão:
+#' A licitação pertence a um órgão superior que não deve ser monitorado portanto o empenho/compra também não deve ser.
+#' O empenho/compra não tem a informação de qual licitação está relacionado ou não conseguimos encontrar a licitação na base.
+#'
+#' @param compras Dataframe de compras federais para análise
+#' @param info_licitacoes Dataframe com licitações processadas e agregadas
+#' @return Dataframe com as compras que não estão ligadas a nenhuma licitação ou que não conseguimos encontrar a ligação.
+#' 
+#' @examples 
+#' .check_compras_nao_ligadas(compras, info_licitacoes)
+.check_compras_nao_ligadas <- function(compras, info_licitacoes) {
+  compras_nao_relacionadas <- compras %>%
+    distinct(codigo_contrato,
+             nr_licitacao,
+             cd_tipo_modalidade,
+             cd_orgao_lic) %>% anti_join(
+               info_licitacoes,
+               by = c("nr_licitacao", "cd_tipo_modalidade", "cd_orgao_lic" = "cd_orgao")
+             )
+  flog.info(
+    str_glue(
+      '{compras_nao_relacionadas %>% nrow()} compras federais não tem licitações relacionadas.'
+    )
+  )
+  flog.info(
+    str_glue(
+      '{compras_nao_relacionadas %>% filter(!is.na(nr_licitacao)) %>% nrow()} compras federais não tem licitações',
+      '
+                     relacionadas mas possuem a informação de relação com empenho.'
+    )
+  )
+  if (compras_nao_relacionadas %>% filter(!is.na(nr_licitacao)) %>% nrow() > 0) {
+    print(compras_nao_relacionadas %>% filter(!is.na(nr_licitacao)))
+  }
+  
+  return(compras_nao_relacionadas)
 }
