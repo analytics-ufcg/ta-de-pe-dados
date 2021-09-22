@@ -110,6 +110,11 @@ def clean_empenho():
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/drop/drop_empenho.sql'])
 
 @click.command()
+def clean_empenho_federal():
+    """Dropa a tabela de empenhos federais do Banco de Dados"""
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/drop/drop_empenho_federal.sql'])
+
+@click.command()
 def clean_data():
     """Dropa as tabelas do Banco de Dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/drop/drop_tables.sql'])
@@ -134,6 +139,7 @@ cli.add_command(import_data)
 cli.add_command(import_empenho)
 cli.add_command(import_novidade)
 cli.add_command(clean_empenho)
+cli.add_command(clean_empenho_federal)
 cli.add_command(clean_data)
 cli.add_command(shell)
 cli.add_command(import_empenho_raw)
