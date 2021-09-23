@@ -39,14 +39,7 @@ source(here::here("transformer/processor/estados/PE/contratos/processador_contra
 #' info_contratos = aggregator_contratos(c(2020), c("PE", "RS", "BR"), info_licitacoes = aggregator_licitacoes(c(2020), "covid", c("PE", "RS", "BR"))),
 #' info_orgaos = aggregator_orgaos(c(2020), "covid", c("PE", "RS", "BR")),
 #' info_item_licitacao = aggregator_itens_licitacao(c(2020), c("PE", "RS", "BR"), info_licitacoes = aggregator_licitacoes(c(2020), "covid", c("PE", "RS", "BR"))))
-aggregator_itens_contrato <-
-  function(anos,
-           filtro,
-           administracao = c("PE", "RS", "BR"),
-           info_licitacoes,
-           info_contratos,
-           info_orgaos,
-           info_item_licitacao) {
+aggregator_itens_contrato <- function(anos, filtro, administracao = c("PE", "RS", "BR"), info_licitacoes, info_contratos, info_orgaos, info_item_licitacao) {
     
   flog.info("#### Processando agregador de itens de contrato..")
   
@@ -135,10 +128,10 @@ aggregator_itens_contrato <-
   tryCatch({
     info_item_contrato <- dplyr::bind_rows(itens_contratos_rs, itens_contratos_pe, itens_contratos_br) %>%
       left_join(info_orgaos %>% select(id_orgao, cd_orgao, id_estado),
-                by = c("cd_orgao", "id_estado")) %>% 
+                by = c("cd_orgao", "id_estado")) %>%
       join_contratos_e_itens(info_contratos %>%
-                               dplyr::select(dt_inicio_vigencia, cd_orgao, id_contrato, nr_licitacao, ano_licitacao,
-                                             cd_tipo_modalidade, nr_contrato, ano_contrato,
+                               dplyr::select(dt_inicio_vigencia, codigo_contrato, cd_orgao, id_contrato, nr_licitacao, ano_licitacao,
+                                             nr_contrato, ano_contrato, id_estado, cd_tipo_modalidade,
                                              tp_instrumento_contrato)) %>%
       generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", "nr_contrato", "ano_contrato",
                          "tp_instrumento_contrato", "nr_lote", "nr_item"), ITEM_CONTRATO_ID) %>%
