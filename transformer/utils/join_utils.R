@@ -20,31 +20,38 @@ join_contratos_e_itens <- function(itens_contrato_df, contratos_df) {
   itens_rs_pe <- itens_contrato_df %>% filter(id_estado %in% c("43","26"))
   
   if(nrow(itens_rs_pe) > 0) {
-    itens_rs_pe <- itens_contrato_df %>% 
+    itens_rs_pe <- itens_rs_pe %>% 
       dplyr::inner_join(contratos_rs_pe,
                         by = c("cd_orgao", "nr_licitacao", "cd_tipo_modalidade",
-                               "ano_licitacao", "nr_contrato", "ano_contrato", "codigo_contrato",
-                               "tp_instrumento_contrato", "id_estado"))
+                               "ano_licitacao", "nr_contrato", "ano_contrato", 
+                               "codigo_contrato", "tp_instrumento_contrato", "id_estado"))
   }
   
   contratos_br <- contratos_df %>% filter(id_estado == "99")
   itens_br <- itens_contrato_df %>% filter(id_estado == "99")
   
-  if ("ano_licitacao" %in% names(itens_contrato_df)) {
-    itens_contrato_df <- itens_contrato_df %>%dplyr::select(-ano_licitacao)
+  if ("ano_licitacao" %in% names(itens_br)) {
+    itens_br <- itens_br %>% dplyr::select(-ano_licitacao)
   }
   
-  if ("cd_tipo_modalidade" %in% names(itens_contrato_df)) {
-    itens_contrato_df <- itens_contrato_df %>%dplyr::select(-cd_tipo_modalidade)
+  if ("cd_tipo_modalidade" %in% names(itens_br)) {
+    itens_br <- itens_br %>% dplyr::select(-cd_tipo_modalidade)
   }
   
   if(nrow(itens_br) > 0) {
-    itens_br <- itens_contrato_df %>% 
-      dplyr::inner_join(contratos_df, by = c("codigo_contrato", "cd_orgao",
-                                             "nr_licitacao", "nr_contrato",
-                                             "ano_contrato", "tp_instrumento_contrato",
-                                             "id_estado"
-                                             ))
+    itens_br <- itens_br %>% 
+      dplyr::inner_join(
+        contratos_br,
+        by = c(
+          "codigo_contrato",
+          "cd_orgao",
+          "nr_licitacao",
+          "nr_contrato",
+          "ano_contrato",
+          "tp_instrumento_contrato",
+          "id_estado"
+        )
+      )
   }
   
   itens <- bind_rows(itens_rs_pe, itens_br)

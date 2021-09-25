@@ -90,10 +90,10 @@ create_categoria <- function(info_item_contrato) {
   itens_com_categorias <- info_item_contrato %>% 
     mutate(ds_item =str_squish(str_to_lower(gsub("[[:punct:]]", "", ds_item )))) %>% 
     mutate(ds_item = iconv(ds_item, from="UTF-8", to="ASCII//TRANSLIT")) %>%
-    left_join(categorias) %>%
+    left_join(categorias, by = c("ds_item")) %>%
     select(id_item_contrato, categoria)
   
-  info_item_contrato %<>% left_join(itens_com_categorias) %>% 
+  info_item_contrato %<>% left_join(itens_com_categorias, by = c("id_item_contrato")) %>% 
     mutate(language = "portuguese")
   
 }
@@ -119,6 +119,16 @@ split_descricao <- function(info_item_contrato) {
     select(-lista)
 }
 
+#' Cria coluna servico que classifica o item como serviço prestado
+#' 
+#' @param info_item_contrato Dataframe de itens de contrato
+#'
+#' @return Dataframe com informações dos itens dos contratos incluindo coluna que classifica o item como
+#' serviço ou não
+#'   
+#' @examples 
+#' info_item_contrato <- marca_servicos(info_item_contrato)
+#'
 marca_servicos <- function(info_item_contrato) {
   servicos <- info_item_contrato %>% 
     dplyr::mutate(ds_item_pesq_simples = tolower(iconv(ds_item , from="UTF-8", to="ASCII//TRANSLIT"))) %>% 
@@ -126,11 +136,11 @@ marca_servicos <- function(info_item_contrato) {
                                       "(contratacao de empresa)|(prestacao de servico[s]?)|^servico[s]?|
                                       (a prestacao de)|(contratacao de prestacao)|(contratacao de servico)|
                                       (aluguel/loca)|servia|(contratacao contratacao de)| (contratacao da empresa)|
-                                      (contratacao de)"))
+                                      (contratacao de)")) %>% 
+    select(id_item_contrato)
   
-  info_item_contrato %<>% dplyr::anti_join(servicos) %>% 
-    dplyr::mutate(servico = FALSE) %>% 
-    dplyr::bind_rows(servicos %>%  dplyr::mutate(servico = TRUE)) %>% 
-    dplyr::select(-ds_item_pesq_simples)
-    
+  info_item_contrato <- info_item_contrato %>% 
+    dplyr::mutate(servico = id_item_contrato %in% (servicos %>% pull(id_item_contrato)))
+  
+  return(info_item_contrato)
 }
