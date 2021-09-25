@@ -33,6 +33,7 @@ help:
 	@echo "\tfeed-shell \t\t\tAbre terminal psql com o banco cadastrado nas variáveis de ambiente."
 	@echo "\tfeed-clean-data \t\tRemove as tabelas processadas pelo Tá na Mesa (licitações, contratos e novidades)."
 	@echo "\tfeed-clean-empenho \t\tRemove as tabela de empenho (vinda do TCE) carregada no BD do Tá na Mesa."
+	@echo "\tfeed-clean-empenho-federal \t\tRemove as tabela de empenho federal carregada no BD do Tá na Mesa."
 .PHONY: help
 .PHONY: build-fetcher-data-rs
 fetch-data-rs:
@@ -113,3 +114,6 @@ feed-clean-data:
 feed-clean-empenho:
 	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py clean-empenho
 .PHONY: feed-clean-empenho
+feed-clean-empenho-federal:
+	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py clean-empenho-federal
+.PHONY: feed-clean-empenho-federal
