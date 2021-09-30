@@ -60,7 +60,7 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
         vl_total_item_contrato = valor_total,
         ds_item = descricao,
         sg_unidade_medida = unidade,
-        cd_tipo_modalidade = modalidade_aplicacao
+        cd_tipo_modalidade = codigo_modalidade_aplicacao
       ) %>%
       left_join(
         empenhos_relacionados_df %>% select(
@@ -75,6 +75,7 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
       ) %>%
       dplyr::mutate(origem_valor = 'empenho')  %>%
       mutate(
+        cd_tipo_modalidade = as.character(cd_tipo_modalidade),
         nr_item = as.integer(nr_item),
         qt_itens_contrato = as.double(qt_itens_contrato),
         vl_item_contrato = as.double(vl_item_contrato),

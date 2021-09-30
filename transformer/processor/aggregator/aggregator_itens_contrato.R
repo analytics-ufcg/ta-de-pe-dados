@@ -7,6 +7,7 @@ source(here::here("transformer/utils/utils.R"))
 source(here::here("transformer/utils/join_utils.R"))
 source(here::here("transformer/utils/constants.R"))
 
+source(here::here("transformer/processor/estados/Federal/contratos/processador_itens_compras_federal.R"))
 source(here::here("transformer/processor/estados/RS/licitacoes/processador_eventos_licitacoes_rs.R"))
 source(here::here("transformer/processor/estados/RS/licitacoes/processador_lotes_licitacoes_rs.R"))
 source(here::here("transformer/processor/estados/RS/licitacoes/processador_itens_licitacoes_rs.R"))
@@ -32,20 +33,20 @@ source(here::here("transformer/processor/estados/PE/contratos/processador_contra
 #' @return Dataframe com os itens de contrato agregados e prontos para ir para o BD.
 #' 
 #' @examples 
+#' info_orgaos = aggregator_orgaos(c(2020), "covid", c("PE", "RS", "BR"))
+#' info_licitacoes = aggregator_licitacoes(c(2020), "covid", c("PE", "RS", "BR"))
+#' info_contratos = aggregator_contratos(c(2020), c("PE", "RS", "BR"), info_licitacoes)
+#' info_compras = aggregator_compras(c(2020), "covid", c("PE", "RS", "BR"), info_licitacoes, info_orgaos)
+#' info_contratos = bind_rows(info_contratos, info_compras)
+#' info_item_licitacao = aggregator_itens_licitacao(c(2020), c("PE", "RS", "BR"), info_licitacoes)
+#' 
 #' itens_contrato_agregado <- 
-#' aggregator_itens_contrato(c(2020), "covid", c("PE", "RS"), 
-#' info_licitacoes = aggregator_licitacoes(c(2020), "covid", c("PE", "RS")),
-#' info_contratos = aggregator_contratos(c(2020), c("PE", "RS"), info_licitacoes = aggregator_licitacoes(c(2020), "covid", c("PE", "RS"))),
-#' info_orgaos = aggregator_orgaos(c(2020), "covid", c("PE", "RS")),
-#' info_item_licitacao = aggregator_itens_licitacao(c(2020), c("PE", "RS"), info_licitacoes = aggregator_licitacoes(c(2020), "covid", c("PE", "RS"))))
-aggregator_itens_contrato <-
-  function(anos,
-           filtro,
-           administracao = c("PE", "RS"),
-           info_licitacoes,
-           info_contratos,
-           info_orgaos,
-           info_item_licitacao) {
+#' aggregator_itens_contrato(c(2020), "covid", c("PE", "RS", "BR"), 
+#' info_licitacoes,
+#' info_contratos,
+#' info_orgaos,
+#' info_item_licitacao)
+aggregator_itens_contrato <- function(anos, filtro, administracao = c("PE", "RS", "BR"), info_licitacoes, info_contratos, info_orgaos, info_item_licitacao) {
     
   flog.info("#### Processando agregador de itens de contrato..")
   
@@ -112,23 +113,36 @@ aggregator_itens_contrato <-
   } else {
     itens_contratos_pe <- tibble()
   }
+
+  if ("BR" %in% administracao) {
+    itens_contratos_br <- tryCatch({
+      flog.info("# processando itens de contrato do Governo Federal(BR)...")
+      processa_itens_compras_federal()
+    }, error = function(e) {
+      flog.error("Ocorreu um erro ao processar os dados de itens de contrato do Governo Federal(BR)")
+      flog.error(e)
+      return(tibble())
+    })
+  } else {
+    itens_contratos_br <- tibble()
+  }
     
-  if (dplyr::bind_rows(itens_contratos_rs, itens_contratos_pe) %>% nrow() == 0) {
+  if (dplyr::bind_rows(itens_contratos_rs, itens_contratos_pe, itens_contratos_br) %>% nrow() == 0) {
     flog.warn("Nenhum dado de item de contrato para agregar!")
     return(tibble())
   }
 
   tryCatch({
-    info_item_contrato <- dplyr::bind_rows(itens_contratos_rs, itens_contratos_pe) %>%
+    info_item_contrato <- dplyr::bind_rows(itens_contratos_rs, itens_contratos_pe, itens_contratos_br) %>%
       left_join(info_orgaos %>% select(id_orgao, cd_orgao, id_estado),
-                by = c("cd_orgao", "id_estado")) %>% 
+                by = c("cd_orgao", "id_estado")) %>%
       join_contratos_e_itens(info_contratos %>%
-                               dplyr::select(dt_inicio_vigencia, cd_orgao, id_contrato, nr_licitacao, ano_licitacao,
-                                             cd_tipo_modalidade, nr_contrato, ano_contrato,
-                                             tp_instrumento_contrato)) %>%
+                               dplyr::select(dt_inicio_vigencia, id_contrato, id_licitacao,
+                                             codigo_contrato, cd_orgao, nr_licitacao, ano_licitacao,
+                                             cd_tipo_modalidade, nr_contrato, ano_contrato, 
+                                             tp_instrumento_contrato, id_estado)) %>%
       generate_hash_id(c("id_orgao", "ano_licitacao", "nr_licitacao", "cd_tipo_modalidade", "nr_contrato", "ano_contrato",
                          "tp_instrumento_contrato", "nr_lote", "nr_item"), ITEM_CONTRATO_ID) %>%
-      join_licitacoes_e_itens(info_licitacoes) %>%
       join_itens_contratos_e_licitacoes(info_item_licitacao) %>%
       dplyr::ungroup() %>%
       dplyr::select(id_item_contrato, id_contrato, id_orgao, cd_orgao, id_licitacao, id_item_licitacao, dplyr::everything()) %>%
