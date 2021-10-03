@@ -2,6 +2,8 @@ library(tidyverse)
 library(magrittr)
 library(futile.logger)
 
+source(here::here("transformer/utils/rollbar.R"))
+
 help <- "
 Usage:
 Rscript export_fornecedores_bd.R <anos>

@@ -2,6 +2,8 @@ library(tidyverse)
 library(here)
 library(magrittr)
 
+source(here::here("transformer/utils/rollbar.R"))
+
 help <- "
 Usage:
 Rscript export_empenhos_bd.R
