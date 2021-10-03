@@ -1,3 +1,5 @@
+readRenviron(here::here(".Renviron"))
+
 POSTGRES_HOST <- Sys.getenv("POSTGRES_HOST")
 POSTGRES_USER <- Sys.getenv("POSTGRES_USER")
 POSTGRES_DB <- Sys.getenv("POSTGRES_DB")

@@ -116,8 +116,9 @@ aggregator_compras <- function(anos, filtro, administracao = c("PE", "RS"), info
       sigla_estado,
       id_estado
     )
-  
-  compras_nao_relacionadas <- .check_compras_nao_ligadas(compras_federal, info_licitacoes)
+  if(nrow(compras_federal) != 0) {
+    compras_nao_relacionadas <- .check_compras_nao_ligadas(compras_federal, info_licitacoes)
+  }
 
   return(info_compras)
 }

@@ -32,6 +32,7 @@ services:
       - ${PATH_VOLUME_DADOS:-./data}:/app/data
       - ./reports:/app/reports
       - ./tests:/app/tests
+      - .env:/app/.Renviron
     ports:
       - 8787:8787
     networks:
