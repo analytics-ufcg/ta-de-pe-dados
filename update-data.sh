@@ -79,6 +79,14 @@ printWithTime() {
   printf "[$(date +%d-%m-%y_%H:%M)] $1 \n"
 }
 
+sendDeployInfo() {
+  REVISION=$(git rev-parse --verify HEAD)
+  LOCAL_USERNAME=$(whoami)
+  curl -d '{"environment":"$R_ENV", "revision":"$REVISION", "local_username": "$LOCAL_USERNAME" }' \
+  -H "Content-Type: application/json" -H "X-Rollbar-Access-Token: $ROLLBAR_ACCESS_TOKEN" \
+  -X POST https://api.rollbar.com/api/1/deploy/
+}
+
 # Verifica se os anos de entrada estão corretos
 checkParamYear() {
   if [ "$ANO_INICIO" -gt "$ANO_FIM" ]; then
@@ -293,6 +301,7 @@ feed_clean_data() {
 #                           EXECUÇÃO
 # ==============================================================
 
+sendDeployInfo
 checkEmptyParam
 checkParamYear
 
