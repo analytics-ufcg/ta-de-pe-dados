@@ -58,7 +58,6 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
         qt_itens_contrato = quantidade,
         vl_item_contrato = valor_unitario,
         vl_total_item_contrato = valor_total,
-        ds_item = descricao,
         sg_unidade_medida = unidade,
         cd_tipo_modalidade = codigo_modalidade_aplicacao
       ) %>%
@@ -81,6 +80,10 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
         vl_item_contrato = as.double(vl_item_contrato),
         vl_total_item_contrato = as.double(vl_total_item_contrato)
       ) %>%
+      dplyr::mutate(ds_item = case_when(
+        !is.na(item) ~ str_glue("{item} {marca} {descricao_restante}"),
+        TRUE ~ descricao
+      )) %>% 
       select(
         nr_item,
         codigo_contrato,
