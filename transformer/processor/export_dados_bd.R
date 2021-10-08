@@ -3,6 +3,8 @@ library(here)
 library(magrittr)
 library(futile.logger)
 
+source(here::here("transformer/utils/rollbar.R"))
+
 help <- "
 Usage:
 Rscript export_dados_bd.R <anos> <filtro>

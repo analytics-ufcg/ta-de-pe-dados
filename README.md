@@ -60,6 +60,24 @@ b) Preencha as variáveis contidas no .env.sample também para o `.env`. Altere 
 
 c) Do **diretório raiz desse repositório** execute o comando a seguir que irá levantar os serviços:
 
+Você pode opcionalmente realizar o build das imagens:
+
+```shell
+docker-compose build
+```
+
+Caso o seguite erro apareça:
+```
+error checking context: 'can't stat '<path>/ta-de-pe-dados/data/postgres_data''.
+ERROR: Service 'rbase' failed to build : Build failed
+```
+
+execute o seguinte comando para alterar a permissão de acesso ao diretório do postgres_data:
+
+```
+sudo chown -R <seu-user>:<seu-user> data/
+```
+
 ```shell
 docker-compose up -d
 ```
