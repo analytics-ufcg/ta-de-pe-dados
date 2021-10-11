@@ -84,7 +84,7 @@ adapta_info_compras_federal <- function(empenho_df, empenhos_licitacao_df, filtr
     mutate(tp_instrumento_contrato = "Compra",
            tipo_instrumento_contrato = "Compra",
            contrato_possui_garantia = NA_character_,
-           vigencia_original_do_contrato = NA_character_,
+           vigencia_original_do_contrato = NA_integer_,
            justificativa_contratacao = NA_character_,
            data = as.Date(data_emissao, format = "%d/%m/%Y"),
            ano_contrato = lubridate::year(data),

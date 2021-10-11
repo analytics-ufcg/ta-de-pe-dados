@@ -18,7 +18,7 @@ help:
 	@echo "\tprocess-data-novidades \t\tExecuta o processamento de dados de novidades."
 	@echo "\tprocess-data-fornecedores anos=<ano1,ano2> \t\tExecuta o processamento de dados de fornecedores."
 	@echo "\tprocess-data-itens-similares \t\tExecuta o processamento para agrupar itens similares."
-	@echo "\tprocess-data-alertas anos=<ano1,ano2> filtro=<merenda> \t\tExecuta o processamento de dados dos Alertas."
+	@echo "\tprocess-data-alertas anos=<ano1,ano2> filtro=<merenda> estados=<RS,PE,BR> \t\tExecuta o processamento de dados dos Alertas."
 	@echo "\tfeed-create \t\t\tCria as tabelas usadas no Tá na Mesa no Banco de Dados."
 	@echo "\tfeed-create-empenho-raw \t\t\tCria a tabela de empenho raw usada para processamento de empenhos."
 	@echo "\tfeed-create-empenho-raw-gov-federal \t\t\tCria as tabelas de empenho e itens de empenhos usada para processamento de empenhos do Governo Federal."
@@ -70,7 +70,7 @@ process-data-itens-similares:
 	docker exec r-container sh -c "cd /app/transformer/processor/geral/alertas && Rscript export_itens_similares.R"
 .PHONY: process-data-itens-similares
 process-data-alertas:
-	docker exec r-container sh -c "cd /app/transformer/processor/geral/alertas && Rscript export_alertas_bd.R $(anos) $(filtro)"
+	docker exec r-container sh -c "cd /app/transformer/processor/geral/alertas && Rscript export_alertas_bd.R $(anos) $(filtro) $(estados)"
 .PHONY: process-data-alertas
 feed-create:
 	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py create

@@ -268,7 +268,8 @@ read_dados_cadastrais_processados <- function() {
                                       col_types = list(
                                         cnpj = col_character(),
                                         data_situacao_especial = col_character(),
-                                        situacao_especial = col_character()
+                                        situacao_especial = col_character(),
+                                        cnae_fiscal = col_character()
                                         ))
 }
 
