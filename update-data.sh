@@ -218,7 +218,7 @@ process_data_alertas(){
   echo ""
   printWithTime "> Executando o processamento de alertas"
   echo ""
-  make process-data-alertas anos=$1 filtro=$2
+  make process-data-alertas anos=$1 filtro=$2 estados=$3
 }   
 
 # ==============================================================
@@ -360,7 +360,7 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
   process_data_itens_similares
 
   # Processa os dados de alertas referentes a fornecedores contratados logo após a abertura da empresa:
-  process_data_alertas $anosConcatenados "$tipoAplicacao"
+  process_data_alertas $anosConcatenados "$tipoAplicacao" "$ESTADOS"
 
   # Importa os dados de empenhos processados para o BD
   feed_import_empenho
