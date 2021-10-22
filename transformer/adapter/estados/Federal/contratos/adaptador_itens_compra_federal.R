@@ -74,7 +74,7 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
       vl_item_contrato = as.double(vl_item_contrato),
       vl_total_item_contrato = as.double(vl_total_item_contrato)
     ) %>%
-    dplyr::mutate(ds_tidy = str_remove_all(descricao, "^[[:punct:]]*( )*")) %>% 
+    dplyr::mutate(ds_tidy = str_remove_all(descricao, "^[$|[:punct:]]*( )?")) %>% 
     dplyr::mutate(ds_item = case_when(
       !is.na(item) ~ if_else(tolower(item) == tolower(descricao_restante), 
                              str_glue("{item} {marca}"), 
