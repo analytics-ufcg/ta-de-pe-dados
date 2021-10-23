@@ -4,7 +4,7 @@ O **Tá de Pé?** é um sistema desenvolvido através da parceria entre a **Tran
 
 # Camada de Dados
 
-Este repositório contém a camada de dados do *Tá de Pé?*. Esta camada, ilustrada na imagem abaixo, fornece meios para extração, processamento, e armazenamento de dados do TCE de dois estados brasileiros, Rio Grande do Sul e Pernambuco, e da Receita Federal.
+Este repositório contém a camada de dados do *Tá de Pé?*. Esta camada, ilustrada na imagem abaixo, fornece meios para extração, processamento, e armazenamento de dados do TCE de dois estados brasileiros, Rio Grande do Sul e Pernambuco, da Receita Federal e das compras realizadas pelo Governo Federal.
 
 A Camada de Dados possui três componentes principais:
 
@@ -35,6 +35,7 @@ Mais detalhadamente, cada componente da camada de dados do *Tá de Pé?* realiza
 2. [Fetcher](#2)
    - 2.1 [Download dos dados brutos do TCE-RS](#21)
    - 2.2 [Download dos dados brutos do TCE-PE](#22)
+   - 2.3 [Download dos dados brutos do Governo Federal](#23)
 3. [Processor](#3)
    - 3.1 [Processamento dos dados de licitações e contratos](#31)
    - 3.2 [Processamento dos dados de fornecedores](#32)
@@ -122,6 +123,12 @@ Execute o seguinte comando para baixar os dados do TCE-PE.
 make fetch-data-pe ano_inicial=<ano> ano_final=<ano>
 ```
 
+### Passo 2.2 <a name="22"></a>
+
+Execute o seguinte comando para baixar os dados do Governo Federal
+
+TODO - ainda não implementado
+
 ## 3. Processor <a name="3"></a>
 
 Esta etapa consiste em processar os dados para o formato que utilizamos e encontrar alertas.
@@ -130,13 +137,24 @@ Esta etapa consiste em processar os dados para o formato que utilizamos e encont
 
 Obs: É preciso ter feito o download dos dados para os anos de interesse, conforme explicado na seção *Fetcher*.
 
-Execute o script de processamento dos dados gerais vindos do TCE:
+Atenção! Caso você tenha interesse em processar os dados federais é necessário carregar
+os dados de empenhos e itens de empenho federais no banco de processamento para que
+o ta de pe dados possa realizar a limpeza e o filtro nesses dados:
+para isto execute:
+
+```
+make feed-create-empenho-raw-gov-federal
+make feed-import-empenho-raw-gov-federal
+```
+
+Execute o script de processamento dos dados gerais:
 
 ```shell
 make process-data anos=2018,2019,2020,2021 filtro=merenda estados=RS,PE,BR
 ```
 
-Obs: o parâmetro anos pode conter um ou mais anos (estes separados por vírgula). O parâmetro filtro pode ser 'merenda' ou 'covid'.
+Obs: o parâmetro anos pode conter um ou mais anos (estes separados por vírgula). O parâmetro filtro pode ser 'merenda' ou 'covid'. O parâmetro estados pode conter um
+ou mais estados.
 
 Os dados processados estarão disponíveis no diretório `data/bd`.
 
@@ -330,7 +348,7 @@ chmod +x update-data.sh
 ### Para baixar, processar, e importar os dados com um único comando, execute:
 
 ```
-./update-data.sh --tipo merenda --contexto development --ano-inicio 2019 --ano-fim 2020
+./update-data.sh --tipo merenda --contexto development --ano-inicio 2020 --ano-fim 2021 --estados RS,PE,BR
 ```
 
 Este processo pode demorar bastante dependendo da sua conexão e da capacidade de processamento da sua máquina. Seu banco de dados local já estará pronto para uso.
