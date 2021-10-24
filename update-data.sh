@@ -241,20 +241,36 @@ feed_import_data() {
   docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py import-data
 } 
 
-# Cria tabela de empenhos raw (vindos diretamento do TCE)
+# Cria tabela de empenhos raw (vindos diretamento do TCE-RS)
 feed_create_empenho_raw() {
   echo ""
-  printWithTime "> Criando tabela de empenhos (vindos diretamente do TCE)"
+  printWithTime "> Criando tabela de empenhos (vindos diretamente do TCE-RS)"
   echo ""
   make feed-create-empenho-raw
 }  
   
-# Importa os dados de empenhos (vindos diretamento do TCE)
+# Importa os dados de empenhos (vindos diretamento do TCE-RS)
 feed_import_empenho_raw() {
   echo ""
-  printWithTime "> Importando os dados de empenhos (vindos diretamente do TCE)"
+  printWithTime "> Importando os dados de empenhos (vindos diretamente do TCE-RS)"
   echo ""
   make feed-import-empenho-raw
+}  
+
+# Cria tabela de empenhos raw (vindos diretamento do Governo Federal)
+feed_create_empenho_raw_gov_federal() {
+  echo ""
+  printWithTime "> Criando tabela de empenhos (vindos diretamente do Governo Federal)"
+  echo ""
+  make feed-create-empenho-raw-gov-federal
+}  
+  
+# Importa os dados de empenhos (vindos diretamento do Governo Federal)
+feed_import_empenho_raw_gov_federal() {
+  echo ""
+  printWithTime "> Importando os dados de empenhos (vindos diretamente do Governo Federal)"
+  echo ""
+  make feed-import-empenho-raw-gov-federal
 }  
 
 # Importa os dados de empenhos processados para o BD
@@ -324,9 +340,13 @@ IFS=',' read -r -a tiposAplicacao <<<"$TIPO_APLICACAO"
 # anos concatenados por vírgula
 anosConcatenados=$(concatYears)
 
-# Importa os dados de empenhos (vindos diretamento do TCE)
+# Importa os dados de empenhos (vindos diretamento do TCE-RS)
 feed_create_empenho_raw
 feed_import_empenho_raw
+
+# Importa os dados de empenhos (vindos diretamento do Governo Federal)
+feed_create_empenho_raw_gov_federal
+feed_import_empenho_raw_gov_federal
 
 # iteração para cada tipo de aplicação
 for tipoAplicacao in "${tiposAplicacao[@]}"; do
