@@ -207,7 +207,7 @@ join_compras_e_licitacoes <- function(compras_df, licitacoes_df) {
   if (nrow(compras_federal) > 0) {
     flog.info(str_glue("Foram encontradas {compras_federal %>% nrow()} compras federais."))
     compras_federal <- compras_federal %>%
-      dplyr::inner_join(
+      dplyr::left_join(
         licitacoes_df %>%
           dplyr::select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, id_estado,
                         id_licitacao) %>% 
