@@ -74,9 +74,10 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
       vl_item_contrato = as.double(vl_item_contrato),
       vl_total_item_contrato = as.double(vl_total_item_contrato)
     ) %>%
-    dplyr::mutate(ds_tidy = str_remove_all(descricao, "^[$|[:punct:]]*( )?")) %>% 
-    dplyr::mutate(ds_tidy = str_remove_all(ds_tidy, "^[0-9]*(,|.)[0-9]* ?((?i)(unidade(s de)?|ML|L(i)?|quilograma|par|galão|embalagem( [0-9]+,[0-9]+ .)?|caixa ([0-9]+,[0-9]+ UN.)?|teste|un.|saco|lata|frasco(-ampola)?|pacote|milheiro|metro c.bico|conjunto|jogo|L|peça( [0-9]+,[0-9]+ M)?))?[[:space:]|[:blank:]]*([0-9]*,[0-9]* ?(UN|L))?")) %>% 
-    dplyr::mutate(ds_tidy = str_remove_all(ds_tidy, "^[0-9]*(.)?((?i)(un(.)? |li|unidade(s)? de rodo|caixa(s)? com [0-9]+ unidade(s)? de [0-9] litro)?[[:space:]|[:blank:]]*[[:punct:]])?[[:space:]|[:blank:]]*")) %>% 
+    dplyr::mutate(item = str_remove_all(item, "^'([[:alpha:]]*(.)*?)*'[[:blank:]]*")) %>%
+    dplyr::mutate(ds_tidy = str_remove_all(descricao, "^[0-9]*(,|.)[0-9]* ?((?i)(unidade(s de)?|ML|L(i)?|quilograma|par|galão|embalagem( [0-9]+,[0-9]+ )?|caixa ([0-9]+,[0-9]+ UN(D)?)?|teste|un.|saco|lata|frasco(-ampola)?|pacote|milheiro|metro c.bico|conjunto|jogo|L|peça( [0-9]+,[0-9]+ M)?))?[[:space:]|[:blank:]]*([0-9]*,[0-9]* ?(UN|L))?")) %>% 
+    dplyr::mutate(ds_tidy = str_remove_all(ds_tidy, "^'([[:alpha:]]*(.)*?)*'[[:blank:]]*")) %>%
+    dplyr::mutate(ds_tidy = str_remove_all(ds_tidy, "^[$|[:punct:]]*( )?")) %>%
     dplyr::mutate(ds_item = case_when(
       !is.na(item) ~ if_else(tolower(item) == tolower(descricao_restante), 
                              str_glue("{item} {marca}"), 
