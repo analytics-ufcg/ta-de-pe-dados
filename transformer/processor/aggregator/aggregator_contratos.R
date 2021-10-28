@@ -82,7 +82,8 @@ aggregator_contratos <- function(anos, administracao = c("PE", "RS"), info_licit
       obs_contrato = character(),
       tipo_instrumento_contrato = character(),
       ano_licitacao = integer(),
-      cd_tipo_modalidade = character()
+      cd_tipo_modalidade = character(),
+      tem_alteracoes = logical()
     )
     return(empty_info_contrato)
   }
@@ -103,7 +104,7 @@ aggregator_contratos <- function(anos, administracao = c("PE", "RS"), info_licit
                   nr_documento_contratado, dt_inicio_vigencia, dt_final_vigencia, vl_contrato,
                   descricao_objeto_contrato, nr_licitacao, sigla_estado, tp_instrumento_contrato, contrato_possui_garantia,
                   vigencia_original_do_contrato, justificativa_contratacao, obs_contrato, tipo_instrumento_contrato, 
-                  ano_licitacao, cd_tipo_modalidade)
+                  ano_licitacao, cd_tipo_modalidade, tem_alteracoes)
   
   return(info_contratos)
 }

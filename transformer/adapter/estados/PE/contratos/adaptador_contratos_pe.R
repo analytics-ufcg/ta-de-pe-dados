@@ -34,7 +34,8 @@ adapta_info_contratos_pe <- function(contratos_df) {
            vigencia_original_do_contrato = NA_integer_,
            justificativa_contratacao = NA_character_,
            obs_contrato = NA_character_,
-           tipo_instrumento_contrato = NA_character_) %>% 
+           tipo_instrumento_contrato = NA_character_,
+           tem_alteracoes = NA) %>% 
     select(
       codigo_contrato = codigo_contrato_original,
       nr_contrato = numero_contrato,
@@ -55,7 +56,8 @@ adapta_info_contratos_pe <- function(contratos_df) {
       obs_contrato,
       tipo_instrumento_contrato,
       descricao_objeto_contrato = especificacao_objeto,
-      nr_licitacao = codigo_pl
+      nr_licitacao = codigo_pl,
+      tem_alteracoes
     ) %>% 
     dplyr::mutate(nr_documento_contratado = str_replace_all(nr_documento_contratado, "[[:punct:]]", "")) %>% 
     dplyr::mutate(tp_documento_contratado = 
