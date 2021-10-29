@@ -13,9 +13,9 @@ def call_all_fetch():
     '''
     Requisita todos os arquivos de baixar dados.
     '''
-    os.system(PYTHON_VERSION + ' ./analytics/ta-de-pe-dados/fetcher/receita/fetch_licitacoes.py ')
-    os.system(PYTHON_VERSION + ' ./analytics/ta-de-pe-dados/fetcher/receita/fetch_empenhos.py ')
-    os.system(PYTHON_VERSION + ' ./analytics/ta-de-pe-dados/fetcher/receita/fetch_itens_empenhos.py ')
+    os.system(PYTHON_VERSION + ' fetch_licitacoes.py ')
+    os.system(PYTHON_VERSION + ' fetch_empenhos.py ')
+    os.system(PYTHON_VERSION + ' fetch_itens_empenhos.py ')
 
 
 if __name__ == "__main__":
@@ -33,13 +33,13 @@ if __name__ == "__main__":
         call_all_fetch()
             
     elif action == '1':
-        call_fetch('./analytics/ta-de-pe-dados/fetcher/receita/fetch_empenhos.py')
+        call_fetch('fetch_empenhos.py')
 
     elif action == '2':
-        call_fetch('./analytics/ta-de-pe-dados/fetcher/receita/fetch_itens_empenhos.py')
+        call_fetch('fetch_itens_empenhos.py')
 
     elif action == '3':
-        call_fetch('./analytics/ta-de-pe-dados/fetcher/receita/fetch_licitacoes.py')
+        call_fetch('fetch_licitacoes.py')
     
     else:
         print('Opcao incorreta.')
