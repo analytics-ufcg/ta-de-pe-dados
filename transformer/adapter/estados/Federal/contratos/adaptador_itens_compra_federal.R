@@ -77,7 +77,7 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
     dplyr::mutate(item = str_remove_all(item, "^'([[:alpha:]]*(.)*?)*'[[:blank:]]*")) %>%
     dplyr::mutate(ds_tidy = str_remove_all(descricao, "^( )*([$]|-|_|,|@|[.]|'|#|])*( )?")) %>%
     dplyr::mutate(ds_tidy = str_replace_all(ds_tidy, '((\r|\n|\t)|( ){2,})+', ' ')) %>% 
-    dplyr::mutate(ds_tidy = str_replace_all(ds_tidy, '^[0-9]*,[0-9]* (UNIDADE|GARRAFA|FRASCO|Unidade|Litro)', ' ')) %>% 
+    dplyr::mutate(ds_tidy = str_replace_all(ds_tidy, '^[0-9]*,[0-9]* ((?i)unidade|garrafa|frasco|litro)', ' ')) %>% 
     dplyr::mutate(ds_item = case_when(
       !is.na(item) ~ if_else(tolower(item) == tolower(descricao_restante), 
                              str_glue("{item} {marca}"), 
