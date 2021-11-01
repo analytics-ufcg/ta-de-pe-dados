@@ -44,6 +44,9 @@ fetch-data-rs-all:
 	docker-compose run --rm fetcher-tce-rs python3.6 fetch_orgaos.py
 	docker-compose run --rm fetcher-tce-rs python3.6  fetch_all_data.py $(ano) 4 
 .PHONY: fetch-data-rs-all
+fetch-data-federal:
+	docker-compose run --rm fetcher-data-federal python3.6 fetch_all_data.py
+.PHONY: fetch-data-federal
 fetch-data-pe:		
 	docker exec r-container sh -c "cd /app/fetcher/estados/PE/tce/ && Rscript fetch_dados_tce_pe.R --data_inicio $(ano_inicial) --data_fim $(ano_final)"
 .PHONY: fetch-data-pe
