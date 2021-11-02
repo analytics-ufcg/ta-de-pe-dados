@@ -1,8 +1,11 @@
-import shutil
+import os, shutil
 
-try:
-    shutil.rmtree('/data/tce_rs/empenhos')
-except OSError as e:
-    print(e)
-else:
-    print("The directory is deleted successfully")
+folder = '/data/tce_rs/empenhos'
+
+for the_file in os.listdir(folder):
+
+    try:
+        shutil.rmtree('/data/tce_rs/empenhos/' + the_file)
+    except Exception as e:
+        print(e)
+
