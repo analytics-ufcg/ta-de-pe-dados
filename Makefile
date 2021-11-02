@@ -120,3 +120,6 @@ feed-clean-empenho:
 feed-clean-empenho-federal:
 	docker-compose run --rm --no-deps feed python3.6 /feed/manage.py clean-empenho-federal
 .PHONY: feed-clean-empenho-federal
+delete-empenhos-rs:
+	docker-compose run --rm --no-deps feed python3.6 /feed/scripts/delete/delete_empenhos_rs.py
+.PHONY: delete-empenhos-rs
