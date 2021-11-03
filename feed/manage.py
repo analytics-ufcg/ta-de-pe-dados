@@ -76,12 +76,12 @@ def import_data():
 
 @click.command()
 def import_empenho_raw():
-    """Importa dados (licitações e contratos) para as tabelas do Banco de dados"""
+    """Importa dados (empenhos) para as tabelas do Banco de dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_empenho_raw.sql'])
 
 @click.command()
 def import_empenho_raw_gov_federal():
-    """Importa dados (licitações e contratos) para as tabelas do Banco de dados"""
+    """Importa dados (empenhos) para as tabelas do Banco de dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/import/import_empenhos_federais.sql'])
 
 @click.command()
