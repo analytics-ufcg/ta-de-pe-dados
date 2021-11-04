@@ -19,14 +19,21 @@ def call_all_fetch():
 
 
 if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print('Chamada Correta: python3.6 fetch_all_data.py <ano>')
+        exit(1)
 
-    print('Escolha uma opcao: ')
-    print('1 - Baixar empenhos')
-    print('2 - Baixar itens de empenhos')
-    print('3 - Baixar licitacoes')
-    print('4 - Baixar tudo')
+    if len(sys.argv) == 2:
+        action = str(sys.argv[1])
 
-    action = input('Digite sua opcao: ')
+    else:
+        print('Escolha uma opcao: ')
+        print('1 - Baixar empenhos')
+        print('2 - Baixar itens de empenhos')
+        print('3 - Baixar licitacoes')
+        print('4 - Baixar tudo')
+
+        action = input('Digite sua opcao: ')
 
     if action == '4':
         print("Baixando todos os dados!")

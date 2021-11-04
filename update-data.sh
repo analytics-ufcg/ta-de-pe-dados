@@ -161,6 +161,14 @@ fetcher_data_inidoneas() {
   make fetch-inidoneos
 }
 
+# Recupera os dados do Governo Federal
+fetcher_data_federal_all() {
+  echo ""
+  printWithTime "> Executando o download dos dados do Governo Federal"
+  echo ""
+  make fetch-data-federal-all
+}
+
 # ==============================================================
 #                          PROCESSADOR
 # ==============================================================
@@ -356,6 +364,7 @@ feed_import_empenho_raw
 delete_empenhos_rs
 
 # Importa os dados de empenhos (vindos diretamento do Governo Federal)
+fetcher_data_federal_all
 feed_create_empenho_raw_gov_federal
 feed_import_empenho_raw_gov_federal
 
