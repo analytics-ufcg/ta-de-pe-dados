@@ -219,7 +219,15 @@ process_data_alertas(){
   printWithTime "> Executando o processamento de alertas"
   echo ""
   make process-data-alertas anos=$1 filtro=$2 estados=$3
-}   
+}
+
+# Deleta os arquivos csv de empenhos do RS:
+delete_empenhos_rs(){
+  echo ""
+  printWithTime "> Excluindo csvs de empenhos do RS"
+  echo ""
+  make delete-empenhos-rs
+}
 
 # ==============================================================
 #                             FEED
@@ -343,6 +351,9 @@ anosConcatenados=$(concatYears)
 # Importa os dados de empenhos (vindos diretamento do TCE-RS)
 feed_create_empenho_raw
 feed_import_empenho_raw
+
+# Deleta os csvs de empenhos do RS
+delete_empenhos_rs
 
 # Importa os dados de empenhos (vindos diretamento do Governo Federal)
 feed_create_empenho_raw_gov_federal
