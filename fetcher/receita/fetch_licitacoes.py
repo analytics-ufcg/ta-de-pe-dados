@@ -34,11 +34,11 @@ def save_response_content(response, destination):
 
 
 file_id = '1qsgQhbtmKaZAt9igk9hghhCIER4dMlcr'
-destination = './data/dados_federais/licitacoes.zip'
+destination = '/code/scripts/data/dados_federais/licitacoes.zip'
 download_file_from_google_drive(file_id, destination)
 
-Zip_ref = zipfile.ZipFile('./data/dados_federais/licitacoes.zip', 'r')
-Zip_ref.extractall('./data/dados_federais')
+Zip_ref = zipfile.ZipFile('/code/scripts/data/dados_federais/licitacoes.zip', 'r')
+Zip_ref.extractall('/code/scripts/data/dados_federais')
 Zip_ref.close()
 
-os.remove('./data/dados_federais/licitacoes.zip')
+os.remove('/code/scripts/data/dados_federais/licitacoes.zip')

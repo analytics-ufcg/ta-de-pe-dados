@@ -31,5 +31,5 @@ def save_response_content(response, destination):
 
 
 file_id = "1J7inAnjDm0acwhfErcfOGM6G44Ngfb96"
-destination = "./data/dados_federais/despesa_empenho.csv.gz"
+destination = "/code/scripts/data/dados_federais/despesa_empenho.csv.gz"
 download_file_from_google_drive(file_id, destination)
