@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS "novidade" (
     "id_licitacao" VARCHAR(32),
     "data" DATE,
     "id_original" VARCHAR(32),
-    "nome_municipio" VARCHAR(30),
+    "nome_municipio" VARCHAR(64),
     "texto_novidade" VARCHAR(200),
     "id_contrato" VARCHAR(32),
     PRIMARY KEY("id_novidade"),
