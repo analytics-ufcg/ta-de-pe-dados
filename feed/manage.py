@@ -49,6 +49,7 @@ def create_empenho_raw_gov_federal():
     """Cria as tabelas de empenhos do Governo Federal raw do Banco de dados"""
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_empenhos_raw_federais.sql'])
     subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_itens_empenhos_raw_federais.sql'])
+    subprocess.run(['psql', '-h', host, '-U', user, '-d', db, '-f', '/feed/scripts/create/create_itens_historico_federais.sql'])
 
 @click.command()
 def update_data():
