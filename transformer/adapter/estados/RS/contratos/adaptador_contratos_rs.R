@@ -49,7 +49,8 @@ adapta_info_contratos <- function(contratos_df) {
 
   info_contratos <- contratos_df %>%
     janitor::clean_names() %>% 
-    mutate(codigo_contrato = NA_character_) %>% # Valor do código do contrato faz sentido apenas para outros estados
+    mutate(codigo_contrato = NA_character_,
+           tem_alteracoes = NA) %>% # Valor do código do contrato faz sentido apenas para outros estados
     select(
       codigo_contrato,
       nr_contrato,
@@ -71,6 +72,7 @@ adapta_info_contratos <- function(contratos_df) {
       vigencia_original_do_contrato = nr_dias_prazo,
       descricao_objeto_contrato = ds_objeto,
       justificativa_contratacao = ds_justificativa,
-      obs_contrato = ds_observacao
+      obs_contrato = ds_observacao,
+      tem_alteracoes
     )
 }

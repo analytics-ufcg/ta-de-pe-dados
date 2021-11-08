@@ -80,6 +80,13 @@ adapta_info_compras_federal <- function(empenho_df, empenhos_licitacao_df, filtr
            cd_tipo_modalidade = codigo_modalidade_compra,
            cd_orgao_lic = codigo_ug)
   
+  # Verifica se o empenho pode ter alterações/modificações (ANULAÇÂO, ESTORNO, REFORÇO)
+  empenho_df <- empenho_df %>% 
+    group_by(codigo_favorecido, codigo_unidade_gestora, processo) %>% 
+    mutate(n_especie = n_distinct(especie)) %>% 
+    ungroup() %>% 
+    mutate(tem_alteracoes = n_especie > 1)
+  
   compras_df <- empenho_df %>% 
     mutate(tp_instrumento_contrato = "Compra",
            tipo_instrumento_contrato = "Compra",
@@ -95,6 +102,8 @@ adapta_info_compras_federal <- function(empenho_df, empenhos_licitacao_df, filtr
       nchar(codigo_favorecido) == 14 ~ 'J',
       TRUE ~ 'O'
     )) %>%
+    left_join(empenhos_licitacao_df, by = c("codigo" = "codigo_contrato")) %>% 
+    filter(especie %in% c("ORIGINAL", "REFORÇO")) %>% 
     select(
       codigo_contrato = codigo,
       nr_contrato = codigo_resumido,
@@ -114,9 +123,12 @@ adapta_info_compras_federal <- function(empenho_df, empenhos_licitacao_df, filtr
       justificativa_contratacao,
       obs_contrato = observacao,
       tipo_instrumento_contrato,
-      descricao_objeto_contrato = observacao
-    ) %>% 
-    left_join(empenhos_licitacao_df, by = c("codigo_contrato"))
+      descricao_objeto_contrato = observacao,
+      nr_licitacao,
+      cd_tipo_modalidade,
+      cd_orgao_lic,
+      tem_alteracoes
+    )
   
   flog.info(str_glue('{compras_df %>% nrow} adaptados.'))
   flog.info(str_glue('{compras_df %>% filter(is.na(nr_licitacao)) %>% nrow} não tem licitações relacionadas.'))

@@ -161,6 +161,14 @@ fetcher_data_inidoneas() {
   make fetch-inidoneos
 }
 
+# Recupera os dados do Governo Federal
+fetcher_data_federal_all() {
+  echo ""
+  printWithTime "> Executando o download dos dados do Governo Federal"
+  echo ""
+  make fetch-data-federal-all
+}
+
 # ==============================================================
 #                          PROCESSADOR
 # ==============================================================
@@ -219,7 +227,15 @@ process_data_alertas(){
   printWithTime "> Executando o processamento de alertas"
   echo ""
   make process-data-alertas anos=$1 filtro=$2 estados=$3
-}   
+}
+
+# Deleta os arquivos csv de empenhos do RS:
+delete_empenhos_rs(){
+  echo ""
+  printWithTime "> Excluindo csvs de empenhos do RS"
+  echo ""
+  make delete-empenhos-rs
+}
 
 # ==============================================================
 #                             FEED
@@ -344,7 +360,11 @@ anosConcatenados=$(concatYears)
 feed_create_empenho_raw
 feed_import_empenho_raw
 
+# Deleta os csvs de empenhos do RS
+delete_empenhos_rs
+
 # Importa os dados de empenhos (vindos diretamento do Governo Federal)
+fetcher_data_federal_all
 feed_create_empenho_raw_gov_federal
 feed_import_empenho_raw_gov_federal
 

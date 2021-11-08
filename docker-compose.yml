@@ -65,6 +65,19 @@ services:
       - ./fetcher/estados/RS/tce:/code/scripts/
     networks:
       - proxynet
+
+  fetcher-data-federal:
+    build:
+      context: fetcher/receita/
+    container_name: fetcher-receita-federal-container
+    image: fetcher-receita-federal-image
+    env_file:
+      - .env
+    volumes:
+      - ${PATH_VOLUME_DADOS:-./data}:/code/scripts/data/
+      - ./fetcher/receita/:/code/scripts/
+    networks:
+      - proxynet
    
 
   postgres:
