@@ -1,5 +1,7 @@
 library(dplyr)
 library(futile.logger)
+library(tidyverse)
+
 
 #' @param host Host do banco de dados
 #' @param user User do banco de dados
