@@ -48,7 +48,7 @@ fetch-data-federal:
 	docker-compose run --rm fetcher-data-federal python3.6 fetch_all_data.py
 .PHONY: fetch-data-federal
 fetch-data-federal-all:
-	docker-compose run --rm fetcher-data-federal python3.6 fetch_all_data.py 4
+	docker-compose run --rm fetcher-data-federal python3.6 fetch_all_data.py 5
 .PHONY: fetch-data-federal
 fetch-data-pe:		
 	docker exec r-container sh -c "cd /app/fetcher/estados/PE/tce/ && Rscript fetch_dados_tce_pe.R --data_inicio $(ano_inicial) --data_fim $(ano_final)"
