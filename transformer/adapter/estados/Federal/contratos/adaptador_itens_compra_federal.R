@@ -75,10 +75,10 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
       vl_total_item_contrato = as.double(vl_total_item_contrato)
     ) %>%
     dplyr::mutate(item = str_remove_all(item, "^'([[:alpha:]]*(.)*?)*'[[:blank:]]*")) %>%
-    dplyr::mutate(ds_tidy = str_remove_all(descricao, '^[0-9]+,[0-9]+ [A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\'\\.]* +([0-9]+,[0-9]+ [A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\'\\.]* +)?')) %>% 
+    dplyr::mutate(ds_tidy = str_remove_all(descricao, '^[0-9]+,[0-9]+ [A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\'\\.]* +([0-9]+,[0-9]+ [A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\'\\.]* +)?')) %>%
     dplyr::mutate(ds_tidy = str_remove_all(ds_tidy, "^( )*([$]|-|_|,|@|[.]|'|#|])*( )?")) %>%
-    dplyr::mutate(ds_tidy = str_remove_all(ds_tidy, "\\((( )?([0-9]+|U(N)?|ITEM [0-9]+( DO TR)?)|([0-9]{2,}\\/[0-9]{2,}\\/[0-9]{4,}#[0-9]+))\\)( )?")) %>% 
-    dplyr::mutate(ds_tidy = str_replace_all(ds_tidy, '((\r|\n|\t)|( ){2,})+', ' ')) %>% 
+    dplyr::mutate(ds_tidy = str_remove_all(ds_tidy, "\\((( )?([0-9]+|U(N)?|ITEM [0-9]+( DO TR)?)|([0-9]{2,}\\/[0-9]{2,}\\/[0-9]{4,}#[0-9]+))\\)( )?")) %>%
+    dplyr::mutate(ds_tidy = str_replace_all(ds_tidy, '((\r|\n|\t)|( ){2,})+', ' ')) %>%
     dplyr::mutate(ds_item = case_when(
       !is.na(item) ~ if_else(tolower(item) == tolower(descricao_restante), 
                              str_glue("{item} {marca}"), 
