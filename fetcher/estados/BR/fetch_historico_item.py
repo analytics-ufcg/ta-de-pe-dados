@@ -30,6 +30,6 @@ def save_response_content(response, destination):
                 f.write(chunk)
 
 
-file_id = "1iPwqdbdqXheaDTO97uJTcNFG3Plj_qUP"
+file_id = "1RK7BcahfU1VpU1GUyvULI-_KdGuHtFkx"
 destination = "/code/scripts/data/dados_federais/despesa_item_historico.csv.gz"
 download_file_from_google_drive(file_id, destination)
