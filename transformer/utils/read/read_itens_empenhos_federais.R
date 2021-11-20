@@ -29,7 +29,7 @@ read_itens_empenhos_federais_covid <- function(host, user, database, port, passw
   res <- DBI::dbGetQuery(
     con,
     str_glue(
-      "SELECT * FROM itens_empenhos_raw_federais as item ", 
+      "SELECT item.*, emp.codigo_orgao_superior FROM itens_empenhos_raw_federais as item ", 
       "JOIN empenhos_raw_federais as emp ",
       "ON item.codigo_empenho = emp.codigo ",
       "WHERE codigo_acao IN ",
