@@ -16,6 +16,7 @@ def call_all_fetch():
     os.system(PYTHON_VERSION + ' fetch_licitacoes.py ')
     os.system(PYTHON_VERSION + ' fetch_empenhos.py ')
     os.system(PYTHON_VERSION + ' fetch_itens_empenhos.py ')
+    os.system(PYTHON_VERSION + ' fetch_historico_item.py ')
 
 
 if __name__ == "__main__":
@@ -31,11 +32,12 @@ if __name__ == "__main__":
         print('1 - Baixar empenhos')
         print('2 - Baixar itens de empenhos')
         print('3 - Baixar licitacoes')
-        print('4 - Baixar tudo')
+        print('4 - Baixar historico de itens de empenhos')
+        print('5 - Baixar tudo')
 
         action = input('Digite sua opcao: ')
 
-    if action == '4':
+    if action == '5':
         print("Baixando todos os dados!")
         call_all_fetch()
             
@@ -47,6 +49,9 @@ if __name__ == "__main__":
 
     elif action == '3':
         call_fetch('fetch_licitacoes.py')
+    
+    elif action == '4':
+        call_fetch('fetch_historico_item.py')
     
     else:
         print('Opcao incorreta.')

@@ -68,14 +68,14 @@ services:
 
   fetcher-data-federal:
     build:
-      context: fetcher/receita/
-    container_name: fetcher-receita-federal-container
-    image: fetcher-receita-federal-image
+      context: fetcher/estados/BR/
+    container_name: fetcher-data-federal-container
+    image: fetcher-data-federal-image
     env_file:
       - .env
     volumes:
       - ${PATH_VOLUME_DADOS:-./data}:/code/scripts/data/
-      - ./fetcher/receita/:/code/scripts/
+      - ./fetcher/estados/BR/:/code/scripts/
     networks:
       - proxynet
    
