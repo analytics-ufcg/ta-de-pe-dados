@@ -16,12 +16,6 @@ import_empenhos_federal <- function() {
   message(paste0("Importando empenhos de Governo Federal"))
   source(here::here("transformer/utils/bd_constants.R"))
   
-  # POSTGRES_HOST = 'postgres'
-  # POSTGRES_USER = 'postgres'
-  # POSTGRES_DB = 'tanamesa'
-  # POSTGRES_PORT = 5432
-  # POSTGRES_PASSWORD = 'secret'
-
   empenhos <-
     read_empenhos_federais_covid(POSTGRES_HOST,
                                  POSTGRES_USER,
