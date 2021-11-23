@@ -1,7 +1,7 @@
 library(tidyverse)
 library(futile.logger)
 
-fetch_documentos_relacionados <- function(codigo) {
+fetch_documentos_relacionados_federais <- function(codigo) {
   url <- str_glue("http://www.portaltransparencia.gov.br/despesas/documento/documentos-relacionados/baixar?direcaoOrdenacao=asc&codigo={codigo}&fase=Empenho")
   
   temp <- tempfile()
