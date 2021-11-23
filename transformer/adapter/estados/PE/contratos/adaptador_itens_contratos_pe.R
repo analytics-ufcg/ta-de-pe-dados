@@ -27,7 +27,8 @@ import_itens_contrato_pe <- function() {
 adapta_info_itens_contratos_pe <- function(itens_contrato_pe_df, contratos_pe_df, licitacoes_pe_df) {
   info_itens_contratos_pe <- itens_contrato_pe_df %>%
     janitor::clean_names() %>% 
-    mutate(nr_lote = NA_integer_) %>% 
+    mutate(nr_lote = NA_integer_,
+           tem_alteracoes = NA) %>% 
     rename(
       codigo_contrato = codigo_contrato_original,
       nr_item = codigo_item,
@@ -69,7 +70,8 @@ adapta_info_itens_contratos_pe <- function(itens_contrato_pe_df, contratos_pe_df
            tp_instrumento_contrato,
            ano_licitacao,
            cd_tipo_modalidade,
-           origem_valor
+           origem_valor,
+           tem_alteracoes
           )
   
   #faltaram:

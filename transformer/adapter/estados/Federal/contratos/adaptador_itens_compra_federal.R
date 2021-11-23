@@ -1,4 +1,5 @@
 source(here::here("transformer/utils/read/read_itens_empenhos_federais.R"))
+source(here::here("transformer/utils/read/read_historico_itens_federais.R"))
 
 #' Importa dados de itens das compras do governo Federal
 #'
@@ -21,18 +22,90 @@ import_itens_compras_federais <- function() {
   return(itens_compra_federais)
 }
 
+#' Importa dados do histórico de itens das compras do governo Federal
+#'
+#' @return Dataframe com informações do histórico de itens das compras do governo Federal (sem filtro)
+#'
+#' @examples
+#' historico_itens_federais <- import_historico_itens_compras_federais()
+#'
+import_historico_itens_compras_federais <- function() {
+  message("Importando históricos de itens das compras do governo Federal")
+  source(here::here("transformer/utils/bd_constants.R"))
+  
+  historico_itens_federais <-
+    read_historico_itens_federais(POSTGRES_HOST,
+                                       POSTGRES_USER,
+                                       POSTGRES_DB,
+                                       POSTGRES_PORT,
+                                       POSTGRES_PASSWORD)
+  
+  return(historico_itens_federais)
+}
+
+#' Atualiza preço dos itens federais com base no histórico de itens
+#'
+#' @param itens_compra_federal_df Dataframe de itens de empenho para adaptação. Pode ser gerado a partir da função import_itens_compras_federais()
+#' @param historico_itens_federais Dataframe do histórico de itens de empenhos federais para adaptação. 
+#' Pode ser gerado a partir da função import_historico_itens_compras_federais()
+#'
+#' @return Dataframe com as mesmas colunas do dataframe de itens federais (itens_compra_federal_df) mas com a coluna vl_item_contrato
+#' com o preço atualizado e a coluna vl_item_contrato_original com o valor original encontrado para o item
+#'
+#' @examples
+#' itens_compras_BR <- atualiza_preco_itens_federais(itens_compras_BR, historico_itens_federais)
+atualiza_preco_itens_federais <- function(itens_compra_federal_df, historico_itens_federais) {
+  ## Decisões
+  # Foram excluídas linhas do histórico em que houve anulação
+  
+  # O preço unitário do item é a média do valor unitário nas ocorrências de INCLUSAO e REFORCO
+  # A quantidade do item é a soma da quantidade nas ocorrências de INCLUSAO e REFORCO
+  
+  # O valor total do item é o valor informado pela tabela de itens federais no campo (valor atual).
+  # Não necessariamente o valor atual do item corresponde ao valor untiário * quantidade (pelo fator anulações)
+  # Nem sempre o valor atual do item bate com o valor no Portal (possivelmente inconsistência nos dados (exemplo abaixo))
+  
+  # Há casos de inconsistência em que a operação parece estar repetida (160109000012021NE000034, 6)
+  
+  historico_merge <- historico_itens_federais %>% 
+    inner_join(itens_compra_federal_df %>% 
+                 select(codigo_empenho, sequencial, valor_atual), 
+               by = c("codigo_empenho", "sequencial")) %>% 
+    filter(tipo_operacao %in% c("INCLUSAO", "REFORCO")) %>% 
+    group_by(codigo_empenho, sequencial) %>% 
+    summarise(
+      quantidade = sum(quantidade),
+      valor_unitario = mean(valor_unitario),
+      valor_atual = first(valor_atual)
+    ) %>%
+    ungroup() %>%
+    mutate(tem_alteracoes = TRUE)
+  
+  itens_atualizados <- itens_compra_federal_df %>% 
+    left_join(historico_merge, 
+              by = c("codigo_empenho", "sequencial")) %>% 
+    mutate(quantidade = if_else(!is.na(quantidade.y), quantidade.y, as.numeric(quantidade.x)),
+           valor_unitario = if_else(!is.na(valor_unitario.y), valor_unitario.y, valor_unitario.x),
+           valor_atual = if_else(!is.na(valor_atual.y), valor_atual.y, valor_atual.x)) %>% 
+    select(-c(quantidade.x, quantidade.y, valor_unitario.x, valor_unitario.y, valor_atual.x, valor_atual.y))
+  
+  return(itens_atualizados)
+}
+
 #' Processa dados para tabela de informações dos itens das compras do governo federal
 #' As compras do governo federal são extraídas dos empenhos (notas de empenho)
 #'
 #' @param itens_compra_federal_df Dataframe de itens de empenho para adaptação. Pode ser gerado a partir da função import_itens_compras_federais()
 #' @param empenhos_relacionados_df Dataframe adaptado que liga empenhos à licitações. Pode ser gerado a partir da função processa_compras_federal()
+#' @param historico_itens_federais Dataframe do histórico de itens de empenhos federais para adaptação. 
+#' Pode ser gerado a partir da função import_historico_itens_compras_federais()
 #' @param filtro Tipo de filtro para aplicação nos dados. Apenas 'covid' está disponível.
 #'
 #' @return Dataframe com informações dos itens das compras do governo federal
 #'
 #' @examples
 #' itens_compras_BR <- adapta_info_itens_compras_federal(itens_compra_federal_df, empenhos_relacionados_df, filtro)
-adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_relacionados_df, filtro) {
+adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_relacionados_df, historico_itens_federais, filtro) {
   if (filtro == 'covid') {
     flog.info("Aplicando filtro de covid para as compras do Governo Federal")
   } else if (filtro == 'merenda') {
@@ -42,11 +115,15 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
     stop("Tipo de filtro não definido. É possível filtrar pelos tipos 'merenda' ou 'covid")
   }
   
+  itens_compra_federal_df <- atualiza_preco_itens_federais(itens_compra_federal_df, historico_itens_federais)
+  
   info_itens_compras_federal <- itens_compra_federal_df %>%
     rowid_to_column(var='nr_item') %>% 
     janitor::clean_names() %>%
     mutate(ano_licitacao = NA_integer_,
-           nr_lote = NA_integer_) %>%
+           nr_lote = NA_integer_,
+           valor_total = if_else(!is.na(valor_atual), valor_atual, valor_total),
+           tem_alteracoes = if_else(tem_alteracoes, T, F)) %>%
     rename(
       codigo_contrato = codigo_empenho,
       qt_itens_contrato = quantidade,
@@ -101,7 +178,8 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
       tp_instrumento_contrato,
       ano_licitacao,
       cd_tipo_modalidade,
-      origem_valor
+      origem_valor,
+      tem_alteracoes
     )
   
   return(info_itens_compras_federal)
