@@ -18,4 +18,3 @@ fetch_documentos_relacionados_federais <- function(codigo) {
   
   return(dados)
 }
-
