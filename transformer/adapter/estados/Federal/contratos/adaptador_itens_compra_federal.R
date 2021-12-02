@@ -89,7 +89,7 @@ atualiza_preco_itens_federais <- function(itens_compra_federal_df, historico_ite
            valor_atual = if_else(!is.na(valor_atual.y), valor_atual.y, valor_atual.x)) %>% 
     select(-c(quantidade.x, quantidade.y, valor_unitario.x, valor_unitario.y, valor_atual.x, valor_atual.y))
   
-  return(itens_atualizados)
+  return(distinct(itens_atualizados))
 }
 
 #' Processa dados para tabela de informações dos itens das compras do governo federal
