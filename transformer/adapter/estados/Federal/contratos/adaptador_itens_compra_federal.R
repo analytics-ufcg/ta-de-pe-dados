@@ -66,17 +66,17 @@ atualiza_preco_itens_federais <- function(itens_compra_federal_df, historico_ite
   # Nem sempre o valor atual do item bate com o valor no Portal (possivelmente inconsistência nos dados (exemplo abaixo))
   
   # Há casos de inconsistência em que a operação parece estar repetida (160109000012021NE000034, 6)
-  
+    
   historico_merge <- historico_itens_federais %>% 
     inner_join(itens_compra_federal_df %>% 
-                 select(codigo_empenho, sequencial, valor_atual), 
+               select(codigo_empenho, sequencial, valor_atual), 
                by = c("codigo_empenho", "sequencial")) %>% 
-    filter(tipo_operacao %in% c("INCLUSAO", "REFORCO")) %>% 
     group_by(codigo_empenho, sequencial) %>% 
     summarise(
+      quantidade = if_else(tipo_operacao == 'ANULACAO', quantidade * -1, quantidade),
       quantidade = sum(quantidade),
-      valor_unitario = mean(valor_unitario),
-      valor_atual = first(valor_atual)
+      valor_unitario = if_else(quantidade == 0 || valor_unitario == 0, 0, mean(valor_unitario)),
+      valor_atual = (valor_atual * quantidade)
     ) %>%
     ungroup() %>%
     mutate(tem_alteracoes = TRUE)
