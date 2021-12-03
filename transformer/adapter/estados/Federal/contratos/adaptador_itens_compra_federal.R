@@ -71,13 +71,13 @@ atualiza_preco_itens_federais <- function(itens_compra_federal_df, historico_ite
     inner_join(itens_compra_federal_df %>% 
                select(codigo_empenho, sequencial, valor_atual), 
                by = c("codigo_empenho", "sequencial")) %>% 
-    group_by(codigo_empenho, sequencial) %>% 
     mutate(quantidade = if_else(tipo_operacao == 'ANULACAO', quantidade * -1, quantidade)) %>% 
+    group_by(codigo_empenho, sequencial) %>% 
     summarise(
       quantidade = sum(quantidade),
       valor_unitario = if_else(quantidade == 0 || valor_unitario == 0, 0, mean(valor_unitario)),
       valor_original = valor_atual,
-      valor_atual = (valor_atual * quantidade)
+      valor_atual = (valor_unitario * quantidade)
     ) %>%
     ungroup() %>%
     mutate(tem_alteracoes = TRUE)
@@ -90,7 +90,7 @@ atualiza_preco_itens_federais <- function(itens_compra_federal_df, historico_ite
            valor_atual = if_else(!is.na(valor_atual.y), valor_atual.y, valor_atual.x)) %>% 
     select(-c(quantidade.x, quantidade.y, valor_unitario.x, valor_unitario.y, valor_atual.x, valor_atual.y))
   
-  return(distinct(itens_atualizados))
+  return(itens_atualizados)
 }
 
 #' Processa dados para tabela de informações dos itens das compras do governo federal
