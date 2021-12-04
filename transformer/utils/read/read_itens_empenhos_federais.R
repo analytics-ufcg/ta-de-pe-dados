@@ -3,6 +3,8 @@ library(here)
 library(magrittr)
 library(futile.logger)
 
+source(here("transformer/utils/read/read_orgaos_compras_net.R"))
+
 #' @title Recupera dados de itens de empenhos federais filtrados
 #' @description Acessa o banco de dados local de processamento e filtra os dados de itens de empenhos federais com base 
 #' no código de ação. A lista de código de ações usada aqui se refere apenas a ações relacionas a pandemia da 
@@ -29,7 +31,7 @@ read_itens_empenhos_federais_covid <- function(host, user, database, port, passw
   res <- DBI::dbGetQuery(
     con,
     str_glue(
-      "SELECT item.*, emp.codigo_orgao_superior FROM itens_empenhos_raw_federais as item ", 
+      "SELECT item.*, emp.codigo_orgao_superior, emp.codigo_unidade_gestora FROM itens_empenhos_raw_federais as item ", 
       "JOIN empenhos_raw_federais as emp ",
       "ON item.codigo_empenho = emp.codigo ",
       "WHERE codigo_acao IN ",
@@ -37,10 +39,14 @@ read_itens_empenhos_federais_covid <- function(host, user, database, port, passw
     )
   )
 
-  ## Filtro para remover órgãos fora do contexto do Governo Federal
+  unidades_gestoras_compras_net <- get_compras_net_unid_gestoras()
+
   filtered_res <- res %>% 
+    ## Filtro para remover órgãos fora do contexto do Governo Federal
     filter(as.numeric(codigo_orgao_superior) %% 1000 == 0, 
-           as.numeric(codigo_orgao_superior) > 2e4, as.numeric(codigo_orgao_superior) < 9e4)
+           as.numeric(codigo_orgao_superior) > 2e4, as.numeric(codigo_orgao_superior) < 9e4) %>% 
+    ## Filtro para incluir apenas órgãos do comprasnet
+    filter(codigo_unidade_gestora %in% (unidades_gestoras_compras_net %>% pull(codigo_ug)))
   
   return(filtered_res)
 }
