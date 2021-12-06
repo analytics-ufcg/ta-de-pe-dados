@@ -14,7 +14,7 @@ test_that("Testa atualiza_preco_itens_federais", {
   expected_df <- read_csv(here::here("tests/testthat/data/historico_itens/expected_output.csv"))
   
   output_df <- atualiza_preco_itens_federais(itens_compra_federal_df, historico_itens_federais) %>% 
-    select(codigo_empenho, sequencial, quantidade, valor_unitario, valor_atual)
+    select(codigo_empenho, sequencial, quantidade, valor_unitario, valor_total)
   
   expect_true(all_equal(
     output_df %>% filter(codigo_empenho == "550027000012021NE000001"),
