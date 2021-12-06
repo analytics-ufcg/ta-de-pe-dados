@@ -72,13 +72,16 @@ atualiza_preco_itens_federais <- function(itens_compra_federal_df, historico_ite
                select(codigo_empenho, sequencial, valor_atual), 
                by = c("codigo_empenho", "sequencial")) %>% 
     mutate(quantidade = if_else(tipo_operacao == 'ANULACAO', -(quantidade), quantidade)) %>% 
+    ungroup() %>% 
+    mutate(valor_original = valor_atual) %>% 
+    mutate(valor_total = valor_unitario * quantidade) %>% 
     group_by(codigo_empenho, sequencial) %>% 
     summarise(
       quantidade = sum(quantidade),
-      valor_unitario = if_else(quantidade == 0 || valor_unitario == 0, 0, mean(valor_unitario)),
-      valor_original = valor_atual,
-      valor_atual = (valor_unitario * quantidade)
+      valor_total = sum(valor_total),
+      valor_original = first(valor_original)
     ) %>%
+    mutate(valor_unitario = valor_total / quantidade) %>% 
     ungroup() %>%
     mutate(tem_alteracoes = TRUE)
   
