@@ -90,8 +90,8 @@ atualiza_preco_itens_federais <- function(itens_compra_federal_df, historico_ite
               by = c("codigo_empenho", "sequencial")) %>% 
     mutate(quantidade = if_else(!is.na(quantidade.y), quantidade.y, as.numeric(quantidade.x)),
            valor_unitario = if_else(!is.na(valor_unitario.y), valor_unitario.y, valor_unitario.x),
-           valor_atual = if_else(!is.na(valor_atual.y), valor_atual.y, valor_atual.x)) %>% 
-    select(-c(quantidade.x, quantidade.y, valor_unitario.x, valor_unitario.y, valor_atual.x, valor_atual.y))
+           valor_total = if_else(!is.na(valor_total.y), valor_total.y, valor_total.x)) %>% 
+    select(-c(quantidade.x, quantidade.y, valor_unitario.x, valor_unitario.y, valor_total.x, valor_total.y))
   
   return(itens_atualizados)
 }
