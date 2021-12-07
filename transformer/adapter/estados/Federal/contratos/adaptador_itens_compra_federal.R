@@ -83,7 +83,7 @@ atualiza_preco_itens_federais <- function(itens_compra_federal_df, historico_ite
     ) %>%
     mutate(valor_unitario = valor_total / quantidade) %>% 
     ungroup() %>%
-    mutate(tem_alteracoes = TRUE)
+    mutate(tem_inconsistencia = TRUE)
   
   itens_atualizados <- itens_compra_federal_df %>% 
     left_join(historico_merge, 
@@ -127,7 +127,7 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
     mutate(ano_licitacao = NA_integer_,
            nr_lote = NA_integer_,
            valor_total = if_else(!is.na(valor_atual), valor_atual, valor_total),
-           tem_alteracoes = if_else(tem_alteracoes, T, F)) %>%
+           tem_inconsistencia = if_else(tem_inconsistencia, T, F)) %>%
     rename(
       codigo_contrato = codigo_empenho,
       qt_itens_contrato = quantidade,
