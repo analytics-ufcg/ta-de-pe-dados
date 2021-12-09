@@ -82,7 +82,10 @@ atualiza_preco_itens_federais <- function(itens_compra_federal_df, historico_ite
       valor_original = first(valor_original)
     ) %>%
     mutate(valor_unitario = if_else(is.infinite(valor_total / quantidade), 0, valor_total / quantidade),
-           tem_inconsistencia = if_else((quantidade <= 0  && valor_unitario > 0) || valor_unitario < 0, T, F)) %>% 
+           tem_inconsistencia = if_else((quantidade <= 0  && valor_total > 0) 
+                                        || valor_total < 0
+                                        || (quantidade > 0 && valor_total == 0), T, F)
+           ) %>% 
     ungroup()
   
   itens_atualizados <- itens_compra_federal_df %>% 
