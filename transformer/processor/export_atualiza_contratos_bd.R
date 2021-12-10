@@ -11,7 +11,7 @@ contratos_processados_df <- read_contratos_processados()
 empenhos_federais <- import_empenhos_federal() %>% select(valor_original, codigo)
 
 filtra_contratos_tem_alteracoes <- function(contratos_processados_df){
-  contratos_filtrados <- contratos_processados_df %>% filter(tem_alteracoes == TRUE & id_estado == 99) %>% head(n=50)
+  contratos_filtrados <- contratos_processados_df %>% filter(tem_alteracoes == TRUE & id_estado == 99)
   contratos_processados_df <- contratos_processados_df %>% filter(tem_alteracoes == FALSE | tem_alteracoes == TRUE & id_estado != 99)
   
   return(contratos_filtrados)
