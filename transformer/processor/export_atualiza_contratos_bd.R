@@ -7,9 +7,12 @@ source(here::here("transformer/utils/fetcher/export_documentos_federais_relacion
 source(here::here("transformer/utils/read_utils.R"))
 source(here::here("transformer/adapter/estados/Federal/contratos/adaptador_compras_federal.R"))
 
+# Lê o csv dos contratos do Governo Federal
 contratos_processados_df <- read_contratos_processados()
+# Importa os empenhos do Governo Federal e isola apenas o valor e o código dos empenhos
 empenhos_federais <- import_empenhos_federal() %>% select(valor_original, codigo)
 
+# Isola os contratos que tem alterações criando duas variáveis, uma contendo os contratos do Gov Federal e outra com os contratos restantes
 filtra_contratos_tem_alteracoes <- function(contratos_processados_df){
   contratos_filtrados <- contratos_processados_df %>% filter(tem_alteracoes == TRUE & id_estado == 99)
   contratos_processados_df <- contratos_processados_df %>% filter(tem_alteracoes == FALSE | tem_alteracoes == TRUE & id_estado != 99)
@@ -24,6 +27,7 @@ empenhos_relacionados <- data.frame(Data=character(),
                                     codigo_empenho_original=character(), 
                                     stringsAsFactors=FALSE) 
 
+# Cria um dataframe contendo todos os empenhos relacionados de todos os empenhos
 gera_df_documentos_relacionados <- function(documentos_relacionados){
   
   empenhos_relacionados <<- full_join(empenhos_relacionados, documentos_relacionados, copy=TRUE)
@@ -35,7 +39,7 @@ contratos_filtrados <- filtra_contratos_tem_alteracoes(contratos_processados_df)
 
 # Atribui a variável 'empenhos_relacionados' TODOS os empenhos relacionados baixados
 # referentes aos empenhos passados pelos contratos do Governo Federal que tem alteração.
-contratos_filtrados$codigo_contrato %>% 
+contratos_filtrados %>% pull(codigo_contrato) %>% 
   map(fetch_documentos_relacionados_federais) %>% 
   map(gera_df_documentos_relacionados)
 
