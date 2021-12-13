@@ -3,7 +3,7 @@ library(readr)
 library(purrr)
 library(magrittr)
 
-source(here::here("transformer/utils/fetcher/export_documentos_federais_relacionados.R"))
+source(here::here("transformer/utils/fetcher/fetcher_documentos_federais_relacionados.R"))
 source(here::here("transformer/utils/read_utils.R"))
 source(here::here("transformer/adapter/estados/Federal/contratos/adaptador_compras_federal.R"))
 
@@ -14,7 +14,7 @@ empenhos_federais <- import_empenhos_federal() %>% select(valor_original, codigo
 
 # Isola os contratos que tem alterações criando duas variáveis, uma contendo os contratos do Gov Federal e outra com os contratos restantes
 filtra_contratos_tem_alteracoes <- function(contratos_processados_df){
-  contratos_filtrados <- contratos_processados_df %>% filter(tem_alteracoes == TRUE & id_estado == 99)
+  contratos_filtrados <- contratos_processados_df %>% filter(tem_alteracoes == TRUE & id_estado == 99) %>% head()
   contratos_processados_df <- contratos_processados_df %>% filter(tem_alteracoes == FALSE | tem_alteracoes == TRUE & id_estado != 99)
   
   return(contratos_filtrados)
