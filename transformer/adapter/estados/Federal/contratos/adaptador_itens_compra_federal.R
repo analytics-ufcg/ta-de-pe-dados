@@ -79,24 +79,24 @@ atualiza_preco_itens_federais <- function(itens_compra_federal_df, historico_ite
     summarise(
       quantidade = sum(quantidade),
       valor_total = sum(valor_total),
-      valor_original = first(valor_original)
+      valor_original = first(valor_original),
+      .groups = 'drop'
     ) %>%
     mutate(valor_unitario = valor_total / quantidade) %>% 
     mutate(valor_nan = is.nan(valor_unitario),
-           quantidade_negativa =  quantidade < 0,
+           quantidade_negativa = quantidade < 0,
            quantidade_c_valor_zero = quantidade > 0 && valor_total == 0,
            valor_infinito = is.infinite(valor_unitario),
            valor_negativo = valor_unitario < 0,
            valor_sem_quantidade = quantidade <= 0  && valor_unitario > 0,
     ) %>% 
     mutate(tem_inconsistencia = if_else(!(valor_nan)  
-                                        &&(quantidade_negativa
-                                           || quantidade_c_valor_zero
-                                           || valor_infinito
-                                           || valor_negativo
-                                           || valor_sem_quantidade), TRUE, FALSE)
-    ) %>% 
-    ungroup()
+                                        &(quantidade_negativa
+                                        | quantidade_c_valor_zero
+                                        | valor_infinito
+                                        | valor_negativo
+                                        | valor_sem_quantidade), TRUE, FALSE)
+    )
   
   itens_atualizados <- itens_compra_federal_df %>% 
     left_join(historico_merge, 
