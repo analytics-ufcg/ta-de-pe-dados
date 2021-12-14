@@ -69,7 +69,7 @@ atualiza_preco_itens_federais <- function(itens_compra_federal_df, historico_ite
     
   historico_merge <- historico_itens_federais %>% 
     inner_join(itens_compra_federal_df %>% 
-               select(codigo_empenho, sequencial, valor_atual), 
+                 select(codigo_empenho, sequencial, valor_atual), 
                by = c("codigo_empenho", "sequencial")) %>% 
     mutate(quantidade = if_else(tipo_operacao == 'ANULACAO', -(quantidade), quantidade)) %>% 
     ungroup() %>% 
@@ -81,20 +81,21 @@ atualiza_preco_itens_federais <- function(itens_compra_federal_df, historico_ite
       valor_total = sum(valor_total),
       valor_original = first(valor_original)
     ) %>%
-    mutate(valor_unitario = valor_total / quantidade,
+    mutate(valor_unitario = valor_total / quantidade) %>% 
+    mutate(valor_nan = is.nan(valor_unitario),
            quantidade_negativa =  quantidade < 0,
            quantidade_c_valor_zero = quantidade > 0 && valor_total == 0,
            valor_infinito = is.infinite(valor_unitario),
            valor_negativo = valor_unitario < 0,
-           valor_zero = is.nan(valor_unitario),
            valor_sem_quantidade = quantidade <= 0  && valor_unitario > 0,
-           tem_inconsistencia = if_else((quantidade_negativa
-                                       || quantidade_c_valor_zero
-                                       || valor_infinito
-                                       || valor_negativo
-                                       || valor_sem_quantidade)
-                                        && !valor_zero, TRUE, FALSE)
-           ) %>% 
+    ) %>% 
+    mutate(tem_inconsistencia = if_else(!(valor_nan)  
+                                        &&(quantidade_negativa
+                                           || quantidade_c_valor_zero
+                                           || valor_infinito
+                                           || valor_negativo
+                                           || valor_sem_quantidade), TRUE, FALSE)
+    ) %>% 
     ungroup()
   
   itens_atualizados <- itens_compra_federal_df %>% 
