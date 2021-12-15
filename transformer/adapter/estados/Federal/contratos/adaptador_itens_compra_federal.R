@@ -198,7 +198,7 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
       ano_licitacao,
       cd_tipo_modalidade,
       origem_valor,
-      tem_alteracoes
+      tem_inconsistencia
     )
   
   return(info_itens_compras_federal)
