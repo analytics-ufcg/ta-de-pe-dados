@@ -53,14 +53,14 @@ adapta_info_item_contrato <- function(itens_contrato_df, itens_licitacoes_df) {
              ANO_CONTRATO, TP_INSTRUMENTO, NR_LOTE, NR_ITEM, .keep_all=TRUE) %>%
     mutate(ORIGEM_VALOR = "contrato",
            CODIGO_CONTRATO = NA_character_,
-           TEM_ALTERACOES = NA) %>% 
+           TEM_INCONSISTENCIA = NA) %>% 
     rename(QT_ITENS_CONTRATO = QT_ITENS,
            VL_ITEM_CONTRATO = VL_ITEM,
            VL_TOTAL_ITEM_CONTRATO = VL_TOTAL_ITEM) %>%
     clean_names() %>%
     select(cd_orgao, ano_licitacao, nr_licitacao, cd_tipo_modalidade, nr_lote, nr_item, codigo_contrato,
            ano_contrato, tp_instrumento_contrato = tp_instrumento, nr_contrato, qt_itens_contrato, 
-           vl_item_contrato, vl_total_item_contrato, origem_valor, tem_alteracoes)  %>% 
+           vl_item_contrato, vl_total_item_contrato, origem_valor, tem_inconsistencia)  %>% 
     dplyr::left_join(itens_licitacoes_df, c("cd_orgao", "ano_licitacao", "nr_licitacao",
                                          "cd_tipo_modalidade", "nr_lote", "nr_item")) 
   
