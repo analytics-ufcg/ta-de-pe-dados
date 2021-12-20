@@ -32,7 +32,7 @@ read_empenhos_federais_covid <- function(host, user, database, port, password) {
       "SELECT * FROM empenhos_raw_federais ",
       "WHERE codigo_acao IN ",
       "('00S4', '00S5', '00S7', '00S8', '00S9', '00SF', '00SH', '21C0', '21C1', '21C2', '00SI', '21C0')",
-      "AND codigo_modalidade_aplicacao IN ('90', '60', '50')"
+      "AND codigo_modalidade_aplicacao IN ('90')"
     )
   )
 
