@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS "item_contrato" (
     "vl_item_contrato" NUMERIC(15, 2),
     "vl_total_item_contrato" NUMERIC(15, 2),
     "origem_valor" VARCHAR(10),
-    "tem_alteracoes" BOOLEAN,
+    "tem_inconsistencia" BOOLEAN,
     "sigla_estado" VARCHAR(2),
     "id_estado" INTEGER,
     "dt_inicio_vigencia" DATE,
