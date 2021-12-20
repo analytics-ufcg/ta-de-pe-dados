@@ -1,0 +1,3 @@
+[submodule "fetcher/transparencia_gov"]
+	path = fetcher/governo_federal/transparencia_gov
+	url = https://github.com/analytics-ufcg/transparencia-gov-br.git

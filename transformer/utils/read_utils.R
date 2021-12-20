@@ -395,13 +395,16 @@ read_itens_contratos_pe <- function() {
 read_licitacoes_federal <- function() {
   licitacoes <-
     readr::read_csv(
-      paste0(path_dados_federais_fetcher, "licitacoes-portal.csv"),
+      paste0(path_dados_federais_fetcher, "licitacoes.csv.gz"),
       col_types = list(
-        codigo_ug = readr::col_character(),
+        codigo_unidade_gestora = readr::col_character(),
         codigo_orgao = readr::col_character(),
         codigo_modalidade_compra = readr::col_character()
       )
-    )
+    ) %>% 
+    rename(numero_licitacao = nr_licitacao,
+           codigo_ug = codigo_unidade_gestora,
+           nome_ug = nome_unidade_gestora)
   return(licitacoes)
 }
 
@@ -410,7 +413,12 @@ read_licitacoes_federal <- function() {
 read_empenhos_licitacoes_federal <- function() {
   emp_lic <-
     readr::read_csv(
-      paste0(path_dados_federais_fetcher, "empenhosrelacionados-portal.csv")
-    )
+      paste0(path_dados_federais_fetcher, "empenhos_relacionados.csv.gz")
+    ) %>% 
+    rename(numero_licitacao = nr_licitacao,
+           codigo_ug = codigo_unidade_gestora,
+           nome_ug = nome_unidade_gestora,
+           valor_empenho_r = valor_empenho)
+
   return(emp_lic)
 }

@@ -10,8 +10,7 @@ help:
 	@echo "\tbuild-fetcher-data-rs \t\t\tRealiza o build da imagem com as dependência do fetcher do tá na mesa"
 	@echo "\tfetch-data-rs ano=<ano> \t\tExecuta a cli do fetcher para o ano passado como parâmetro. (2019 é o default)"
 	@echo "\tfetch-data-pe ano_inicial=<ano> ano_final=<ano> \t\t\tRecupera dados do TCE-PE."
-	@echo "\tfetch-data-federal \t\t\tExecuta cli do fetcher dos dados do Governo Federal, podendo escolher qual dados específico deve ser baixado"
-	@echo "\tfetch-data-federal-all \t\t\tRecupera todos os dados do Governo Federal presentes no drive da Transparência Brasil"
+	@echo "\tfetch-data-federal \t\t\tBaixa os dados federais usados no repositório de acordo com um intervalo de tempo. Ex: make fetch_data_federal data_inicio=2020-06-19 data_fim-2020-06-20"
 	@echo "\tfetch-process-receita \t\tCaptura os dados da Receita Federal para os fornecedores processados."
 	@echo "\tfetch-inidoneos \t\tCaptura os dados de empresas inidoneas (CEIS e CNEP)."
 	@echo "\tprocess-data anos=<ano1,ano2> filtro=<merenda> estados=<PE,RS> \tExecuta o módulo de processamento de dados brutos para o formato usado na aplicação."
@@ -47,10 +46,7 @@ fetch-data-rs-all:
 	docker-compose run --rm fetcher-tce-rs python3.6  fetch_all_data.py $(ano) 4 
 .PHONY: fetch-data-rs-all
 fetch-data-federal:
-	docker-compose run --rm fetcher-data-federal python3.6 fetch_all_data.py
-.PHONY: fetch-data-federal
-fetch-data-federal-all:
-	docker-compose run --rm fetcher-data-federal python3.6 fetch_all_data.py 5
+	docker-compose run --rm fetcher-data-federal ./fetch_dados_federais.sh $(data_inicio) $(data_fim)
 .PHONY: fetch-data-federal
 fetch-data-pe:		
 	docker exec r-container sh -c "cd /app/fetcher/estados/PE/tce/ && Rscript fetch_dados_tce_pe.R --data_inicio $(ano_inicial) --data_fim $(ano_final)"

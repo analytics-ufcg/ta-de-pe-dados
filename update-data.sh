@@ -166,7 +166,8 @@ fetcher_data_federal_all() {
   echo ""
   printWithTime "> Executando o download dos dados do Governo Federal"
   echo ""
-  make fetch-data-federal-all
+  ANO_FIM_FIXED=$(($ANO_FIM + 1))
+  make fetch-data-federal data_inicio="$ANO_INICIO-01-01" data_fim="$ANO_FIM_FIXED-01-01"
 }
 
 # ==============================================================
@@ -347,7 +348,7 @@ echo -e "- Período: $ANO_INICIO até $ANO_FIM \n"
 # Realiza o fetcher dos dados do RS e de PE
 fetcher_data
 
-# Realiza o fetcher dos dados de empresas inidoneas
+# # Realiza o fetcher dos dados de empresas inidoneas
 fetcher_data_inidoneas
 
 # Processa os dados de cada estado e cada tipo de aplicação
@@ -356,14 +357,14 @@ IFS=',' read -r -a tiposAplicacao <<<"$TIPO_APLICACAO"
 # anos concatenados por vírgula
 anosConcatenados=$(concatYears)
 
-# Importa os dados de empenhos (vindos diretamento do TCE-RS)
+# Importa os dados de empenhos (vindos diretamente do TCE-RS)
 feed_create_empenho_raw
 feed_import_empenho_raw
 
 # Deleta os csvs de empenhos do RS
 delete_empenhos_rs
 
-# Importa os dados de empenhos (vindos diretamento do Governo Federal)
+# Importa os dados de empenhos (vindos diretamente do Governo Federal)
 fetcher_data_federal_all
 feed_create_empenho_raw_gov_federal
 feed_import_empenho_raw_gov_federal
