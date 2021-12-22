@@ -68,17 +68,16 @@ services:
 
   fetcher-data-federal:
     build:
-      context: fetcher/estados/BR/
+      context: fetcher/governo_federal/
     container_name: fetcher-data-federal-container
     image: fetcher-data-federal-image
     env_file:
       - .env
     volumes:
-      - ${PATH_VOLUME_DADOS:-./data}:/code/scripts/data/
-      - ./fetcher/estados/BR/:/code/scripts/
+      - ${PATH_VOLUME_DADOS:-./data}:/code/data/
+      - ./fetcher/governo_federal:/code/
     networks:
       - proxynet
-   
 
   postgres:
     image: postgres:11.1-alpine

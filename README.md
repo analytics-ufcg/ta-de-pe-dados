@@ -59,7 +59,15 @@ a) Crie uma cópia do arquivo .env.sample no **diretório raiz desse repositóri
 
 b) Preencha as variáveis contidas no .env.sample também para o `.env`. Altere os valores conforme sua necessidade. Atente que se você está usando o banco local, o valor da variável `POSTGRES_HOST` deve ser *postgres*, que é o nome do serviço que será levantado pelo docker-compose. Contate a equipe em caso de dúvida.
 
-c) Do **diretório raiz desse repositório** execute o comando a seguir que irá levantar os serviços:
+c) Atualize a dependência do github submodule para o fetcher do Governo Federal:
+
+```shell
+git submodule update --init --recursive
+```
+
+Acesse o [README](fetcher/governo_federal/README.md) para mais informações.
+
+d) Do **diretório raiz desse repositório** execute o comando a seguir que irá levantar os serviços:
 
 Você pode opcionalmente realizar o build das imagens:
 
@@ -90,6 +98,9 @@ docker ps
 ```
 
 ## 1. Configuração dos Bancos de dados Locais <a name="1"></a>
+
+Execute este passo apenas se você quer repetir todo o processo de obtenção/processamento dos dados.
+Esses processos podem demorar bastante.
 
 ### Passo 1.1 - Configuração do Banco de dados local da Receita Federal <a name="11"></a>
 
