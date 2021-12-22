@@ -10,7 +10,7 @@ help:
 	@echo "\tbuild-fetcher-data-rs \t\t\tRealiza o build da imagem com as dependência do fetcher do tá na mesa"
 	@echo "\tfetch-data-rs ano=<ano> \t\tExecuta a cli do fetcher para o ano passado como parâmetro. (2019 é o default)"
 	@echo "\tfetch-data-pe ano_inicial=<ano> ano_final=<ano> \t\t\tRecupera dados do TCE-PE."
-	@echo "\tfetch-data-federal \t\t\tBaixa os dados federais usados no repositório de acordo com um intervalo de tempo. Ex: make fetch_data_federal data_inicio=2020-06-19 data_fim-2020-06-20"
+	@echo "\tfetch-data-federal \t\t\tBaixa os dados federais usados no repositório de acordo com um intervalo de tempo. Ex: make fetch_data_federal data_inicio=2020-06-19 data_fim=2020-06-20"
 	@echo "\tfetch-process-receita \t\tCaptura os dados da Receita Federal para os fornecedores processados."
 	@echo "\tfetch-inidoneos \t\tCaptura os dados de empresas inidoneas (CEIS e CNEP)."
 	@echo "\tprocess-data anos=<ano1,ano2> filtro=<merenda> estados=<PE,RS> \tExecuta o módulo de processamento de dados brutos para o formato usado na aplicação."
