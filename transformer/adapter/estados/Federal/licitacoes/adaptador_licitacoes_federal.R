@@ -61,7 +61,7 @@ adapta_info_licitacoes_federal <- function(licitacoes_df, tipo_filtro) {
                                       substr(numero_licitacao, nchar(numero_licitacao) - 3, nchar(numero_licitacao)),
                                       as.character(ano_data_abertura)),
                   ano_licitacao = as.integer(ano_licitacao),
-                  valor_licitacao = str_replace(valor_licitacao, ",", "."),
+                  valor_licitacao = as.numeric(str_replace(valor_licitacao, ",", ".")),
                   data_abertura = as.Date(data_abertura, format = "%d/%m/%Y"),
                   data_resultado_compra = as.Date(data_resultado_compra, format = "%d/%m/%Y"),
                   permite_subcontratacao = NA_character_,
