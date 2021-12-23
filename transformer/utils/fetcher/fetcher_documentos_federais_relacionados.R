@@ -12,7 +12,9 @@ fetch_documentos_relacionados_federais <- function(codigo) {
     download.file(url, temp)
     dados <- read_csv2(temp)
     dados <- dados %>%
-      mutate(codigo_empenho_original = codigo) 
+      mutate(codigo_empenho_original = codigo,
+             Espécie = as.character(Espécie)
+             ) 
     unlink(temp)
   }, error = function(e) {
     flog.info("Não foi possível realizar o download dos dados! Verifique se o download está disponível no Portal de Transparência")
