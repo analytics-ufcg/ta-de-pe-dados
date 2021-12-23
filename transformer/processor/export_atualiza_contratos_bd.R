@@ -26,17 +26,14 @@ empenhos_relacionados <- data.frame(Data=character(),
                                     stringsAsFactors=FALSE) 
 
 
-# Atribui a variável 'empenhos_relacionados' TODOS os empenhos relacionados baixados
-# referentes aos empenhos passados pelos contratos do Governo Federal que tem alteração.
-empenhos_relacionados <- contratos_filtrados %>% pull(codigo_contrato) %>% 
-  map_df(fetch_documentos_relacionados_federais)
-
 contratos_filtrados$grupo <- 1:13085 %% 20 + 1
 
 agrupamento <- split(contratos_filtrados, contratos_filtrados$grupo)
 
 group <- 1
 
+# Atribui a variável 'empenhos_relacionados' TODOS os empenhos relacionados baixados
+# referentes aos empenhos passados pelos contratos do Governo Federal que tem alteração.
 for(grupo in agrupamento){
   tryCatch({
     data_frame_relacionados <- grupo$codigo_contrato %>% map_df(fetch_documentos_relacionados_federais)
