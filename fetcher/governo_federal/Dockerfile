@@ -8,5 +8,3 @@ RUN set -ex && \
     python -m pip --no-cache install -r /code/transparencia_gov/requirements.txt
 
 WORKDIR /code
-
-COPY ./transparencia_gov ./transparencia_gov
