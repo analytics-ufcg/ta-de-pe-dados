@@ -26,7 +26,7 @@ empenhos_relacionados <- data.frame(Data=character(),
                                     stringsAsFactors=FALSE) 
 
 
-contratos_filtrados$grupo <- 1:13085 %% 20 + 1
+contratos_filtrados$grupo <- 1:46049 %% 20 + 1
 
 agrupamento <- split(contratos_filtrados, contratos_filtrados$grupo)
 
