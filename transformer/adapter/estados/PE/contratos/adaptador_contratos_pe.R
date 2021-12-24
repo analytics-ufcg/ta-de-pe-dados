@@ -29,12 +29,36 @@ adapta_info_contratos_pe <- function(contratos_df) {
 
   info_contratos <- contratos_df %>%
     janitor::clean_names() %>%
-    select(codigo_contrato = codigo_contrato_original, nr_contrato = numero_contrato, ano_contrato, 
-           cd_orgao = codigo_uj, nm_orgao = nome_uj,
-           nr_processo = numero_processo, ano_processo, tp_documento_contratado = tipo_documento_contratado,
-           nr_documento_contratado = cpfcnpj_contratado, dt_inicio_vigencia = data_inicio_vigencia, 
-           dt_final_vigencia = data_fim_vigencia, vl_contrato = valor_contrato,
-           descricao_objeto_contrato = especificacao_objeto, nr_licitacao = codigo_pl) %>% 
+    mutate(tp_instrumento_contrato = NA_character_,
+           contrato_possui_garantia = NA_character_,
+           vigencia_original_do_contrato = NA_integer_,
+           justificativa_contratacao = NA_character_,
+           obs_contrato = NA_character_,
+           tipo_instrumento_contrato = NA_character_,
+           tem_alteracoes = NA) %>% 
+    select(
+      codigo_contrato = codigo_contrato_original,
+      nr_contrato = numero_contrato,
+      ano_contrato,
+      cd_orgao = codigo_uj,
+      nm_orgao = nome_uj,
+      nr_processo = numero_processo,
+      ano_processo,
+      tp_documento_contratado = tipo_documento_contratado,
+      nr_documento_contratado = cpfcnpj_contratado,
+      dt_inicio_vigencia = data_inicio_vigencia,
+      dt_final_vigencia = data_fim_vigencia,
+      vl_contrato = valor_contrato,
+      tp_instrumento_contrato,
+      contrato_possui_garantia,
+      vigencia_original_do_contrato,
+      justificativa_contratacao,
+      obs_contrato,
+      tipo_instrumento_contrato,
+      descricao_objeto_contrato = especificacao_objeto,
+      nr_licitacao = codigo_pl,
+      tem_alteracoes
+    ) %>% 
     dplyr::mutate(nr_documento_contratado = str_replace_all(nr_documento_contratado, "[[:punct:]]", "")) %>% 
     dplyr::mutate(tp_documento_contratado = 
                     dplyr::case_when(

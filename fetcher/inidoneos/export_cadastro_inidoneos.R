@@ -9,8 +9,8 @@ output_path <- here::here("data/inidoneos/")
 dir.create(output_path)
 
 data_atual <- gsub("-", "", Sys.Date())
-ceis <- fetch_ceis(data_atual)
-cnep <- fetch_cnep(data_atual)
+ceis <- fetch_ceis_github(data_atual)
+cnep <- fetch_cnep_github(data_atual)
 
 if (nrow(ceis) > 0) {
   write_csv(ceis, paste0(output_path, "ceis.csv"))

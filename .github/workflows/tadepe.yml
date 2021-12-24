@@ -1,0 +1,24 @@
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches: [master, deploy]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: rocker/tidyverse:3.6.1
+    steps:
+        - name: Checkout Project
+          uses: actions/checkout@v1
+
+        - name: Install Dependencies
+          run: |
+            install.packages(c('here', 'devtools', 'futile.logger', 'janitor'))
+          shell: Rscript {0}
+
+        - name: Run tests
+          run: |
+            testthat::test_dir("tests/testthat/")
+          shell: Rscript {0}

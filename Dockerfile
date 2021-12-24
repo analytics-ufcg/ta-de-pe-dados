@@ -31,5 +31,7 @@ RUN R -e "install.packages(c('here', 'janitor', 'purrr', 'optparse', 'odbc', 'DB
 RUN R -e "install.packages('RPostgres', repos='http://cran.rstudio.com/')"
 RUN Rscript -e 'devtools::install_version("tidyselect", version = "1.1.0", repos = "http://cran.rstudio.com/")'
 RUN Rscript -e "install.packages('futile.logger', repos='http://cran.rstudio.com/')"
+RUN Rscript -e "install.packages('rollbar', repos='http://cran.rstudio.com/')"
+RUN Rscript -e 'devtools::install_version("testthat", version = "3.0.4", repos = "http://cran.rstudio.com/")'
 
 EXPOSE 8787

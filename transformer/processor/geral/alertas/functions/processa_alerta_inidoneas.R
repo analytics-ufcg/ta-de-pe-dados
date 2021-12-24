@@ -6,10 +6,11 @@ source(here::here("transformer/processor/geral/alertas/functions/helpers/process
 
 #' @title Gera alertas para empresas inidoneas
 #' @description Gera alertas para empresas inidoneas que estão presentes na lista de fornecedores
-#' @param Anos para consideração dos contratos feitos com fornecedores sancionados. 
+#' @param Anos para consideração dos contratos feitos com fornecedores sancionados.
+#' @param estados Array com os estados para considerar nos contratos
 #' Array com os anos para recuperação dos contratos. Exemplo: c(2018, 2019, 2020)
 #' @return Dataframe com os alertas gerados
-processa_alerta_inidoneas <- function(anos) {
+processa_alerta_inidoneas <- function(anos, estados = c("RS", "PE", "BR")) {
   flog.info("Processando alertas de empresas inidôneas...")
   
   ceis <- read_csv(here::here("data/inidoneos/ceis.csv"), col_types = cols(.default = col_character())) %>% 
@@ -25,7 +26,7 @@ processa_alerta_inidoneas <- function(anos) {
   
   fornecedores <- read_fornecedores_processados()
   
-  contratos_merge <- processa_contratos_info(anos) %>% 
+  contratos_merge <- processa_contratos_info(anos, estados) %>% 
     distinct(id_contrato, nr_contrato, nr_documento_contratado, dt_inicio_vigencia)
   
   fornecedores_inidoneos <- fornecedores %>% 

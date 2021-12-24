@@ -35,15 +35,29 @@ socios <- fetch_socios(receita, cnpjs) %>%
                    SOCIOS_ID) %>%
   select(id_socio, dplyr::everything())
 
+extra_cnaes <- tibble(
+  cod_secao = "U",
+  nm_secao = "ORGANISMOS INTERNACIONAIS E OUTRAS INSTITUIÇÕES EXTRATERRITORIAIS",
+  cod_divisao = "99",
+  nm_divisao = "ORGANISMOS INTERNACIONAIS E OUTRAS INSTITUIÇÕES EXTRATERRITORIAIS",
+  cod_grupo = "99.0",
+  nm_grupo = "Organismos internacionais e outras instituições extraterritoriais",
+  cod_classe = "99.00-8",
+  nm_classe = "Organismos internacionais e outras instituições extraterritoriais",
+  id_cnae = "9900800",
+  nm_cnae = "Organismos internacionais e outras instituições extraterritoriais"
+)
 cnaes_info <- fetch_cnaes_info(receita) %>%
-  rename(id_cnae = cod_cnae)
+  rename(id_cnae = cod_cnae) %>% 
+  bind_rows(extra_cnaes)
 
 cnaes_secundarios <- fetch_cnaes_secundarios(receita, cnpjs) %>%
   rename(id_cnae = cnae_secundario) %>%
   filter(id_cnae %in% (cnaes_info %>% dplyr::pull(id_cnae))) %>%
   generate_hash_id(c("cnpj", "id_cnae"),
                    CNAE_ID) %>%
-  select(id_cnae_secundario, dplyr::everything())
+  select(id_cnae_secundario, dplyr::everything()) %>% 
+  distinct(id_cnae_secundario, .keep_all = TRUE)
 
 natureza_juridica <- fetch_natureza_juridica_info(receita) %>% 
   select(codigo_natureza_juridica = cod_subclass_natureza_juridica,

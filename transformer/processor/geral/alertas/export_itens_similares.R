@@ -3,6 +3,8 @@ library(magrittr)
 source(here::here("transformer/utils/bd_constants.R"))
 source(here::here("transformer/utils/utils.R"))
 source(here::here("transformer/utils/constants.R"))
+source(here::here("transformer/utils/rollbar.R"))
+
 .HELP <- "Rscript fetch_dados_ta_na_mesa.R"
 
 ta_na_mesa_db <- NULL

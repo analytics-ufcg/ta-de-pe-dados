@@ -27,8 +27,9 @@ usage() {
   echo -e "\t-c  --contexto    corresponde ao contexto de destino (production, staging ou development)."
   echo -e "\t-i  --data_inicio corresponde ao ano de início do processamento."
   echo -e "\t-f  --data_fim    corresponde ao ano final do processamento."
+  echo -e "\t-f  --estados    corresponde a lista de estados para processamento."
   echo ""
-  echo "Ex. de uso: $0 --tipo covid,merenda --contexto development --ano-inicio 2017 --ano-fim 2019"
+  echo "Ex. de uso: $0 --tipo covid,merenda --contexto development --ano-inicio 2017 --ano-fim 2019 --estados RS,PE"
   exit
 }
 
@@ -51,6 +52,10 @@ while [ $# -gt 0 ]; do
     if [[ "$1" != *=* ]]; then shift; fi
     ANO_FIM="${1#*=}"
     ;;
+  --estados* | -f*)
+    if [[ "$1" != *=* ]]; then shift; fi
+    ESTADOS="${1#*=}"
+    ;;
   --help | -h)
     usage
     exit 0
@@ -72,6 +77,14 @@ pprint() {
 # Pretty Print
 printWithTime() {
   printf "[$(date +%d-%m-%y_%H:%M)] $1 \n"
+}
+
+sendDeployInfo() {
+  REVISION=$(git rev-parse --verify HEAD)
+  LOCAL_USERNAME=$(whoami)
+  curl -d '{"environment":"$R_ENV", "revision":"$REVISION", "local_username": "$LOCAL_USERNAME" }' \
+  -H "Content-Type: application/json" -H "X-Rollbar-Access-Token: $ROLLBAR_ACCESS_TOKEN" \
+  -X POST https://api.rollbar.com/api/1/deploy/
 }
 
 # Verifica se os anos de entrada estão corretos
@@ -148,6 +161,23 @@ fetcher_data_inidoneas() {
   make fetch-inidoneos
 }
 
+# Recupera os dados do Governo Federal
+fetcher_data_federal_all() {
+  echo ""
+  printWithTime "> Executando o download dos dados do Governo Federal"
+  echo ""
+  ANO_FIM_FIXED=$(($ANO_FIM + 1))
+  make fetch-data-federal data_inicio="$ANO_INICIO-01-01" data_fim="$ANO_FIM_FIXED-01-01"
+}
+
+# Recupera os dados do Governo Federal já baixados e disponibilizados no google drive
+fetcher_data_federal_all_drive() {
+  echo ""
+  printWithTime "> Executando o download dos dados do Governo Federal do Google Drive"
+  echo ""
+  make fetch-data-federal-drive
+}
+
 # ==============================================================
 #                          PROCESSADOR
 # ==============================================================
@@ -156,7 +186,7 @@ process_data(){
   echo ""
   printWithTime "> Executando o processamento dos dados gerais"
   echo ""
-  make process-data anos=$1 filtro=$2
+  make process-data anos=$1 filtro=$2 estados=$3
 }
 
 # Processa as informações de fornecedores (como data do primeiro 
@@ -205,8 +235,16 @@ process_data_alertas(){
   echo ""
   printWithTime "> Executando o processamento de alertas"
   echo ""
-  make process-data-alertas anos=$1 filtro=$2
-}   
+  make process-data-alertas anos=$1 filtro=$2 estados=$3
+}
+
+# Deleta os arquivos csv de empenhos do RS:
+delete_empenhos_rs(){
+  echo ""
+  printWithTime "> Excluindo csvs de empenhos do RS"
+  echo ""
+  make delete-empenhos-rs
+}
 
 # ==============================================================
 #                             FEED
@@ -228,20 +266,36 @@ feed_import_data() {
   docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py import-data
 } 
 
-# Cria tabela de empenhos raw (vindos diretamento do TCE)
+# Cria tabela de empenhos raw (vindos diretamento do TCE-RS)
 feed_create_empenho_raw() {
   echo ""
-  printWithTime "> Criando tabela de empenhos (vindos diretamente do TCE)"
+  printWithTime "> Criando tabela de empenhos (vindos diretamente do TCE-RS)"
   echo ""
   make feed-create-empenho-raw
 }  
   
-# Importa os dados de empenhos (vindos diretamento do TCE)
+# Importa os dados de empenhos (vindos diretamento do TCE-RS)
 feed_import_empenho_raw() {
   echo ""
-  printWithTime "> Importando os dados de empenhos (vindos diretamente do TCE)"
+  printWithTime "> Importando os dados de empenhos (vindos diretamente do TCE-RS)"
   echo ""
   make feed-import-empenho-raw
+}  
+
+# Cria tabela de empenhos raw (vindos diretamento do Governo Federal)
+feed_create_empenho_raw_gov_federal() {
+  echo ""
+  printWithTime "> Criando tabela de empenhos (vindos diretamente do Governo Federal)"
+  echo ""
+  make feed-create-empenho-raw-gov-federal
+}  
+  
+# Importa os dados de empenhos (vindos diretamento do Governo Federal)
+feed_import_empenho_raw_gov_federal() {
+  echo ""
+  printWithTime "> Importando os dados de empenhos (vindos diretamente do Governo Federal)"
+  echo ""
+  make feed-import-empenho-raw-gov-federal
 }  
 
 # Importa os dados de empenhos processados para o BD
@@ -288,6 +342,7 @@ feed_clean_data() {
 #                           EXECUÇÃO
 # ==============================================================
 
+sendDeployInfo
 checkEmptyParam
 checkParamYear
 
@@ -301,7 +356,7 @@ echo -e "- Período: $ANO_INICIO até $ANO_FIM \n"
 # Realiza o fetcher dos dados do RS e de PE
 fetcher_data
 
-# Realiza o fetcher dos dados de empresas inidoneas
+# # Realiza o fetcher dos dados de empresas inidoneas
 fetcher_data_inidoneas
 
 # Processa os dados de cada estado e cada tipo de aplicação
@@ -310,9 +365,24 @@ IFS=',' read -r -a tiposAplicacao <<<"$TIPO_APLICACAO"
 # anos concatenados por vírgula
 anosConcatenados=$(concatYears)
 
-# Importa os dados de empenhos (vindos diretamento do TCE)
+# Importa os dados de empenhos (vindos diretamente do TCE-RS)
 feed_create_empenho_raw
 feed_import_empenho_raw
+
+# Deleta os csvs de empenhos do RS
+delete_empenhos_rs
+
+# Importa os dados de empenhos (vindos diretamente do Governo Federal)
+
+# para baixar os dados diretamente do portal execute: 
+# (você precisará de muito espaço em disco e o download pode demorar bastante)
+# fetcher_data_federal_all
+
+# caso prefira, baixe do drive os dados já processados
+fetcher_data_federal_all_drive
+
+feed_create_empenho_raw_gov_federal
+feed_import_empenho_raw_gov_federal
 
 # iteração para cada tipo de aplicação
 for tipoAplicacao in "${tiposAplicacao[@]}"; do
@@ -322,7 +392,7 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
   feed_clean_data
 
   # processa os dados gerais
-  process_data $anosConcatenados "$tipoAplicacao"
+  process_data $anosConcatenados "$tipoAplicacao" "$ESTADOS"
   
   # Processa dos fornecedores
   process_data_fornecedores $anosConcatenados
@@ -346,7 +416,7 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
   process_data_itens_similares
 
   # Processa os dados de alertas referentes a fornecedores contratados logo após a abertura da empresa:
-  process_data_alertas $anosConcatenados "$tipoAplicacao"
+  process_data_alertas $anosConcatenados "$tipoAplicacao" "$ESTADOS"
 
   # Importa os dados de empenhos processados para o BD
   feed_import_empenho

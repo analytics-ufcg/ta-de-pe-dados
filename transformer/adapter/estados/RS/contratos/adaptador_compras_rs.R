@@ -59,9 +59,10 @@ adapta_compras_itens <- function(licitacoes_df, licitacoes_encerradas_df, lotes_
 .prepara_licitacoes_df <- function(licitacoes_df) {
   licitacoes_df %>% 
     janitor::clean_names() %>% 
+    mutate('codigo_contrato' = NA_character_) %>% 
     dplyr::select(cd_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, ds_objeto,
                   tp_nivel_julgamento, tp_documento_fornecedor, nr_documento_fornecedor,
-                  vl_estimado_licitacao = vl_licitacao, vl_homologado)
+                  vl_estimado_licitacao = vl_licitacao, vl_homologado, codigo_contrato)
 }
 
 #' Seleciona as colunas para o dataframe de lotes_df usados no processamento das compras
