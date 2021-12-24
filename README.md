@@ -110,6 +110,11 @@ Esses processos podem demorar bastante.
 
 [Link](https://github.com/JoaquimCMH/tomeconta-tce-pe-dados) para as instruções de configuração do banco de dados do Tribunal de Contas do estado de Pernambuco.
 
+Não esqueça de conectar o container do banco do Tome Conta a rede de containers do projeto tá de pé:
+
+```
+docker network connect ta_na_mesa_network mssql-tce-pe
+```
 
 ## 2. Fetcher <a name="2"></a>
 

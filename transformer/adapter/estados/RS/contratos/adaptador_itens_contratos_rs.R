@@ -53,7 +53,7 @@ adapta_info_item_contrato <- function(itens_contrato_df, itens_licitacoes_df) {
              ANO_CONTRATO, TP_INSTRUMENTO, NR_LOTE, NR_ITEM, .keep_all=TRUE) %>%
     mutate(ORIGEM_VALOR = "contrato",
            CODIGO_CONTRATO = NA_character_,
-           TEM_INCONSISTENCIA = NA) %>% 
+           TEM_INCONSISTENCIA = FALSE) %>% 
     rename(QT_ITENS_CONTRATO = QT_ITENS,
            VL_ITEM_CONTRATO = VL_ITEM,
            VL_TOTAL_ITEM_CONTRATO = VL_TOTAL_ITEM) %>%

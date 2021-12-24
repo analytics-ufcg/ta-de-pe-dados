@@ -142,7 +142,7 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
     mutate(ano_licitacao = NA_integer_,
            nr_lote = NA_integer_,
            valor_total = if_else(!is.na(valor_atual), valor_atual, valor_total),
-           tem_inconsistencia = if_else(tem_inconsistencia, T, F)) %>%
+           tem_inconsistencia = if_else(!is.na(tem_inconsistencia), tem_inconsistencia, F)) %>%
     rename(
       codigo_contrato = codigo_empenho,
       qt_itens_contrato = quantidade,

@@ -66,6 +66,19 @@ services:
     networks:
       - proxynet
 
+  fetcher-data-federal-drive:
+    build:
+      context: fetcher/estados/BR/
+    container_name: fetcher-data-federal-drive-container
+    image: fetcher-data-federal-drive-image
+    env_file:
+      - .env
+    volumes:
+      - ${PATH_VOLUME_DADOS:-./data}:/code/scripts/data/
+      - ./fetcher/estados/BR/:/code/scripts/
+    networks:
+      - proxynet
+
   fetcher-data-federal:
     build:
       context: fetcher/governo_federal/

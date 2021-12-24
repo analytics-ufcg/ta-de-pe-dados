@@ -28,7 +28,7 @@ adapta_info_itens_contratos_pe <- function(itens_contrato_pe_df, contratos_pe_df
   info_itens_contratos_pe <- itens_contrato_pe_df %>%
     janitor::clean_names() %>% 
     mutate(nr_lote = NA_integer_,
-           tem_inconsistencia = NA) %>% 
+           tem_inconsistencia = FALSE) %>% 
     rename(
       codigo_contrato = codigo_contrato_original,
       nr_item = codigo_item,
