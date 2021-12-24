@@ -14,8 +14,12 @@ create_tipo_alertas <- function() {
               "Produtos atípicos",
               "Contratado inidôneo",
               "Faturamento alto")
+  descricao <- c("Contratos assinados com menos de 30 dias após abertura da empresa",
+              "Venda de produto incomum para a atividade econômica informada da empresa",
+              "Contratos assinados com empresas sancionadas ou condenadas",
+              "Empresa vende acima do faturamento legal permitido à sua categoria")
   
-  tipos_alertas <- data.frame(id_tipo, titulo)
+  tipos_alertas <- data.frame(id_tipo, titulo, descricao)
   flog.info(str_glue("{tipos_alertas %>% nrow()} tipos de alertas gerados"))
   
   return(tipos_alertas)

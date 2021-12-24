@@ -1,6 +1,7 @@
 
 path_tce_pe_fetcher <- here::here("data/tce_pe/")
 path_tce_rs_fetcher <- here::here("data/tce_rs/")
+path_dados_federais_fetcher <- here::here("data/dados_federais/")
 path_data_transformer <- here::here("data/bd/")
 
 #' Lê arquivo csv de licitações
@@ -267,7 +268,8 @@ read_dados_cadastrais_processados <- function() {
                                       col_types = list(
                                         cnpj = col_character(),
                                         data_situacao_especial = col_character(),
-                                        situacao_especial = col_character()
+                                        situacao_especial = col_character(),
+                                        cnae_fiscal = col_character()
                                         ))
 }
 
@@ -387,3 +389,36 @@ read_itens_contratos_pe <- function() {
                            ))
 }
   
+
+#' Lê arquivo csv de licitações do Governo Federal
+#' @return Dataframe de licitações do Governo Federal
+read_licitacoes_federal <- function() {
+  licitacoes <-
+    readr::read_csv(
+      paste0(path_dados_federais_fetcher, "licitacoes.csv.gz"),
+      col_types = list(
+        codigo_unidade_gestora = readr::col_character(),
+        codigo_orgao = readr::col_character(),
+        codigo_modalidade_compra = readr::col_character()
+      )
+    ) %>% 
+    rename(numero_licitacao = nr_licitacao,
+           codigo_ug = codigo_unidade_gestora,
+           nome_ug = nome_unidade_gestora)
+  return(licitacoes)
+}
+
+#' Lê arquivo csv de ligação entre empenhos e licitações no Governo Federal
+#' @return Dataframe da ligação entre empenhos e licitações do Governo Federal
+read_empenhos_licitacoes_federal <- function() {
+  emp_lic <-
+    readr::read_csv(
+      paste0(path_dados_federais_fetcher, "empenhos_relacionados.csv.gz")
+    ) %>% 
+    rename(numero_licitacao = nr_licitacao,
+           codigo_ug = codigo_unidade_gestora,
+           nome_ug = nome_unidade_gestora,
+           valor_empenho_r = valor_empenho)
+
+  return(emp_lic)
+}

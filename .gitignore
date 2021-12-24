@@ -1,6 +1,7 @@
 scripts/__pycache__
 .env
 .env.prod
+.env.local
 .Rproj.user
 .Rhistory
 log_file.txt
@@ -10,4 +11,6 @@ logs/
 .DS_Store
 
 azure/.env
+
+environment/
 

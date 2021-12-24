@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS "contrato" (
     "tipo_instrumento_contrato" VARCHAR(50),
     "ano_licitacao" INTEGER,
     "cd_tipo_modalidade" VARCHAR(3),
+    "tem_alteracoes" BOOLEAN,
     "language" VARCHAR(10),
     PRIMARY KEY("id_contrato"),
     CONSTRAINT contrato_key UNIQUE (id_orgao, nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato),

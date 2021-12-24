@@ -10,11 +10,12 @@ source(here::here("transformer/processor/aggregator/agrega_contratos.R"))
 #' Processa alertas de fornecedores com relação a diferença entre a data de abertura e a data do primeiro contrato
 #' 
 #' @param anos Array com os anos para recuperação dos contratos. Exemplo: c(2018, 2019, 2020)
+#' @param estados Array com os estados para considerar nos contratos
 #' @return Dataframe com alertas para a diferença de datas
 #' 
 #' @examples 
-#' alertas <- processa_alertas_data_abertura_contrato(c(2018, 2019, 2020))
-processa_alertas_data_abertura_contrato <- function(anos) {
+#' alertas <- processa_alertas_data_abertura_contrato(c(2018, 2019, 2020), c("RS", "PE", "BR"))
+processa_alertas_data_abertura_contrato <- function(anos, estados = c("RS", "PE", "BR")) {
   flog.info(str_glue("Processando alertas da data de abertura!"))
   LIMITE_DIFERENCA_DIAS = 30
   flog.info(str_glue("Diferença de dias entre a abertura e o primeiro contrato: {LIMITE_DIFERENCA_DIAS}"))
@@ -33,7 +34,7 @@ processa_alertas_data_abertura_contrato <- function(anos) {
   
   flog.info(str_glue("{fornecedores %>% nrow()} fornecedores com o alerta!"))
   
-  contratos_merge <- processa_contratos_info(anos)
+  contratos_merge <- processa_contratos_info(anos, estados)
   flog.info(str_glue("Pesquisa feita em {contratos_merge %>% nrow()} contratos de {contratos_merge %>% count(id_estado) %>% nrow()} estados."))
   
   fornecedores_contratos <- fornecedores %>% 
@@ -41,6 +42,7 @@ processa_alertas_data_abertura_contrato <- function(anos) {
                                       "data_primeiro_contrato" = "dt_inicio_vigencia"))
   
   alertas_data <- fornecedores_contratos %>% 
+    filter(!is.na(nr_contrato)) %>% 
     mutate(id_tipo = 1) %>% 
     mutate(info = paste0("Contrato ", nr_contrato, "/", ano_contrato, " em ", nm_orgao)) %>% 
     select(nr_documento, id_contrato, id_tipo, info) %>% 
@@ -50,6 +52,3 @@ processa_alertas_data_abertura_contrato <- function(anos) {
   
   return(alertas_data)
 }
-
-
-

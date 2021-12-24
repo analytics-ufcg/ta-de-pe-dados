@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS "item" (
     "nr_item" INTEGER,
     "ds_item" VARCHAR(3000),
     "qt_itens_licitacao" REAL,
-    "sg_unidade_medida" VARCHAR(15),	
+    "sg_unidade_medida" VARCHAR(30),	
     "vl_unitario_estimado" NUMERIC(15, 2),
     "vl_total_estimado" NUMERIC(15, 2),
     "sigla_estado" VARCHAR(2),
