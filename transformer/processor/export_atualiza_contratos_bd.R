@@ -25,8 +25,8 @@ empenhos_relacionados <- data.frame(Data=character(),
                                     codigo_empenho_original=character(), 
                                     stringsAsFactors=FALSE) 
 
-
-contratos_filtrados$grupo <- 1:46049 %% 20 + 1
+numero_de_linhas <- count(contratos_filtrados)
+contratos_filtrados$grupo <- 1:numero_de_linhas$n %% 20 + 1
 
 agrupamento <- split(contratos_filtrados, contratos_filtrados$grupo)
 
