@@ -170,6 +170,14 @@ fetcher_data_federal_all() {
   make fetch-data-federal data_inicio="$ANO_INICIO-01-01" data_fim="$ANO_FIM_FIXED-01-01"
 }
 
+# Recupera os dados do Governo Federal já baixados e disponibilizados no google drive
+fetcher_data_federal_all_drive() {
+  echo ""
+  printWithTime "> Executando o download dos dados do Governo Federal do Google Drive"
+  echo ""
+  make fetch-data-federal-drive
+}
+
 # ==============================================================
 #                          PROCESSADOR
 # ==============================================================
@@ -373,7 +381,14 @@ feed_import_empenho_raw
 delete_empenhos_rs
 
 # Importa os dados de empenhos (vindos diretamente do Governo Federal)
-fetcher_data_federal_all
+
+# para baixar os dados diretamente do portal execute: 
+# (você precisará de muito espaço em disco e o download pode demorar bastante)
+# fetcher_data_federal_all
+
+# caso prefira, baixe do drive os dados já processados
+fetcher_data_federal_all_drive
+
 feed_create_empenho_raw_gov_federal
 feed_import_empenho_raw_gov_federal
 

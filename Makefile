@@ -46,6 +46,9 @@ fetch-data-rs-all:
 	docker-compose run --rm fetcher-tce-rs python3.6 fetch_orgaos.py
 	docker-compose run --rm fetcher-tce-rs python3.6  fetch_all_data.py $(ano) 4 
 .PHONY: fetch-data-rs-all
+fetch-data-federal-drive:
+	docker-compose run --rm fetcher-data-federal-drive python3.6 fetch_all_data.py 5
+.PHONY: fetch-data-federal-drive
 fetch-data-federal:
 	docker-compose run --rm fetcher-data-federal ./fetch_dados_federais.sh $(data_inicio) $(data_fim)
 .PHONY: fetch-data-federal

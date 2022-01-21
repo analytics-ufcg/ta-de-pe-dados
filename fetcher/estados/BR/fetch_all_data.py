@@ -13,10 +13,11 @@ def call_all_fetch():
     '''
     Requisita todos os arquivos de baixar dados.
     '''
-    os.system(PYTHON_VERSION + ' fetch_licitacoes.py ')
     os.system(PYTHON_VERSION + ' fetch_empenhos.py ')
     os.system(PYTHON_VERSION + ' fetch_itens_empenhos.py ')
     os.system(PYTHON_VERSION + ' fetch_historico_item.py ')
+    os.system(PYTHON_VERSION + ' fetch_licitacao.py ')
+    os.system(PYTHON_VERSION + ' fetch_empenho_relacionado.py ')
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 import requests
+import utils
 
 def download_file_from_google_drive(id, destination):
     URL = "https://docs.google.com/uc?export=download"
@@ -30,6 +31,7 @@ def save_response_content(response, destination):
                 f.write(chunk)
 
 
-file_id = "1J7inAnjDm0acwhfErcfOGM6G44Ngfb96"
+file_id = "1MAPRqjJSnKo5iO8YRd3Jpa4fSpSxQGOG"
+utils.create_dirs("/code/scripts/data/dados_federais")
 destination = "/code/scripts/data/dados_federais/despesa_empenho.csv.gz"
 download_file_from_google_drive(file_id, destination)
