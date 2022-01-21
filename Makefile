@@ -16,6 +16,7 @@ help:
 	@echo "\tprocess-data anos=<ano1,ano2> filtro=<merenda> estados=<PE,RS> \tExecuta o módulo de processamento de dados brutos para o formato usado na aplicação."
 	@echo "\t\t\t\t\tAssume um ou mais anos separados por vírgula. Assume que os dados foram baixados."
 	@echo "\tprocess-data-empenhos \t\tExecuta o processamento de dados de empenhos."
+	@echo "\tprocess-atualiza-empenhos-federais \t\tAtualiza a tabela de empenhos federais com preços novos considerando empenhos de anulação e reforço"
 	@echo "\tprocess-data-novidades \t\tExecuta o processamento de dados de novidades."
 	@echo "\tprocess-data-fornecedores anos=<ano1,ano2> \t\tExecuta o processamento de dados de fornecedores."
 	@echo "\tprocess-data-itens-similares \t\tExecuta o processamento para agrupar itens similares."
