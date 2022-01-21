@@ -60,6 +60,9 @@ process-data:
 process-data-empenhos:
 	docker exec r-container sh -c "cd /app/transformer/processor/estados/RS/empenhos && Rscript export_empenhos_bd.R"
 .PHONY: process-data-empenhos
+process-atualiza-empenhos-federais:
+	docker exec r-container sh -c "cd /app/transformer/processor && Rscript export_atualiza_contratos_bd.R"
+.PHONY: process-atualiza-empenhos-federais
 process-data-novidades:
 	docker exec r-container sh -c "cd /app/transformer/processor/geral/novidades && Rscript export_novidades_bd.R"
 .PHONY: process-data-novidades
