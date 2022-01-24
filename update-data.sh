@@ -166,6 +166,7 @@ fetcher_data_federal_all() {
   echo ""
   printWithTime "> Executando o download dos dados do Governo Federal"
   echo ""
+  ANO_INICIO_FIXED=$(($ANO_FIM - 1))
   ANO_FIM_FIXED=$(($ANO_FIM + 1))
   make fetch-data-federal data_inicio="$ANO_INICIO-01-01" data_fim="$ANO_FIM_FIXED-01-01"
 }
