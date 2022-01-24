@@ -384,10 +384,10 @@ delete_empenhos_rs
 
 # para baixar os dados diretamente do portal execute: 
 # (você precisará de muito espaço em disco e o download pode demorar bastante)
-# fetcher_data_federal_all
+fetcher_data_federal_all
 
 # caso prefira, baixe do drive os dados já processados
-fetcher_data_federal_all_drive
+# fetcher_data_federal_all_drive
 
 feed_create_empenho_raw_gov_federal
 feed_import_empenho_raw_gov_federal
@@ -416,6 +416,9 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
 
   # Processa os dados de empenhos
   process_data_empenhos
+
+  # Processa os empenhos relacionados do Governo Federal
+  process_atualiza_empenhos_federais
 
   # Processa os dados de novidades
   process_data_novidades
