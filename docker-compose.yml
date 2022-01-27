@@ -89,6 +89,7 @@ services:
     volumes:
       - ${PATH_VOLUME_DADOS:-./data}:/code/data/
       - ./fetcher/governo_federal:/code/
+      - ${HTTPCACHE_DIR}:${HTTPCACHE_DIR}
     networks:
       - proxynet
 
