@@ -11,6 +11,7 @@ source(here::here("transformer/processor/geral/alertas/functions/helpers/process
 #' Array com os anos para recuperação dos contratos. Exemplo: c(2018, 2019, 2020, 2021)
 #' @return Dataframe com os alertas gerados
 processa_alerta_faturamento_suspeito <- function(anos) {
+  options(scipen=999)
   flog.info("Processando alertas do faturamento de fornecedores de acordo com o porte...")
   
   dados_cadastrais <- read_dados_cadastrais_processados() %>% 
