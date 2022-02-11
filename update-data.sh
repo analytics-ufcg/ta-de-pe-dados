@@ -166,6 +166,7 @@ fetcher_data_federal_all() {
   echo ""
   printWithTime "> Executando o download dos dados do Governo Federal"
   echo ""
+  ANO_INICIO_FIXED=$(($ANO_FIM - 1))
   ANO_FIM_FIXED=$(($ANO_FIM + 1))
   make fetch-data-federal data_inicio="$ANO_INICIO-01-01" data_fim="$ANO_FIM_FIXED-01-01"
 }
@@ -392,10 +393,10 @@ delete_empenhos_rs
 
 # para baixar os dados diretamente do portal execute: 
 # (você precisará de muito espaço em disco e o download pode demorar bastante)
-# fetcher_data_federal_all
+fetcher_data_federal_all
 
 # caso prefira, baixe do drive os dados já processados
-fetcher_data_federal_all_drive
+# fetcher_data_federal_all_drive
 
 feed_create_empenho_raw_gov_federal
 feed_import_empenho_raw_gov_federal
@@ -424,6 +425,9 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
 
   # Processa os dados de empenhos
   process_data_empenhos
+
+  # Processa os empenhos relacionados do Governo Federal
+  process_atualiza_empenhos_federais
 
   # Processa os dados de novidades
   process_data_novidades
