@@ -17,6 +17,7 @@ help:
 	@echo "\t\t\t\t\tAssume um ou mais anos separados por vírgula. Assume que os dados foram baixados."
 	@echo "\tprocess-data-empenhos \t\tExecuta o processamento de dados de empenhos."
 	@echo "\tprocess-atualiza-empenhos-federais \t\tAtualiza a tabela de empenhos federais com preços novos considerando empenhos de anulação e reforço"
+	@echo "\tprocess-relaciona-itens-empenhos \t\tRelaciona o valor dos itens calculado de acordo com as anulações e reforços aos empenhos originais"
 	@echo "\tprocess-data-novidades \t\tExecuta o processamento de dados de novidades."
 	@echo "\tprocess-data-fornecedores anos=<ano1,ano2> \t\tExecuta o processamento de dados de fornecedores."
 	@echo "\tprocess-data-itens-similares \t\tExecuta o processamento para agrupar itens similares."
@@ -64,6 +65,9 @@ process-data-empenhos:
 process-atualiza-empenhos-federais:
 	docker exec r-container sh -c "cd /app/transformer/processor && Rscript export_atualiza_contratos_bd.R"
 .PHONY: process-atualiza-empenhos-federais
+process-relaciona-itens-empenhos:
+	docker exec r-container sh -c "cd /app/transformer/processor && Rscript relaciona_itens_empenhos.R"
+.PHONY: process-relaciona-itens-empenhos
 process-data-novidades:
 	docker exec r-container sh -c "cd /app/transformer/processor/geral/novidades && Rscript export_novidades_bd.R"
 .PHONY: process-data-novidades

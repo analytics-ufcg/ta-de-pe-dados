@@ -214,6 +214,14 @@ process_atualiza_empenhos_federais(){
   make process-atualiza-empenhos-federais
 }
 
+# Atualiza valores dos empenhos do Governo Federal
+process_relaciona_itens_empenhos(){
+  echo ""
+  printWithTime "> Relacionando o valor final dos itens aos empenhos originais"
+  echo ""
+  make process-relaciona-itens-empenhos
+}
+
 # Processa os dados de novidades
 process_data_novidades(){
   echo ""

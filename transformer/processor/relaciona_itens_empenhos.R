@@ -106,15 +106,22 @@ for(i in tabela_resultado$descricao.y){
 
 
 tabela_resultado <- tabela_resultado %>%
-  mutate(valor_total.x = ifelse(Espécie == "ANULAÇÃO", valor_total.x * -1, valor_total.x)) %>%
-  mutate(valor_geral = valor_total.y + valor_total.x) %>%
+  mutate(valor_total.x = ifelse(Espécie == "ANULAÇÃO", valor_total.x * -1, valor_total.x),
+        valor_itens_relacionados = valor_total.y + valor_total.x) %>%
   group_by(codigo_empenho) %>%
-  mutate(valor_geral = sum(valor_geral)) %>%
-  filter(valor_geral >= "0") %>%
-  rename(codigo_contrato = codigo_empenho)
+  group_by(descricao.y) %>%
+  mutate(valor_itens_relacionados = sum(valor_itens_relacionados)) %>%
+  group_by(codigo_empenho) %>%
+  distinct(descricao.y, .keep_all = TRUE) %>%
+  filter(valor_itens_relacionados >= "0") %>%
+  rename(codigo_contrato = codigo_empenho) %>%
+  select(codigo_contrato, valor_itens_relacionados, descricao.y)
+
 
 
 contratos_filtrados2 <- contratos_filtrados2 %>%
-  left_join(tabela_resultado, by="codigo_contrato")
+  left_join(tabela_resultado, by="codigo_contrato") %>%
+  full_join(contratos_processados_df)
 
+write_csv(contratos_filtrados2, here::here("./data/bd/info_contrato.csv"))
 
