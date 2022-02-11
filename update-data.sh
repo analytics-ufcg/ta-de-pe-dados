@@ -429,6 +429,9 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
   # Processa os empenhos relacionados do Governo Federal
   process_atualiza_empenhos_federais
 
+  # Relaciona o preço dos itens dos empenhos relacionados ao empenho original
+  process_relaciona_itens_empenhos
+
   # Processa os dados de novidades
   process_data_novidades
 
