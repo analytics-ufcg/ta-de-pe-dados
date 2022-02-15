@@ -53,8 +53,8 @@ valores_itens_empenhos_relacionados <- tabela_resultado %>%
 
 
 tabela_resultado <- itens_federais %>%
-  left_join(teste, by= c("codigo_empenho", "descricao"))
-
+  left_join(teste, by= c("codigo_empenho", "descricao")) %>%
+  mutate(contem_calculo_itens_relacionados = ifelse(!is.na(valor_itens_empenhos_relacionados), TRUE, FALSE))
 
 write_csv(tabela_resultado, here::here("./data/bd/info_item_contrato.csv"))
 
