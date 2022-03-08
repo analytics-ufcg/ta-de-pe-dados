@@ -36,8 +36,8 @@ for(i in tabela_resultado$descricao){
     i <- str_replace(i, "0+", "")
     tabela_resultado[line, 8] <- i
   }
-  line <- line + 1
   tabela_resultado[line, 8] <- gsub(" ", "",tabela_resultado[line, 8], fixed = TRUE)
+  line <- line + 1
 }
 
 
