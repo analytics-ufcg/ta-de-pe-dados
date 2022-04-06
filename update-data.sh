@@ -379,10 +379,10 @@ delete_empenhos_rs
 # fetcher_data_federal_all
 
 # caso prefira, baixe do drive os dados já processados
-fetcher_data_federal_all_drive
+# fetcher_data_federal_all_drive
 
-feed_create_empenho_raw_gov_federal
-feed_import_empenho_raw_gov_federal
+# feed_create_empenho_raw_gov_federal
+# feed_import_empenho_raw_gov_federal
 
 # iteração para cada tipo de aplicação
 for tipoAplicacao in "${tiposAplicacao[@]}"; do
@@ -395,40 +395,40 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
   process_data $anosConcatenados "$tipoAplicacao" "$ESTADOS"
   
   # Processa dos fornecedores
-  process_data_fornecedores $anosConcatenados
+  # process_data_fornecedores $anosConcatenados
   
   # Adiciona dados oriundos da RF aos fornecedores
-  process_data_receita_federal
+  # process_data_receita_federal
 
   # cria tabelas
-  feed_create
+  # feed_create
   
   # Importa dados para as tabelas
-  feed_import_data
+  # feed_import_data
 
   # Processa os dados de empenhos
-  process_data_empenhos
+  # process_data_empenhos
 
   # Processa os dados de novidades
-  process_data_novidades
+  # process_data_novidades
 
   # Processa os dados de alertas referentes a produtos atípicos
-  process_data_itens_similares
+  # process_data_itens_similares
 
   # Processa os dados de alertas referentes a fornecedores contratados logo após a abertura da empresa:
-  process_data_alertas $anosConcatenados "$tipoAplicacao" "$ESTADOS"
+  # process_data_alertas $anosConcatenados "$tipoAplicacao" "$ESTADOS"
 
   # Importa os dados de empenhos processados para o BD
-  feed_import_empenho
+  # feed_import_empenho
 
   # Importa os dados de novidades para o BD
-  feed_import_novidade
+  # feed_import_novidade
 
   # Importa para o BD os dados de alertas sobre produtos atípicos:
-  feed_import_itens_similares_data
+  # feed_import_itens_similares_data
 
   # Importa para o BD os dados de alertas sobre fornecedores contratados logo após a abertura da empresa
-  feed_import_alerta
+  # feed_import_alerta
 
   if [[ $CONTEXTO == "production" ]] || [[ $CONTEXTO == "staging" ]]
   then
