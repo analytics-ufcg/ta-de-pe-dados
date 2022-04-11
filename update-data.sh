@@ -379,10 +379,10 @@ delete_empenhos_rs
 # fetcher_data_federal_all
 
 # caso prefira, baixe do drive os dados já processados
-fetcher_data_federal_all_drive
+# fetcher_data_federal_all_drive
 
-feed_create_empenho_raw_gov_federal
-feed_import_empenho_raw_gov_federal
+# feed_create_empenho_raw_gov_federal
+# feed_import_empenho_raw_gov_federal
 
 # iteração para cada tipo de aplicação
 for tipoAplicacao in "${tiposAplicacao[@]}"; do
