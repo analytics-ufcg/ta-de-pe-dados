@@ -57,7 +57,8 @@ aggregator_compras <- function(anos, filtro, administracao = c("PE", "RS"), info
           descricao_objeto_contrato = ds_objeto,
           tp_documento_contratado = tp_fornecedor,
           nr_documento_contratado = nr_fornecedor
-        )
+        ) %>% 
+        mutate(tem_alteracoes = NA)
     }, error = function(e) {
       flog.error("Ocorreu um erro ao processar os dados de compras do RS")
       flog.error(e)
