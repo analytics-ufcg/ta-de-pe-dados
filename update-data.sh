@@ -22,15 +22,16 @@ exec > >(tee -a $log_filepath) 2>&1
 # Descreve como utilizar o script
 usage() {
   echo ""
-  echo "Formato: $0 --tipo <tipo> --contexto <contexto> --ano-inicio <ano inicial> --ano-fim <ano final> --data-fim <data final> --estados <ufs>"
+  echo "Formato: $0 --tipo <tipo> --contexto <contexto> --ano-inicio <ano inicial> --ano-fim <ano final> --data-inicio <data inicial> --data-fim <data final> --estados <ufs>"
   echo -e "\t-t  --tipo         corresponde aos tipos de aplicações (covid e/ou merenda) que serão processadas."
   echo -e "\t-c  --contexto     corresponde ao contexto de destino (production, staging ou development)."
   echo -e "\t-i  --ano-inicio   corresponde ao ano de início do processamento."
   echo -e "\t-f  --ano-fim      corresponde ao ano final do processamento."
-  echo -e "\t-f  --data-fim     corresponde a data limite para processamentos diários (Gov. Federal)."
+  echo -e "\t-f  --data-inicio  corresponde a data de início do processamento (Gov. Federal)."
+  echo -e "\t-f  --data-fim     corresponde a data limite do processamento (Gov. Federal)."
   echo -e "\t-f  --estados      corresponde a lista de estados para processamento."
   echo ""
-  echo "Ex. de uso: $0 --tipo covid,merenda --contexto development --ano-inicio 2017 --ano-fim 2019 --data-fim 2022-03-31 --estados RS,PE,BR"
+  echo "Ex. de uso: $0 --tipo covid,merenda --contexto development --ano-inicio 2017 --ano-fim 2019 --data-incio 2020-01-01 --data-fim 2022-03-31 --estados RS,PE,BR"
   exit
 }
 
@@ -52,6 +53,10 @@ while [ $# -gt 0 ]; do
   --ano-fim* | -f*)
     if [[ "$1" != *=* ]]; then shift; fi
     ANO_FIM="${1#*=}"
+    ;;
+  --data-inicio* | -f*)
+    if [[ "$1" != *=* ]]; then shift; fi
+    DATA_INICIO="${1#*=}"
     ;;
   --data-fim* | -f*)
     if [[ "$1" != *=* ]]; then shift; fi
@@ -186,7 +191,7 @@ fetcher_data_federal() {
   echo ""
   printWithTime "> Executando o download dos dados do Governo Federal"
   echo ""
-  make fetch-data-federal data_inicio="$ANO_INICIO-01-01" data_fim="$DATA_FIM"
+  make fetch-data-federal data_inicio="$DATA_INICIO" data_fim="$DATA_FIM"
 }
 
 # Recupera os dados do Governo Federal já baixados e disponibilizados no google drive
@@ -386,7 +391,7 @@ pprint "Início da execução: $inicio"
 
 echo -e "- Tipo(s) de aplicação: $TIPO_APLICACAO"
 echo -e "- Contexto: $CONTEXTO"
-echo -e "- Período: $ANO_INICIO até $ANO_FIM ($DATA_FIM) \n"
+echo -e "- Período: $ANO_INICIO até $ANO_FIM ($DATA_INICIO até $DATA_FIM) \n"
 
 # Realiza o fetcher dos dados do RS e de PE e do Governo Federal
 fetcher_data
