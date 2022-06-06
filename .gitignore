@@ -2,6 +2,8 @@ scripts/__pycache__
 .env
 .env.prod
 .env.local
+.env.covid.*
+.env.merenda.*
 .Rproj.user
 .Rhistory
 log_file.txt
