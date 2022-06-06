@@ -232,6 +232,9 @@ process_data_receita_federal() {
 
 # Processa os dados de empenhos
 process_data_empenhos(){
+  #
+  # TODO Verificar se estamos processando o RS pois apenas ele tem empenhos
+  #
   echo ""
   printWithTime "> Executando o processamento dos empenhos"
   echo ""
@@ -240,6 +243,9 @@ process_data_empenhos(){
 
 # Atualiza valores dos empenhos do Governo Federal
 process_atualiza_empenhos_federais(){
+  #
+  # TODO Verificar se estamos processando o BR pois apenas ele tem empenhos
+  #
   echo ""
   printWithTime "> Executando a atualização dos empenhos do Governo Federal"
   echo ""
@@ -340,6 +346,9 @@ feed_import_empenho_raw_gov_federal() {
 
 # Importa os dados de empenhos processados para o BD
 feed_import_empenho () {
+  #
+  # TODO Verificar se estamos processando o RS pois apenas ele tem empenhos
+  #
   echo ""
   printWithTime "> Importando os dados de empenhos"
   echo ""
@@ -432,6 +441,12 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
   # Adiciona dados oriundos da RF aos fornecedores
   process_data_receita_federal
 
+  # Processa os empenhos (contratos) relacionados do Governo Federal
+  process_atualiza_empenhos_federais
+
+  # Relaciona o preço dos itens dos empenhos relacionados ao empenho original
+  process_relaciona_itens_empenhos
+
   # cria tabelas
   feed_create
   
@@ -440,12 +455,6 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
 
   # Processa os dados de empenhos
   process_data_empenhos
-
-  # Processa os empenhos relacionados do Governo Federal
-  process_atualiza_empenhos_federais
-
-  # Relaciona o preço dos itens dos empenhos relacionados ao empenho original
-  process_relaciona_itens_empenhos
 
   # Processa os dados de novidades
   process_data_novidades
@@ -463,7 +472,8 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
   feed_import_novidade
 
   # Importa para o BD os dados de alertas sobre produtos atípicos:
-  feed_import_itens_similares_data
+  # A tabela importada nesse comando já foi criada pelo process_data_itens_similares
+  # feed_import_itens_similares_data
 
   # Importa para o BD os dados de alertas sobre fornecedores contratados logo após a abertura da empresa
   feed_import_alerta

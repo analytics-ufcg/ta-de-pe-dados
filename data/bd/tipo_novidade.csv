@@ -1,0 +1,12 @@
+id_tipo,texto_evento,texto_resumo
+1,Abertura da licitação %s,Abertura
+2,Licitação %s homologada,Homologação
+3,Licitação %s adjudicada,Adjudicação
+4,Empenho de %s da licitação %s,%s empenhado
+5,Liquidação de %s do empenho da licitação %s,%s liquidado
+6,Pagamento de %s de empenho da licitação %s,%s pago
+7,Estorno de %s do empenho da licitação %s,%s estornado do empenho
+8,Estorno de %s da liquidação da licitação %s,%s estornado da liquidação
+9,Estorno de %s de pagamento da licitação %s,%s estornado do pagamento
+10,Início de vigência do contrato %s da licitação %s,Início de vigência do contrato %s
+11,Fim de vigência do contrato %s da licitação %s,Fim de vigência do contrato %s

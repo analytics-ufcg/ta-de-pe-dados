@@ -25,8 +25,14 @@ licitacoes <- read_licitacoes_processadas() %>% join_licitacao_e_orgao(orgao_mun
 
 flog.info(str_glue("{licitacoes %>% nrow()} novidades de licitações geradas!"))
 
-empenhos <- read_empenhos_processados() %>% join_empenho_e_orgao(orgao_municipio) %>% gather_empenhos() %>% 
+empenhos <- tryCatch({
+  read_empenhos_processados() %>% join_empenho_e_orgao(orgao_municipio) %>% gather_empenhos() %>% 
   transforma_empenhos_em_novidades()
+}, error = function(e) {
+  flog.error("Ocorreu um erro ao processar as novidades de empenho")
+  flog.error(e)
+  return(tibble())
+})
 
 flog.info(str_glue("{empenhos %>% nrow()} novidades de empenhos geradas!"))
 
@@ -38,7 +44,7 @@ flog.info(str_glue("{contratos %>% nrow()} novidades de contratos geradas!"))
 flog.info("Gerando tabela de novidades")
 novidades <- dplyr::bind_rows(licitacoes, contratos, empenhos) %>% 
   generate_hash_id(c("id_tipo", "id_licitacao", "id_original"), NOVIDADE_ID) %>% 
-  dplyr::select(id_novidade, dplyr::everything())
+  dplyr::select(id_novidade, id_tipo, id_licitacao, data, id_original, nome_municipio, texto_novidade, id_contrato)
 
 readr::write_csv(tipos_novidades, here::here("data/bd/tipo_novidade.csv"))
 readr::write_csv(novidades, here::here("data/bd/novidade.csv"))

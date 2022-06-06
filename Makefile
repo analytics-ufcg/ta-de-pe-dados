@@ -19,7 +19,7 @@ help:
 	@echo "\tprocess-atualiza-empenhos-federais \t\tAtualiza a tabela de empenhos federais com preços novos considerando empenhos de anulação e reforço"
 	@echo "\tprocess-relaciona-itens-empenhos \t\tRelaciona o valor dos itens calculado de acordo com as anulações e reforços aos empenhos originais"
 	@echo "\tprocess-data-novidades \t\tExecuta o processamento de dados de novidades."
-	@echo "\tprocess-data-fornecedores anos=<ano1,ano2> \t\tExecuta o processamento de dados de fornecedores."
+	@echo "\tprocess-data-fornecedores anos=<ano1,ano2> estados=<RS,PE,BR> \t\tExecuta o processamento de dados de fornecedores."
 	@echo "\tprocess-data-itens-similares \t\tExecuta o processamento para agrupar itens similares."
 	@echo "\tprocess-data-alertas anos=<ano1,ano2> filtro=<merenda> estados=<RS,PE,BR> \t\tExecuta o processamento de dados dos Alertas."
 	@echo "\tfeed-create \t\t\tCria as tabelas usadas no Tá na Mesa no Banco de Dados."
@@ -75,7 +75,7 @@ process-data-novidades:
 	docker exec r-container sh -c "cd /app/transformer/processor/geral/novidades && Rscript export_novidades_bd.R"
 .PHONY: process-data-novidades
 process-data-fornecedores:
-	docker exec r-container sh -c "cd /app/transformer/processor && Rscript export_fornecedores_bd.R $(anos)"
+	docker exec r-container sh -c "cd /app/transformer/processor && Rscript export_fornecedores_bd.R $(anos) $(estados)"
 .PHONY: process-data-fornecedores
 fetch-process-receita:
 	docker exec r-container sh -c "cd /app/fetcher/receita &&  Rscript fetch_dados_receita.R"

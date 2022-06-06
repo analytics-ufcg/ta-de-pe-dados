@@ -1,0 +1,5 @@
+id_tipo,titulo,descricao
+1,Contratado logo após a abertura,Contratos assinados com menos de 30 dias após abertura da empresa
+2,Produtos atípicos,Venda de produto incomum para a atividade econômica informada da empresa
+3,Contratado inidôneo,Contratos assinados com empresas sancionadas ou condenadas
+4,Faturamento alto,Empresa vende acima do faturamento legal permitido à sua categoria

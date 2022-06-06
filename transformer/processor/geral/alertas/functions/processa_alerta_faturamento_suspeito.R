@@ -14,15 +14,25 @@ processa_alerta_faturamento_suspeito <- function(anos) {
   options(scipen=999)
   flog.info("Processando alertas do faturamento de fornecedores de acordo com o porte...")
   
-  dados_cadastrais <- read_dados_cadastrais_processados() %>% 
-    mutate(
-      limite_faturamento = case_when(
-        porte_empresa == 'Microempresa' &
-          opcao_pelo_mei == 'N' ~ 360000,
-        porte_empresa == 'Microempresa' &
-          opcao_pelo_mei == 'S' ~ 81000,
-        porte_empresa == 'Empresa de pequeno porte' ~ 4800000
-      ))
+  dados_cadastrais <- tryCatch({
+    read_dados_cadastrais_processados() %>% 
+      mutate(
+        limite_faturamento = case_when(
+          porte_empresa == 'Microempresa' &
+            opcao_pelo_mei == 'N' ~ 360000,
+          porte_empresa == 'Microempresa' &
+            opcao_pelo_mei == 'S' ~ 81000,
+          porte_empresa == 'Empresa de pequeno porte' ~ 4800000
+        )) 
+  }, error = function(e) {
+    flog.error("Ocorreu um erro ao ler dados cadastrais")
+    flog.error(e)
+    return(tibble())
+  })
+  
+  if (nrow(dados_cadastrais) == 0) {
+    return(tibble())
+  }
   
   fornecedores <- read_fornecedores_processados()
   contratos <- read_contratos_processados()

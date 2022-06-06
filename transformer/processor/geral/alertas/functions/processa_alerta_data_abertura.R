@@ -22,7 +22,17 @@ processa_alertas_data_abertura_contrato <- function(anos, estados = c("RS", "PE"
   
   fornecedores_tce <- read_fornecedores_processados()
   
-  fornecedores_receita <- read_dados_cadastrais_processados()
+  fornecedores_receita <- tryCatch({
+    read_dados_cadastrais_processados()
+  }, error = function(e) {
+    flog.error("Ocorreu um erro ao ler dados cadastrais")
+    flog.error(e)
+    return(tibble())
+  })
+  
+  if (nrow(fornecedores_receita) == 0) {
+    return(tibble())
+  }
   
   fornecedores <- fornecedores_tce %>% 
     left_join(fornecedores_receita %>% 
