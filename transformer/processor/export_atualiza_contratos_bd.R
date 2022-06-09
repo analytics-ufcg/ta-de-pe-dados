@@ -78,12 +78,13 @@ write_csv(empenhos_relacionados, here::here("data/dados_federais/empenhos_docume
 
 # Leva o valor atualizado dos empenhos_relacionados para a tabela de contratos_filtrados e depois devolve
 # essa amostra atualizada para a tabela de onde a amostra havia sido retirada.
+# TODO Salvar novo valor em nova coluna
 contratos_atualizados <- contratos_filtrados %>%
-  right_join(empenhos_relacionados %>% 
+  left_join(empenhos_relacionados %>% 
                rename(codigo_contrato = codigo_empenho_original) %>%
                select(codigo_contrato, valor_final), by="codigo_contrato") %>%
-  mutate(vl_contrato = valor_final) %>%
-  mutate(language = 'portugues') %>%
+  mutate(vl_contrato = ifelse(is.na(valor_final), vl_contrato, valor_final)) %>%
+  mutate(language = 'portuguese') %>%
   select(-valor_final, -grupo) %>%
   bind_rows(contratos_processados_df) %>% 
   select(id_contrato, id_estado, id_orgao, id_licitacao, codigo_contrato, nr_contrato,
@@ -98,4 +99,4 @@ if (nrow(contratos_processados) != nrow(contratos_atualizados)) {
   stop("Erro na atualização dos valores dos contratos: número de contratos inválido")
 }
 
-write_csv(contratos, here::here("./data/bd/info_contrato.csv"))
+write_csv(contratos_atualizados, here::here("./data/bd/info_contrato.csv"))
