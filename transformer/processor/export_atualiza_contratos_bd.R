@@ -74,11 +74,8 @@ empenhos_relacionados <- empenhos_federais %>%
   mutate(valor_final = ifelse(is.na(alteracoes), valor_empenho_original, valor_empenho_original + alteracoes)) %>%
   select(codigo_empenho_original, valor_empenho_original, alteracoes, valor_final)
 
-write_csv(empenhos_relacionados, here::here("data/dados_federais/empenhos_documentos_relacionados_log.csv"))
-
 # Leva o valor atualizado dos empenhos_relacionados para a tabela de contratos_filtrados e depois devolve
 # essa amostra atualizada para a tabela de onde a amostra havia sido retirada.
-# TODO Salvar novo valor em nova coluna
 contratos_atualizados <- contratos_filtrados %>%
   left_join(empenhos_relacionados %>% 
                rename(codigo_contrato = codigo_empenho_original) %>%
@@ -99,4 +96,6 @@ if (nrow(contratos_processados) != nrow(contratos_atualizados)) {
   stop("Erro na atualização dos valores dos contratos: número de contratos inválido")
 }
 
+flog.info("#### escrevendo dados...")
 write_csv(contratos_atualizados, here::here("./data/bd/info_contrato.csv"))
+flog.info("#### Contratos atualizados!")

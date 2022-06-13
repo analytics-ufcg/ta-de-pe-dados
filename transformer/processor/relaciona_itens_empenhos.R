@@ -8,21 +8,7 @@ source(here::here("transformer/adapter/estados/Federal/contratos/adaptador_itens
 
 itens_federais <- import_itens_compras_federais()
 
-# TODO Organizar função de leitura do arquivo do Governo Federal
-# Ler do arquivo total ao invés de ler dos checkpoints
-empenhos_relacionados <- data.frame(Data=character(),
-                                    Fase=character(), 
-                                    Documento=character(), 
-                                    Espécie=character(), 
-                                    X5 = character(),
-                                    codigo_empenho_original=character(), 
-                                    stringsAsFactors=FALSE) 
-
-for(i in c(1:20)){
-  empenhos_relacionados <<- empenhos_relacionados %>%
-    full_join(read_csv(here::here(str_glue("data/dados_federais/empenhos_documentos_relacionados_checkpoint{i}.csv"))))
-}
-# TODO FIM
+empenhos_relacionados <- read_csv(here::here("data/dados_federais/empenhos_documentos_relacionados.csv"))
 
 itens_empenhos_relacionados <- empenhos_relacionados %>%
   filter(Fase == "Empenho" & Espécie != "ORIGINAL") %>%
@@ -74,4 +60,6 @@ if (nrow(itens_match) != nrow(item_processados)) {
   stop("Erro na atualização dos valores dos itens: número de itens inválido")
 }
 
+flog.info("#### escrevendo dados...")
 write_csv(itens_match, here::here("./data/bd/info_item_contrato.csv"))
+flog.info("#### Itens de empenho atualizados!")

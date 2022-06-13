@@ -232,32 +232,56 @@ process_data_receita_federal() {
 
 # Processa os dados de empenhos
 process_data_empenhos(){
-  #
-  # TODO Verificar se estamos processando o RS pois apenas ele tem empenhos
-  #
-  echo ""
-  printWithTime "> Executando o processamento dos empenhos"
-  echo ""
-  make process-data-empenhos
+  # Verifica se estamos processando o RS pois apenas ele tem empenhos
+  IFS=','
+  read -a ufs <<< "${ESTADOS}"
+  for val in "${ufs[@]}";
+  do
+    if [[ $val == "RS" ]]
+    then
+      # RS
+      echo ""
+      printWithTime "> Executando o processamento dos empenhos (RS)"
+      echo ""
+      make process-data-empenhos
+      done
+    fi
+  done
 }
 
 # Atualiza valores dos empenhos do Governo Federal
 process_atualiza_empenhos_federais(){
-  #
-  # TODO Verificar se estamos processando o BR pois apenas ele tem empenhos
-  #
-  echo ""
-  printWithTime "> Executando a atualização dos empenhos do Governo Federal"
-  echo ""
-  make process-atualiza-empenhos-federais
+  # Verifica se estamos processando o BR pois apenas ele precisa atualizar empenhos
+  IFS=','
+  read -a ufs <<< "${ESTADOS}"
+  for val in "${ufs[@]}";
+  do
+    if [[ $val == "BR" ]]
+    then
+      # BR
+      echo ""
+      printWithTime "> Executando a atualização dos empenhos (Governo Federal)"
+      echo ""
+      make process-atualiza-empenhos-federais
+    fi
+  done
 }
 
 # Atualiza valores dos empenhos do Governo Federal
 process_relaciona_itens_empenhos(){
-  echo ""
-  printWithTime "> Relacionando o valor final dos itens aos empenhos originais"
-  echo ""
-  make process-relaciona-itens-empenhos
+  IFS=','
+  read -a ufs <<< "${ESTADOS}"
+  for val in "${ufs[@]}";
+  do
+    if [[ $val == "BR" ]]
+    then
+      # BR
+      echo ""
+      printWithTime "> Relacionando o valor final dos itens aos empenhos originais (Governo Federal)"
+      echo ""
+      make process-relaciona-itens-empenhos
+    fi
+  done
 }
 
 # Processa os dados de novidades
