@@ -244,7 +244,6 @@ process_data_empenhos(){
       printWithTime "> Executando o processamento dos empenhos (RS)"
       echo ""
       make process-data-empenhos
-      done
     fi
   done
 }
