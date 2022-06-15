@@ -337,45 +337,87 @@ feed_import_data() {
 
 # Cria tabela de empenhos raw (vindos diretamento do TCE-RS)
 feed_create_empenho_raw() {
-  echo ""
-  printWithTime "> Criando tabela de empenhos (vindos diretamente do TCE-RS)"
-  echo ""
-  make feed-create-empenho-raw
+  IFS=','
+  read -a ufs <<< "${ESTADOS}"
+  for val in "${ufs[@]}";
+  do
+    if [[ $val == "RS" ]]
+    then
+      # RS
+      echo ""
+      printWithTime "> Criando tabela de empenhos (vindos diretamente do TCE-RS)"
+      echo ""
+      make feed-create-empenho-raw
+    fi
+  done
 }  
   
 # Importa os dados de empenhos (vindos diretamento do TCE-RS)
 feed_import_empenho_raw() {
-  echo ""
-  printWithTime "> Importando os dados de empenhos (vindos diretamente do TCE-RS)"
-  echo ""
-  make feed-import-empenho-raw
+  IFS=','
+  read -a ufs <<< "${ESTADOS}"
+  for val in "${ufs[@]}";
+  do
+    if [[ $val == "RS" ]]
+    then
+      # RS
+      echo ""
+      printWithTime "> Importando os dados de empenhos (vindos diretamente do TCE-RS)"
+      echo ""
+      make feed-import-empenho-raw
+    fi
+  done
 }  
 
 # Cria tabela de empenhos raw (vindos diretamento do Governo Federal)
 feed_create_empenho_raw_gov_federal() {
-  echo ""
-  printWithTime "> Criando tabela de empenhos (vindos diretamente do Governo Federal)"
-  echo ""
-  make feed-create-empenho-raw-gov-federal
+  IFS=','
+  read -a ufs <<< "${ESTADOS}"
+  for val in "${ufs[@]}";
+  do
+    if [[ $val == "BR" ]]
+    then
+      # BR
+      echo ""
+      printWithTime "> Criando tabela de empenhos (vindos diretamente do Governo Federal)"
+      echo ""
+      make feed-create-empenho-raw-gov-federal
+    fi
+  done
 }  
   
 # Importa os dados de empenhos (vindos diretamento do Governo Federal)
 feed_import_empenho_raw_gov_federal() {
-  echo ""
-  printWithTime "> Importando os dados de empenhos (vindos diretamente do Governo Federal)"
-  echo ""
-  make feed-import-empenho-raw-gov-federal
+  IFS=','
+  read -a ufs <<< "${ESTADOS}"
+  for val in "${ufs[@]}";
+  do
+    if [[ $val == "BR" ]]
+    then
+      # BR
+      echo ""
+      printWithTime "> Importando os dados de empenhos (vindos diretamente do Governo Federal)"
+      echo ""
+      make feed-import-empenho-raw-gov-federal
+    fi
+  done
 }  
 
 # Importa os dados de empenhos processados para o BD
 feed_import_empenho () {
-  #
-  # TODO Verificar se estamos processando o RS pois apenas ele tem empenhos
-  #
-  echo ""
-  printWithTime "> Importando os dados de empenhos"
-  echo ""
-  docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py import-empenho
+  IFS=','
+  read -a ufs <<< "${ESTADOS}"
+  for val in "${ufs[@]}";
+  do
+    if [[ $val == "RS" ]]
+    then
+      # RS
+      echo ""
+      printWithTime "> Importando os dados de empenhos"
+      echo ""
+      docker-compose $1 run --rm --no-deps feed python3.6 /feed/manage.py import-empenho
+    fi
+  done
 }
 
 # Importa os dados de novidades para o BD
