@@ -498,7 +498,7 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
   feed_clean_data
 
   # processa os dados gerais
-  process_data $anosConcatenados "$tipoAplicacao" "$ESTADOS"
+  process_data "$anosConcatenados" "$tipoAplicacao" "$ESTADOS"
   
   # Processa dos fornecedores
   process_data_fornecedores $anosConcatenados
