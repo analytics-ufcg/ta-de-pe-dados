@@ -23,7 +23,5 @@ CREATE TABLE IF NOT EXISTS "itens_empenhos_raw_federais" (
 	item TEXT,
 	marca TEXT,
 	item_processo TEXT,
-	descricao_restante TEXT,
-	valor_itens_empenhos_relacionados NUMERIC,
-	contem_calculo_itens_relacionados BOOLEAN
+	descricao_restante TEXT
 );

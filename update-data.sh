@@ -381,6 +381,7 @@ feed_create_empenho_raw_gov_federal() {
       echo ""
       printWithTime "> Criando tabela de empenhos (vindos diretamente do Governo Federal)"
       echo ""
+      make feed-clean-empenho-federal
       make feed-create-empenho-raw-gov-federal
     fi
   done
