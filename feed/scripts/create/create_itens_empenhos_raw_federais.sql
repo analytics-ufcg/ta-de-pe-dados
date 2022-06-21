@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS "itens_empenhos_raw_federais" (
 	codigo_elemento_despesa NUMERIC,
 	codigo_empenho TEXT,
 	codigo_grupo_despesa TEXT,
-	codigo_modalidade_aplicacao BIGINT,
+	codigo_modalidade_aplicacao VARCHAR,
 	codigo_subelemento_despesa NUMERIC,
 	descricao TEXT,
 	elemento_despesa TEXT,
