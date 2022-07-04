@@ -80,9 +80,16 @@ processa_itens_cnaes_fornecedores <- function() {
                                  col_types = cols(id_estado = "c"))
     flog.info("Tabela com constantes de mínimo de itens por classe para filtro")
     print(limite_min_itens)
-
-    itens_unicos_similaridade <- read_itens_similares_processados() %>% 
-        dplyr::select (-c(id_item_contrato))
+    
+    
+    itens_unicos_similaridade <- tryCatch({
+        read_itens_similares_processados() %>% 
+            dplyr::select (-c(id_item_contrato))
+    }, error = function(e) {
+        flog.error("Ocorreu um erro ao ler itens similares")
+        flog.error(e)
+        return(tibble())
+    })
 
     flog.info(str_glue("{itens_unicos_similaridade %>% nrow()} classes de itens similares usados"))
 
