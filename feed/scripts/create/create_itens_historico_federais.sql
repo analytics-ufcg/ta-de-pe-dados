@@ -6,6 +6,5 @@ CREATE TABLE IF NOT EXISTS "itens_historico_raw_federais" (
 	data_emissao TEXT,
 	quantidade NUMERIC,
 	valor_unitario NUMERIC,
-	valor_total NUMERIC,
-	FOREIGN KEY (id_empenho) REFERENCES empenhos_raw_federais(id)
+	valor_total NUMERIC
 );

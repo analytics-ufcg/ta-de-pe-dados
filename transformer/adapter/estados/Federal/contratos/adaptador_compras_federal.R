@@ -97,7 +97,8 @@ adapta_info_compras_federal <- function(empenho_df, empenhos_licitacao_df, filtr
       TRUE ~ 'O'
     )) %>%
     left_join(empenhos_licitacao_df, by = c("codigo" = "codigo_contrato")) %>% 
-    filter(especie %in% c("ORIGINAL", "REFORÇO")) %>% 
+    mutate(especie1 = if_else(ano_contrato %in% c(2021, 2022), "ORIGINAL", especie)) %>%
+    filter(especie1 %in% c("ORIGINAL", "REFORÇO")) %>% 
     select(
       codigo_contrato = codigo,
       nr_contrato = codigo_resumido,
