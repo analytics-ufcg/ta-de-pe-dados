@@ -16,3 +16,8 @@ azure/.env
 
 environment/
 
+data/bd/*.csv
+data/bd/*.zip
+data/dados_federais/*.csv
+data/dados_federais/*.zip
+data/dados_federais/*.gz
