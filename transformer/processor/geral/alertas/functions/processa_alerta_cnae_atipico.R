@@ -155,7 +155,7 @@ processa_itens_cnaes_fornecedores <- function() {
     flog.info(str_glue("{all_cnaes %>% nrow()} linhas no mapeamento cnae(fiscal e secundário) para itens de contrato"))
     
     itens_separated <- separate_rows(itens_unicos_similaridade, ids_itens_contratos, convert = TRUE) %>% 
-        mutate (id_item_contrato = ids_itens_contratos) %>% 
+        mutate (id_item_contrato = as.character(ids_itens_contratos), ) %>% 
         select (-c(ids_itens_contratos)) %>% 
         filter (id_item_contrato != "") %>% 
         mutate (item_class = ds_item)
