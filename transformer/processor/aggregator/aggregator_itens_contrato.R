@@ -155,7 +155,7 @@ aggregator_itens_contrato <- function(anos, filtro, administracao = c("PE", "RS"
              nr_licitacao, ano_licitacao, cd_tipo_modalidade, nr_contrato, ano_contrato, tp_instrumento_contrato, 
              nr_item, qt_itens_contrato, vl_item_contrato, vl_total_item_contrato, origem_valor, tem_inconsistencia,
              sigla_estado, id_estado, dt_inicio_vigencia, ds_item, 
-             sg_unidade_medida, categoria, language, ds_1, ds_2, ds_3, servico, valor_calculado)
+             sg_unidade_medida, categoria, language, ds_1, ds_2, ds_3, servico, valor_calculado, codigo_empenho)
   }, error = function(e) {
     flog.error("Ocorreu um erro durante a agregação dos itens de contrato")
     flog.error(e)

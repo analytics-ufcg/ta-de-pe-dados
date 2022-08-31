@@ -91,7 +91,7 @@ if (nrow(info_contratos) > 0) {
 info_item_contrato <- aggregator_itens_contrato(anos, filtro, administracoes, info_licitacoes, info_contratos, info_orgaos, info_item_licitacao)
 gc()
 
-contrato <- info_item_contrato %>% filter(codigo_empenho = '160146000012021NE000096')
+contrato <- info_item_contrato %>% filter(codigo_empenho == '160146000012021NE000096')
 flog.warn("==========================================")
 flog.warn(contrato)
 flog.warn("==========================================")
