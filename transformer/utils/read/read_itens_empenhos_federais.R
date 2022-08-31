@@ -43,5 +43,11 @@ read_itens_empenhos_federais_covid <- function(host, user, database, port, passw
     filter(as.numeric(codigo_orgao_superior) %% 1000 == 0, 
            as.numeric(codigo_orgao_superior) > 2e4, as.numeric(codigo_orgao_superior) < 9e4)
   
+  
+  contrato <- filtered_res %>% filter(codigo_empenho == '160146000012021NE000096')
+  flog.warn("==========================================")
+  flog.warn(contrato)
+  flog.warn("==========================================")
+  
   return(filtered_res)
 }
