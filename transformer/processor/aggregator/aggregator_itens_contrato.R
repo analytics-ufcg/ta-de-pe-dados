@@ -161,6 +161,15 @@ aggregator_itens_contrato <- function(anos, filtro, administracao = c("PE", "RS"
     flog.error(e)
     info_item_contrato <- tibble()
   })
-  
+
+  erros <- info_item_contrato %>% filter(id_item_contrato %in% c('c72ce79803d2c6f29902be96acb3bcaa', '92afe971d9649d230b465a85b8b4a1d5'))
+  flog.warn("==========================================")
+  #  print(contrato)
+  #  flog.warn("==========================================")
+  print(sapply(info_item_contrato, class))
+  flog.warn("==========================================")
+  print(erros)
+  #  readline(prompt="Press [enter] to continue")
+    
   return(info_item_contrato)
 }
