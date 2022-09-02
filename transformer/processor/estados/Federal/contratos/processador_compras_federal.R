@@ -14,7 +14,16 @@ processa_compras_federal <- function(filtro = 'covid') {
 
   compras_federais <- import_empenhos_federal() %>% 
     adapta_info_compras_federal(empenhos_relacionados, filtro) %>%
-    add_info_estado(sigla_estado = "BR", id_estado = "99") 
+    add_info_estado(sigla_estado = "BR", id_estado = "99")
+  
+#  contrato <- compras_federais %>% filter(codigo_empenho %in% c('160146000012021NE000096', '194077000012021NE000070', '120623000012021NE000542', '120645000012021NE000661', '771300000012020NE010502'))
+  flog.warn("==========================================")
+#  print(contrato)
+#  flog.warn("==========================================")
+  print(sapply(compras_federais, class))
+#  flog.warn("==========================================")
+#  flog.warn(contrato)
+#  readline(prompt="Press [enter] to continue")
   
   return(compras_federais)
 }
