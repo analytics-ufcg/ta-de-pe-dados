@@ -170,7 +170,7 @@ aggregator_itens_contrato <- function(anos, filtro, administracao = c("PE", "RS"
   flog.warn("==========================================")
   print(erros)
   #  readline(prompt="Press [enter] to continue")
-  save(erros, file = 'erros.rdata')
+  save(info_item_contrato, file = 'erros.rdata')
     
   return(info_item_contrato)
 }
