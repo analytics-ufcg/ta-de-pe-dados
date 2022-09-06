@@ -150,7 +150,10 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
       vl_total_item_contrato = valor_total,
       sg_unidade_medida = unidade,
       cd_tipo_modalidade = codigo_modalidade_aplicacao
-    ) %>%
+    )
+  save(info_itens_compras_federal, filename="antes_do_double.rdata")
+  
+  info_itens_compras_federal <- info_itens_compras_federal %>%
     left_join(
       empenhos_relacionados_df %>% select(
         codigo_contrato,
@@ -200,6 +203,6 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
       origem_valor,
       tem_inconsistencia
     )
-  
+  save(info_itens_compras_federal, filename='depois_do_double.rdata')
   return(info_itens_compras_federal)
 }
