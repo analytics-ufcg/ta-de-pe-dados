@@ -151,6 +151,7 @@ aggregator_itens_contrato <- function(anos, filtro, administracao = c("PE", "RS"
       create_categoria() %>%
       split_descricao()
       save(pausa_1, file = 'pausa_1.rdata')
+      flog.warn("Salvo pausa 1")
     
       info_item_contrato <- pausa_1 %>% dplyr::ungroup() %>%
       marca_servicos() %>% 
