@@ -136,6 +136,8 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
   
   save(itens_compra_federal_df, file='3_antes.rdata')
   
+  save(historico_itens_federais, file='historico_itens_federais.rdata')
+  
   itens_compra_federal_df <- atualiza_preco_itens_federais(itens_compra_federal_df, historico_itens_federais)
   
   save(itens_compra_federal_df, file='antes_do_antes.rdata')
