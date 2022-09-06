@@ -204,5 +204,6 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
       tem_inconsistencia
     )
   save(info_itens_compras_federal, filename='depois_do_double.rdata')
+  print("salvou")
   return(info_itens_compras_federal)
 }
