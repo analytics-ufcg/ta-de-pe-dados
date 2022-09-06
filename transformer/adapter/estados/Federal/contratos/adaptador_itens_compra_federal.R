@@ -136,6 +136,8 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
   
   itens_compra_federal_df <- atualiza_preco_itens_federais(itens_compra_federal_df, historico_itens_federais)
   
+  save(itens_compra_federal_df, file='antes_do_antes.rdata')
+  
   info_itens_compras_federal <- itens_compra_federal_df %>%
     rowid_to_column(var='nr_item') %>% 
     janitor::clean_names() %>%
