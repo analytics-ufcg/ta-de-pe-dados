@@ -71,7 +71,7 @@ atualiza_preco_itens_federais <- function(itens_compra_federal_df, historico_ite
     inner_join(itens_compra_federal_df %>% 
                  select(codigo_empenho, sequencial, valor_atual), 
                by = c("codigo_empenho", "sequencial")) %>% 
-    mutate(quantidade = if_else(tipo_operacao == 'ANULACAO', -(quantidade), quantidade)) %>% 
+    mutate(quantidade = if_else(tipo_operacao == 'ANULACAO', -(quantidade), quantidade)) %>%
     ungroup() %>% 
     mutate(valor_original = valor_atual) %>% 
     mutate(valor_total = valor_unitario * quantidade) %>% 
@@ -81,8 +81,9 @@ atualiza_preco_itens_federais <- function(itens_compra_federal_df, historico_ite
       valor_total = sum(valor_total),
       valor_original = first(valor_original),
       .groups = 'drop'
-    ) %>%
-    mutate(valor_unitario = valor_total / quantidade) %>% 
+    ) %>% #Até aqui tudo bem
+    mutate(quantidade = if_else((quantidade == 0 & valor_total > 0), 1, quantidade))%>%
+    mutate(valor_unitario = valor_total / quantidade) %>% #Essa linha
     mutate(valor_nan = is.nan(valor_unitario),
            quantidade_negativa = quantidade < 0,
            quantidade_c_valor_zero = quantidade > 0 && valor_total == 0,
