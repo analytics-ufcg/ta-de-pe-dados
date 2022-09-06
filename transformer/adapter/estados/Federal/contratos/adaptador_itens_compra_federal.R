@@ -134,6 +134,8 @@ adapta_info_itens_compras_federal <- function(itens_compra_federal_df, empenhos_
     stop("Tipo de filtro não definido. É possível filtrar pelos tipos 'merenda' ou 'covid")
   }
   
+  save(itens_compra_federal_df, file='3_antes.rdata')
+  
   itens_compra_federal_df <- atualiza_preco_itens_federais(itens_compra_federal_df, historico_itens_federais)
   
   save(itens_compra_federal_df, file='antes_do_antes.rdata')
