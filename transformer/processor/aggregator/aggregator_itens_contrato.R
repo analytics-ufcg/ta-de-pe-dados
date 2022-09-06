@@ -123,9 +123,11 @@ aggregator_itens_contrato <- function(anos, filtro, administracao = c("PE", "RS"
       flog.error(e)
       return(tibble())
     })
+    save(itens_contratos_br, file = 'itens_contratos_br.rdata')
   } else {
     itens_contratos_br <- tibble()
   }
+  
     
   if (dplyr::bind_rows(itens_contratos_rs, itens_contratos_pe, itens_contratos_br) %>% nrow() == 0) {
     flog.warn("Nenhum dado de item de contrato para agregar!")
@@ -133,7 +135,7 @@ aggregator_itens_contrato <- function(anos, filtro, administracao = c("PE", "RS"
   }
 
   tryCatch({
-    info_item_contrato <- dplyr::bind_rows(itens_contratos_rs, itens_contratos_pe, itens_contratos_br) %>%
+    pausa_1 <- dplyr::bind_rows(itens_contratos_rs, itens_contratos_pe, itens_contratos_br) %>%
       left_join(info_orgaos %>% select(id_orgao, cd_orgao, id_estado),
                 by = c("cd_orgao", "id_estado")) %>%
       join_contratos_e_itens(info_contratos %>%
@@ -147,8 +149,10 @@ aggregator_itens_contrato <- function(anos, filtro, administracao = c("PE", "RS"
       dplyr::ungroup() %>%
       dplyr::select(id_item_contrato, id_contrato, id_orgao, cd_orgao, id_licitacao, id_item_licitacao, dplyr::everything()) %>%
       create_categoria() %>%
-      split_descricao() %>%
-      dplyr::ungroup() %>%
+      split_descricao()
+      save(pausa_1, file = 'pausa_1.rdata')
+    
+      info_item_contrato <- pausa_1 %>% dplyr::ungroup() %>%
       marca_servicos() %>% 
       mutate(valor_calculado = NA) %>% 
       select(id_item_contrato, id_contrato, id_orgao, cd_orgao, id_licitacao, id_item_licitacao, nr_lote, 
