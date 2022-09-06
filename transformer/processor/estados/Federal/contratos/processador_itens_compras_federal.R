@@ -14,6 +14,10 @@ processa_itens_compras_federal <- function(filtro = 'covid') {
   compras_federais <- processa_compras_federal()
   historico_itens_federais <- import_historico_itens_compras_federais()
 
+  dump <- import_itens_compras_federais()
+  teste <- adapta_info_itens_compras_federal(dump, compras_federais, historico_itens_federais, filtro)
+  adapta_info_itens_compras_federal(dump, compras_federais, historico_itens_federais, filtro)
+
   itens_compras_federais <- import_itens_compras_federais() %>% 
     adapta_info_itens_compras_federal(compras_federais, historico_itens_federais, filtro) %>%
     add_info_estado(sigla_estado = "BR", id_estado = "99") 
