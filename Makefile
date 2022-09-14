@@ -10,14 +10,16 @@ help:
 	@echo "\tbuild-fetcher-data-rs \t\t\tRealiza o build da imagem com as dependência do fetcher do tá na mesa"
 	@echo "\tfetch-data-rs ano=<ano> \t\tExecuta a cli do fetcher para o ano passado como parâmetro. (2019 é o default)"
 	@echo "\tfetch-data-pe ano_inicial=<ano> ano_final=<ano> \t\t\tRecupera dados do TCE-PE."
-	@echo "\tfetch-data-federal \t\t\tBaixa os dados federais usados no repositório de acordo com um intervalo de tempo. Ex: make fetch_data_federal data_inicio=2020-06-19 data_fim=2020-06-20"
+	@echo "\tfetch-data-federal \t\t\tBaixa os dados federais usados no repositório de acordo com um intervalo de tempo. Ex: make fetch-data-federal data_inicio=2020-01-01 data_fim=2022-06-15"
 	@echo "\tfetch-process-receita \t\tCaptura os dados da Receita Federal para os fornecedores processados."
 	@echo "\tfetch-inidoneos \t\tCaptura os dados de empresas inidoneas (CEIS e CNEP)."
 	@echo "\tprocess-data anos=<ano1,ano2> filtro=<merenda> estados=<PE,RS> \tExecuta o módulo de processamento de dados brutos para o formato usado na aplicação."
 	@echo "\t\t\t\t\tAssume um ou mais anos separados por vírgula. Assume que os dados foram baixados."
 	@echo "\tprocess-data-empenhos \t\tExecuta o processamento de dados de empenhos."
+	@echo "\tprocess-atualiza-empenhos-federais \t\tAtualiza a tabela de empenhos federais com preços novos considerando empenhos de anulação e reforço"
+	@echo "\tprocess-relaciona-itens-empenhos \t\tRelaciona o valor dos itens calculado de acordo com as anulações e reforços aos empenhos originais"
 	@echo "\tprocess-data-novidades \t\tExecuta o processamento de dados de novidades."
-	@echo "\tprocess-data-fornecedores anos=<ano1,ano2> \t\tExecuta o processamento de dados de fornecedores."
+	@echo "\tprocess-data-fornecedores anos=<ano1,ano2> estados=<RS,PE,BR> \t\tExecuta o processamento de dados de fornecedores."
 	@echo "\tprocess-data-itens-similares \t\tExecuta o processamento para agrupar itens similares."
 	@echo "\tprocess-data-alertas anos=<ano1,ano2> filtro=<merenda> estados=<RS,PE,BR> \t\tExecuta o processamento de dados dos Alertas."
 	@echo "\tfeed-create \t\t\tCria as tabelas usadas no Tá na Mesa no Banco de Dados."
@@ -63,11 +65,17 @@ process-data:
 process-data-empenhos:
 	docker exec r-container sh -c "cd /app/transformer/processor/estados/RS/empenhos && Rscript export_empenhos_bd.R"
 .PHONY: process-data-empenhos
+process-atualiza-empenhos-federais:
+	docker exec r-container sh -c "cd /app/transformer/processor && Rscript export_atualiza_contratos_bd.R"
+.PHONY: process-atualiza-empenhos-federais
+process-relaciona-itens-empenhos:
+	docker exec r-container sh -c "cd /app/transformer/processor && Rscript relaciona_itens_empenhos.R"
+.PHONY: process-relaciona-itens-empenhos
 process-data-novidades:
 	docker exec r-container sh -c "cd /app/transformer/processor/geral/novidades && Rscript export_novidades_bd.R"
 .PHONY: process-data-novidades
 process-data-fornecedores:
-	docker exec r-container sh -c "cd /app/transformer/processor && Rscript export_fornecedores_bd.R $(anos)"
+	docker exec r-container sh -c "cd /app/transformer/processor && Rscript export_fornecedores_bd.R $(anos) $(estados)"
 .PHONY: process-data-fornecedores
 fetch-process-receita:
 	docker exec r-container sh -c "cd /app/fetcher/receita &&  Rscript fetch_dados_receita.R"

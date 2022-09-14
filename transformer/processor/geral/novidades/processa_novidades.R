@@ -41,12 +41,17 @@ create_tipo_novidades <- function() {
 
 transforma_licitacao_em_novidades <- function(licitacoes) {
   novidades <- licitacoes %>%
-    dplyr::mutate(id_tipo = dplyr::case_when(
-      evento == "data_abertura" ~ 1,
-      evento == "data_homologacao" ~ 2,
-      evento == "data_adjudicacao" ~ 3
-    ), id_original = id_licitacao, texto_novidade = NA) %>% 
-    dplyr::select(id_tipo, id_licitacao, data, id_original, 
+    dplyr::mutate(
+      id_tipo = dplyr::case_when(
+        evento == "data_abertura" ~ 1,
+        evento == "data_homologacao" ~ 2,
+        evento == "data_adjudicacao" ~ 3
+      ),
+      id_original = id_licitacao,
+      texto_novidade = NA,
+      id_contrato = NA
+    ) %>% 
+    dplyr::select(id_tipo, id_licitacao, id_contrato, data, id_original, 
                   nome_municipio, texto_novidade)
 }
 
@@ -66,10 +71,20 @@ transforma_empenhos_em_novidades <- function(empenhos) {
 
 transforma_contrato_em_novidades <- function(contratos) {
   novidades_ <- contratos %>%
-    dplyr::mutate(id_tipo = dplyr::case_when(
-      (evento == "dt_inicio_vigencia") ~ 10,
-      (evento == "dt_final_vigencia") ~ 11
-    ), texto_novidade = paste0(nr_contrato, "/", ano_contrato), id_original = id_contrato, data = valor) %>% 
-    dplyr::select(id_tipo, id_original, id_licitacao,
-                  data, nome_municipio, texto_novidade)
+    dplyr::mutate(
+      id_tipo = dplyr::case_when(
+        (evento == "dt_inicio_vigencia") ~ 10,
+        (evento == "dt_final_vigencia") ~ 11
+      ),
+      texto_novidade = paste0(nr_contrato, "/", ano_contrato),
+      id_original = id_contrato,
+      data = valor
+    ) %>%
+    dplyr::select(id_tipo,
+                  id_original,
+                  id_licitacao,
+                  id_contrato,
+                  data,
+                  nome_municipio,
+                  texto_novidade)
 }

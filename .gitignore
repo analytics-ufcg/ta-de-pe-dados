@@ -2,6 +2,8 @@ scripts/__pycache__
 .env
 .env.prod
 .env.local
+.env.covid.*
+.env.merenda.*
 .Rproj.user
 .Rhistory
 log_file.txt
@@ -14,3 +16,8 @@ azure/.env
 
 environment/
 
+data/bd/*.csv
+data/bd/*.zip
+data/dados_federais/*.csv
+data/dados_federais/*.zip
+data/dados_federais/*.gz

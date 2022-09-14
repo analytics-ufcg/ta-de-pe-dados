@@ -82,6 +82,7 @@ atualiza_preco_itens_federais <- function(itens_compra_federal_df, historico_ite
       valor_original = first(valor_original),
       .groups = 'drop'
     ) %>%
+    mutate(quantidade = if_else((quantidade == 0 & valor_total != 0), 1, quantidade)) %>%
     mutate(valor_unitario = valor_total / quantidade) %>% 
     mutate(valor_nan = is.nan(valor_unitario),
            quantidade_negativa = quantidade < 0,

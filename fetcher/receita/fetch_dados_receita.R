@@ -20,7 +20,7 @@ tryCatch({receita <- DBI::dbConnect(RPostgres::Postgres(),
 
 output_path <- here::here("data/bd/")
 
-cnpjs <- readr::read_csv(paste0(output_path, "info_fornecedores_contrato.csv")) %>% 
+cnpjs <- readr::read_csv(paste0(output_path, "info_fornecedores_contrato.csv"), col_types = cols(tp_pessoa = col_character())) %>% 
   dplyr::filter(tp_pessoa == "J") %>% 
   pull(nr_documento)
 

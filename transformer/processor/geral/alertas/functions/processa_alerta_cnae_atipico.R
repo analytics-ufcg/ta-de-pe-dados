@@ -16,6 +16,10 @@ processa_alerta_cnae_atipico <- function(filtro) {
     
     cnaes_itens_fornecedor <- processa_itens_cnaes_fornecedores()
     
+    if (nrow(cnaes_itens_fornecedor) == 0) {
+        return(tibble())
+    }
+    
     flog.info(str_glue("Tabela com casos de cnaes para serem ignorados na geração do alerta"))
     cnaes_falsos_positivos <- read_csv(here::here("transformer/processor/geral/alertas/data/cnaes_desconsiderados_produtos.csv"),
                                        col_types = cols(.default = col_character())) %>% 
@@ -76,9 +80,16 @@ processa_itens_cnaes_fornecedores <- function() {
                                  col_types = cols(id_estado = "c"))
     flog.info("Tabela com constantes de mínimo de itens por classe para filtro")
     print(limite_min_itens)
-
-    itens_unicos_similaridade <- read_itens_similares_processados() %>% 
-        dplyr::select (-c(id_item_contrato))
+    
+    
+    itens_unicos_similaridade <- tryCatch({
+        read_itens_similares_processados() %>% 
+            dplyr::select (-c(id_item_contrato))
+    }, error = function(e) {
+        flog.error("Ocorreu um erro ao ler itens similares")
+        flog.error(e)
+        return(tibble())
+    })
 
     flog.info(str_glue("{itens_unicos_similaridade %>% nrow()} classes de itens similares usados"))
 
@@ -90,8 +101,18 @@ processa_itens_cnaes_fornecedores <- function() {
     itens_contratos_processados <- read_itens_contrato_processados()
     flog.info(str_glue("{itens_contratos_processados %>% nrow()} itens de contratos processados"))
 
-    dados_cadastrais_processados <- read_dados_cadastrais_processados() %>% 
-        select(cnpj, razao_social, nome_fantasia, cnae_fiscal) 
+    dados_cadastrais_processados <- tryCatch({
+        read_dados_cadastrais_processados() %>% 
+            select(cnpj, razao_social, nome_fantasia, cnae_fiscal) 
+    }, error = function(e) {
+        flog.error("Ocorreu um erro ao ler dados cadastrais")
+        flog.error(e)
+        return(tibble())
+    })
+    
+    if (nrow(dados_cadastrais_processados) == 0) {
+        return(tibble())
+    }
     
     cnaes_processados <- read_cnaes_processados() %>% 
         select(id_cnae, nm_cnae, nm_classe, nm_grupo, nm_divisao, nm_secao)
@@ -134,7 +155,7 @@ processa_itens_cnaes_fornecedores <- function() {
     flog.info(str_glue("{all_cnaes %>% nrow()} linhas no mapeamento cnae(fiscal e secundário) para itens de contrato"))
     
     itens_separated <- separate_rows(itens_unicos_similaridade, ids_itens_contratos, convert = TRUE) %>% 
-        mutate (id_item_contrato = ids_itens_contratos) %>% 
+        mutate (id_item_contrato = as.character(ids_itens_contratos), ) %>% 
         select (-c(ids_itens_contratos)) %>% 
         filter (id_item_contrato != "") %>% 
         mutate (item_class = ds_item)

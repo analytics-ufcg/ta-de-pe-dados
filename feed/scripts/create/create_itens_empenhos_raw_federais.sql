@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS "itens_empenhos_raw_federais" (
 	codigo_elemento_despesa NUMERIC,
 	codigo_empenho TEXT,
 	codigo_grupo_despesa TEXT,
-	codigo_modalidade_aplicacao BIGINT,
+	codigo_modalidade_aplicacao VARCHAR,
 	codigo_subelemento_despesa NUMERIC,
 	descricao TEXT,
 	elemento_despesa TEXT,
@@ -23,6 +23,5 @@ CREATE TABLE IF NOT EXISTS "itens_empenhos_raw_federais" (
 	item TEXT,
 	marca TEXT,
 	item_processo TEXT,
-	descricao_restante TEXT,
-	FOREIGN KEY (id_empenho) REFERENCES empenhos_raw_federais(id)
+	descricao_restante TEXT
 );
