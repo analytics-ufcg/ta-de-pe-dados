@@ -30,6 +30,7 @@ usage() {
   echo -e "\t-f  --data-inicio  corresponde a data de início do processamento (Gov. Federal)."
   echo -e "\t-f  --data-fim     corresponde a data limite do processamento (Gov. Federal)."
   echo -e "\t-f  --estados      corresponde a lista de estados para processamento."
+  echo -e "\t-f  --limpar       corresponde a flag para limpar os dados já processados ou não"
   echo ""
   echo "Ex. de uso: $0 --tipo covid,merenda --contexto development --ano-inicio 2017 --ano-fim 2019 --data-incio 2020-01-01 --data-fim 2022-03-31 --estados RS,PE,BR"
   exit
@@ -65,6 +66,10 @@ while [ $# -gt 0 ]; do
   --estados* | -f*)
     if [[ "$1" != *=* ]]; then shift; fi
     ESTADOS="${1#*=}"
+    ;;
+    --limpar* | -l*)
+    if [[ "$1" != *=* ]]; then shift; fi
+    LIMPAR="${1#*=}"
     ;;
   --help | -h)
     usage
@@ -494,9 +499,20 @@ feed_import_empenho_raw_gov_federal
 # iteração para cada tipo de aplicação
 for tipoAplicacao in "${tiposAplicacao[@]}"; do
 
-  # remove processamento anterior
-  rm -R $PATH_VOLUME_DADOS/bd
-  feed_clean_data
+    # remove processamento anterior
+    # Check if limpar was called
+    if [[ $LIMPAR == "true" ]]; then
+        rm -R $PATH_VOLUME_DADOS/bd
+        feed_clean_data
+    fi
+    if [[ $LIMPAR == "false" ]]; then
+        #obtain current timestamp
+        timestamp=$(date +%s)
+        #create a new folder with the timestamp
+        mkdir $PATH_VOLUME_DADOS/bd_backup/$timestamp
+        #move the current bd folder to the new folder
+        mv $PATH_VOLUME_DADOS/bd/* $PATH_VOLUME_DADOS/bd_backup/$timestamp
+    fi
 
   # processa os dados gerais
   process_data "$anosConcatenados" "$tipoAplicacao" "$ESTADOS"
@@ -565,4 +581,3 @@ for tipoAplicacao in "${tiposAplicacao[@]}"; do
 done
 
 pprint "Fim da execução: $(date +%d-%m-%y_%H:%M)"
-
